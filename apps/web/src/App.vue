@@ -43,10 +43,25 @@ type Section = {
   lineItemCount: number
 }
 
+type SampleImportResult = {
+  ok: true
+  result: {
+    productionId: string
+    importBatchId: string
+    periods: number
+    sections: number
+    lineItems: number
+    allocations: number
+    snapshots: number
+  }
+}
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
 
 const loading = ref(true)
+const importing = ref(false)
 const error = ref('')
+const importMessage = ref('')
 const productions = ref<Production[]>([])
 const selectedProductionId = ref('')
 const summary = ref<ProductionSummary | null>(null)
@@ -69,8 +84,8 @@ function formatMoney(value: number | null | undefined, currency = 'USD') {
   }).format(Number(value || 0))
 }
 
-async function fetchJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`)
+async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
+  const response = await fetch(`${API_BASE}${path}`, options)
   if (!response.ok) {
     throw new Error(`Request failed: ${response.status}`)
   }
@@ -87,18 +102,30 @@ async function loadProductionData(productionId: string) {
   sections.value = sectionsResponse
 }
 
+async function loadProductions(selectFirst = false) {
+  const productionList = await fetchJson<Production[]>('/api/productions')
+  productions.value = productionList
+
+  if (productionList.length === 0) {
+    selectedProductionId.value = ''
+    summary.value = null
+    sections.value = []
+    return
+  }
+
+  if (selectFirst || !selectedProductionId.value) {
+    selectedProductionId.value = productionList[0].id
+  }
+
+  await loadProductionData(selectedProductionId.value)
+}
+
 async function bootstrap() {
   loading.value = true
   error.value = ''
 
   try {
-    const productionList = await fetchJson<Production[]>('/api/productions')
-    productions.value = productionList
-
-    if (productionList.length > 0) {
-      selectedProductionId.value = productionList[0].id
-      await loadProductionData(productionList[0].id)
-    }
+    await loadProductions(true)
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to load dashboard data.'
   } finally {
@@ -122,6 +149,22 @@ async function handleProductionChange(event: Event) {
   }
 }
 
+async function runSampleImport() {
+  importing.value = true
+  importMessage.value = ''
+  error.value = ''
+
+  try {
+    const response = await fetchJson<SampleImportResult>('/api/imports/sample', { method: 'POST' })
+    await loadProductions(true)
+    importMessage.value = `Sample import complete: ${response.result.sections} sections, ${response.result.lineItems} line items, ${response.result.allocations} allocations.`
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Sample import failed.'
+  } finally {
+    importing.value = false
+  }
+}
+
 onMounted(() => {
   bootstrap()
 })
@@ -138,15 +181,25 @@ onMounted(() => {
         </p>
       </div>
 
-      <label class="production-picker">
-        <span>Production</span>
-        <select :value="selectedProductionId" @change="handleProductionChange">
-          <option v-for="production in productions" :key="production.id" :value="production.id">
-            {{ production.title }}
-          </option>
-        </select>
-      </label>
+      <div class="header-actions">
+        <label class="production-picker">
+          <span>Production</span>
+          <select :value="selectedProductionId" @change="handleProductionChange">
+            <option v-for="production in productions" :key="production.id" :value="production.id">
+              {{ production.title }}
+            </option>
+          </select>
+        </label>
+
+        <button class="import-button" type="button" :disabled="importing" @click="runSampleImport">
+          {{ importing ? 'Running import…' : 'Re-import sample workbook' }}
+        </button>
+      </div>
     </header>
+
+    <section v-if="importMessage" class="panel success-panel">
+      {{ importMessage }}
+    </section>
 
     <section v-if="error" class="panel error-panel">
       <strong>Couldn’t load dashboard data.</strong>

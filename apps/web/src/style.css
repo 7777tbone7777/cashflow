@@ -18,6 +18,8 @@
   --accent: #60a5fa;
   --accent-soft: rgba(96, 165, 250, 0.16);
   --danger: #fca5a5;
+  --success: #86efac;
+  --success-soft: rgba(134, 239, 172, 0.12);
 }
 
 * {
@@ -53,6 +55,13 @@ select {
   gap: 24px;
   align-items: end;
   margin-bottom: 28px;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
 }
 
 .eyebrow {
@@ -93,12 +102,25 @@ h1 {
   font-size: 0.9rem;
 }
 
-.production-picker select {
+.production-picker select,
+.import-button {
   background: var(--panel);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px 14px;
+}
+
+.import-button {
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.22), rgba(96, 165, 250, 0.1));
+  border-color: rgba(96, 165, 250, 0.35);
+  font-weight: 600;
+}
+
+.import-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
 }
 
 .stats-grid {
@@ -142,13 +164,20 @@ h1 {
 }
 
 .loading-panel,
-.error-panel {
+.error-panel,
+.success-panel {
   margin-bottom: 20px;
 }
 
 .error-panel {
   border-color: rgba(252, 165, 165, 0.4);
   color: var(--danger);
+}
+
+.success-panel {
+  border-color: rgba(134, 239, 172, 0.35);
+  background: linear-gradient(180deg, var(--success-soft), rgba(255,255,255,0.01));
+  color: var(--success);
 }
 
 .content-grid {
