@@ -32,12 +32,36 @@ function looksLikeSectionHeader(row) {
   return Boolean(colA && colB && !colC);
 }
 
+function pickDetailSheet(workbook) {
+  const preferredByName = workbook.SheetNames.find((name) => name.toLowerCase().includes('cash flow') && name.toLowerCase().includes('usd'));
+  if (preferredByName) return preferredByName;
+
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName];
+    const rows = xlsx.utils.sheet_to_json(sheet, {
+      header: 1,
+      raw: false,
+      defval: null,
+    });
+
+    const hasPrePrepHeader = rows.some((row) => Array.isArray(row) && row.some((cell) => typeof cell === 'string' && cell.includes('Pre-Prep')));
+    const hasWeeklyTotals = rows.some((row) => Array.isArray(row) && row.some((cell) => cell === 'WEEKLY CASH FLOW TOTALS:'));
+    const hasCumulativeTotals = rows.some((row) => Array.isArray(row) && row.some((cell) => cell === 'CUMULATIVE TOTALS:'));
+
+    if (hasPrePrepHeader && hasWeeklyTotals && hasCumulativeTotals) {
+      return sheetName;
+    }
+  }
+
+  return null;
+}
+
 export function normalizeCashflowWorkbook(workbookPath) {
   const workbook = xlsx.readFile(workbookPath, { cellFormula: true, cellDates: false });
-  const detailSheetName = workbook.SheetNames.find((name) => name.toLowerCase().includes('cash flow') && name.toLowerCase().includes('usd'));
+  const detailSheetName = pickDetailSheet(workbook);
 
   if (!detailSheetName) {
-    throw new Error('Could not find detail cash flow sheet');
+    throw new Error(`Could not find detail cash flow sheet. Found sheets: ${workbook.SheetNames.join(', ')}`);
   }
 
   const sheet = workbook.Sheets[detailSheetName];

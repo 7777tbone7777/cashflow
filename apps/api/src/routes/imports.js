@@ -9,7 +9,16 @@ import { persistNormalizedCashflow } from '../services/importers/persistNormaliz
 const uploadDir = path.resolve('apps/api/uploads');
 fs.mkdirSync(uploadDir, { recursive: true });
 
-const upload = multer({ dest: uploadDir });
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || '');
+    const safeBase = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, `${safeBase}${ext}`);
+  },
+});
+
+const upload = multer({ storage });
 
 export const importsRouter = Router();
 
