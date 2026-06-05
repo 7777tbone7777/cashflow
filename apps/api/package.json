@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
-    "build": "echo \"api build placeholder\""
+    "build": "echo \"api build placeholder\"",
+    "prisma": "prisma",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "cors": "^2.8.5",

@@ -11,5 +11,13 @@
     "dev:api": "npm --workspace apps/api run dev",
     "build:web": "npm --workspace apps/web run build",
     "build:api": "npm --workspace apps/api run build"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.8.0",
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3"
   }
 }

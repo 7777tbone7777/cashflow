@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import { healthRouter } from './routes/health.js';
+import { importsRouter } from './routes/imports.js';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -7,10 +9,8 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-app.get('/health', (_req, res) => {
-  res.json({ ok: true, service: 'cashflow-api' });
-});
-
+app.use('/health', healthRouter);
+app.use('/api/imports', importsRouter);
 app.get('/api', (_req, res) => {
   res.json({
     name: 'cashflow-api',

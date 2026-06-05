@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ImportSourceType {
+  cashflow_xlsx
+  hotcost_xls
+}
+
+enum ImportStatus {
+  queued
+  processing
+  completed
+  failed
+  needs_review
+}
+
+enum PeriodType {
+  ctd
+  commitment
+  preprep
+  prep
+  shoot
+  hiatus
+  post
+}
+
+enum CashFlowLineType {
+  detail
+  fringe
+  subtotal
+  header
+  grand_total
+  cumulative_total
+}
+
+enum SnapshotType {
+  imported
+  recalculated
+  scenario
+}
+
+model Production {
+  id            String             @id @default(uuid()) @db.Uuid
+  title         String
+  currency      String
+  region        String?
+  status        String
+  startDate     DateTime?          @db.Date
+  endDate       DateTime?          @db.Date
+  notes         String?
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  importBatches ImportBatch[]
+  periods       CashFlowPeriod[]
+  sections      CashFlowSection[]
+  lineItems     CashFlowLineItem[]
+  snapshots     ForecastSnapshot[]
+
+  @@map("productions")
+}
+
+model ImportBatch {
+  id               String           @id @default(uuid()) @db.Uuid
+  productionId     String           @map("production_id") @db.Uuid
+  sourceType       ImportSourceType @map("source_type")
+  originalFilename String           @map("original_filename")
+  fileStorageKey   String           @map("file_storage_key")
+  importStatus     ImportStatus     @map("import_status")
+  parserVersion    String           @map("parser_version")
+  startedAt        DateTime?        @map("started_at") @db.Timestamptz(6)
+  completedAt      DateTime?        @map("completed_at") @db.Timestamptz(6)
+  errorSummary     String?          @map("error_summary")
+  metadataJson     Json?            @map("metadata_json")
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  production       Production       @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  lineItems        CashFlowLineItem[]
+
+  @@map("import_batches")
+}
+
+model CashFlowPeriod {
+  id              String      @id @default(uuid()) @db.Uuid
+  productionId    String      @map("production_id") @db.Uuid
+  sequence        Int
+  label           String
+  periodType      PeriodType  @map("period_type")
+  weekEndingDate  DateTime?   @map("week_ending_date") @db.Date
+  sourceColumnKey String      @map("source_column_key")
+  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  production      Production  @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  allocations     CashFlowAllocation[]
+
+  @@unique([productionId, sequence])
+  @@map("cash_flow_periods")
+}
+
+model CashFlowSection {
+  id                   String             @id @default(uuid()) @db.Uuid
+  productionId         String             @map("production_id") @db.Uuid
+  code                 String?
+  name                 String
+  displayOrder         Int                @map("display_order")
+  includedInGrandTotal Boolean            @default(true) @map("included_in_grand_total")
+  sourceStartRow       Int?               @map("source_start_row")
+  sourceEndRow         Int?               @map("source_end_row")
+  createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  production           Production         @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  lineItems            CashFlowLineItem[]
+
+  @@unique([productionId, displayOrder])
+  @@map("cash_flow_sections")
+}
+
+model CashFlowLineItem {
+  id                String               @id @default(uuid()) @db.Uuid
+  productionId      String               @map("production_id") @db.Uuid
+  sectionId         String?              @map("section_id") @db.Uuid
+  importBatchId     String?              @map("import_batch_id") @db.Uuid
+  accountCode       String?              @map("account_code")
+  description       String
+  lineType          CashFlowLineType     @map("line_type")
+  sourceRowNumber   Int?                 @map("source_row_number")
+  ctdAmount         Decimal?             @map("ctd_amount") @db.Decimal(14, 2)
+  commitmentsAmount Decimal?             @map("commitments_amount") @db.Decimal(14, 2)
+  importedTotal     Decimal?             @map("imported_total") @db.Decimal(14, 2)
+  formulaJson       Json?                @map("formula_json")
+  createdAt         DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  production        Production           @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  section           CashFlowSection?     @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  importBatch       ImportBatch?         @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  allocations       CashFlowAllocation[]
+
+  @@index([productionId])
+  @@index([sectionId])
+  @@index([accountCode])
+  @@map("cash_flow_line_items")
+}
+
+model CashFlowAllocation {
+  id               String            @id @default(uuid()) @db.Uuid
+  lineItemId       String            @map("line_item_id") @db.Uuid
+  periodId         String            @map("period_id") @db.Uuid
+  amount           Decimal           @db.Decimal(14, 2)
+  importedValue    Decimal?          @map("imported_value") @db.Decimal(14, 2)
+  sourceFormula    String?           @map("source_formula")
+  isManualOverride Boolean           @default(false) @map("is_manual_override")
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lineItem         CashFlowLineItem  @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
+  period           CashFlowPeriod    @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@unique([lineItemId, periodId])
+  @@map("cash_flow_allocations")
+}
+
+model ForecastSnapshot {
+  id                   String       @id @default(uuid()) @db.Uuid
+  productionId         String       @map("production_id") @db.Uuid
+  name                 String
+  snapshotType         SnapshotType @map("snapshot_type")
+  totalCtd             Decimal?     @map("total_ctd") @db.Decimal(14, 2)
+  totalCommitments     Decimal?     @map("total_commitments") @db.Decimal(14, 2)
+  weeklyTotalsJson     Json         @map("weekly_totals_json")
+  cumulativeTotalsJson Json         @map("cumulative_totals_json")
+  createdBy            String?      @map("created_by")
+  createdAt            DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  production           Production   @relation(fields: [productionId], references: [id], onDelete: Cascade)
+
+  @@map("forecast_snapshots")
+}
