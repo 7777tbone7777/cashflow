@@ -281,10 +281,7 @@ onMounted(() => {
     <header class="page-header">
       <div>
         <p class="eyebrow">Cashflow</p>
-        <h1>Imported cash flow dashboard</h1>
-        <p class="subhead">
-          First live view over the workbook-import pipeline: Postgres-backed, API-driven, and ready for the next UI pass.
-        </p>
+        <h1>Cash Flow Dashboard</h1>
       </div>
 
       <div class="header-actions">
