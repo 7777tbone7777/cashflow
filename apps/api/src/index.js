@@ -5,6 +5,7 @@ import cors from 'cors';
 import { healthRouter } from './routes/health.js';
 import { importsRouter } from './routes/imports.js';
 import { productionsRouter } from './routes/productions.js';
+import { exportsRouter } from './routes/exports.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/health', healthRouter);
 app.use('/api/imports', importsRouter);
 app.use('/api/productions', productionsRouter);
+app.use('/api/exports', exportsRouter);
 app.get('/api', (_req, res) => {
   res.json({
     name: 'cashflow-api',
@@ -39,7 +41,7 @@ app.get('*', (req, res, next) => {
 
 app.use((error, _req, res, _next) => {
   console.error(error);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ error: error?.message || 'Internal server error' });
 });
 
 app.listen(port, () => {

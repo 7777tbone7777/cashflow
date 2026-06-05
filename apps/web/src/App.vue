@@ -60,11 +60,12 @@ type SectionLineItem = {
   }>
 }
 
-type SampleImportResult = {
+type ImportResult = {
   ok: true
   result: {
     productionId: string
     importBatchId: string
+    productionTitle: string
     periods: number
     sections: number
     lineItems: number
@@ -86,6 +87,8 @@ const summary = ref<ProductionSummary | null>(null)
 const sections = ref<Section[]>([])
 const selectedSectionId = ref('')
 const sectionLineItems = ref<SectionLineItem[]>([])
+const uploadFile = ref<File | null>(null)
+const uploadTitle = ref('')
 
 const selectedProduction = computed(() =>
   productions.value.find((production) => production.id === selectedProductionId.value) || null,
@@ -111,7 +114,8 @@ function formatMoney(value: number | string | null | undefined, currency = 'USD'
 async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, options)
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`)
+    const text = await response.text()
+    throw new Error(text || `Request failed: ${response.status}`)
   }
   return response.json()
 }
@@ -200,7 +204,7 @@ async function runSampleImport() {
   error.value = ''
 
   try {
-    const response = await fetchJson<SampleImportResult>('/api/imports/sample', { method: 'POST' })
+    const response = await fetchJson<ImportResult>('/api/imports/sample', { method: 'POST' })
     await loadProductions(true)
     importMessage.value = `Sample import complete: ${response.result.sections} sections, ${response.result.lineItems} line items, ${response.result.allocations} allocations.`
   } catch (err) {
@@ -208,6 +212,54 @@ async function runSampleImport() {
   } finally {
     importing.value = false
   }
+}
+
+function handleFileChange(event: Event) {
+  const target = event.target as HTMLInputElement
+  uploadFile.value = target.files?.[0] || null
+}
+
+async function uploadWorkbook() {
+  if (!uploadFile.value) {
+    error.value = 'Choose a workbook file first.'
+    return
+  }
+
+  importing.value = true
+  importMessage.value = ''
+  error.value = ''
+
+  try {
+    const formData = new FormData()
+    formData.append('workbook', uploadFile.value)
+    if (uploadTitle.value.trim()) {
+      formData.append('productionTitle', uploadTitle.value.trim())
+    }
+
+    const response = await fetchJson<ImportResult>('/api/imports/upload', {
+      method: 'POST',
+      body: formData,
+    })
+
+    await loadProductions(true)
+    importMessage.value = `Upload import complete for ${response.result.productionTitle}: ${response.result.sections} sections, ${response.result.lineItems} line items.`
+    uploadFile.value = null
+    uploadTitle.value = ''
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Workbook upload failed.'
+  } finally {
+    importing.value = false
+  }
+}
+
+function exportJson() {
+  if (!selectedProductionId.value) return
+  window.open(`${API_BASE}/api/exports/productions/${selectedProductionId.value}/report.json`, '_blank')
+}
+
+function exportCsv() {
+  if (!selectedProductionId.value) return
+  window.open(`${API_BASE}/api/exports/productions/${selectedProductionId.value}/report.csv`, '_blank')
 }
 
 watch(selectedSectionId, async (sectionId, previousSectionId) => {
@@ -250,6 +302,27 @@ onMounted(() => {
         </button>
       </div>
     </header>
+
+    <section class="panel upload-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Upload workbook</h2>
+          <p>Import a new cash flow workbook directly from the UI.</p>
+        </div>
+        <div class="export-actions">
+          <button class="secondary-button" type="button" @click="exportJson">Export JSON</button>
+          <button class="secondary-button" type="button" @click="exportCsv">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="upload-grid">
+        <input type="file" accept=".xlsx,.xls" @change="handleFileChange" />
+        <input v-model="uploadTitle" type="text" placeholder="Optional production title" />
+        <button class="import-button" type="button" :disabled="importing" @click="uploadWorkbook">
+          {{ importing ? 'Importing workbook…' : 'Upload and import workbook' }}
+        </button>
+      </div>
+    </section>
 
     <section v-if="importMessage" class="panel success-panel">
       {{ importMessage }}
