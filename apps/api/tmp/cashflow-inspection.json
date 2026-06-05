@@ -1,0 +1,776 @@
+{
+  "sourceFile": "/home/cpetrula/projects/cashflow-app/Cash Flow The Children California Full 083117.xlsx",
+  "sheetNames": [
+    "CASH FLOW SUMMARY",
+    "The Nun Cash Flow - USD",
+    "scout breakdown"
+  ],
+  "detailSheetName": "The Nun Cash Flow - USD",
+  "detailSheetRef": "A1:BE618",
+  "headerRowNumber": 3,
+  "totalRowNumber": 552,
+  "cumulativeRowNumber": 553,
+  "periodColumns": [
+    {
+      "sequence": 1,
+      "columnIndexZeroBased": 6,
+      "excelColumnNumber": 7,
+      "label": "Pre-Prep (-7)"
+    },
+    {
+      "sequence": 2,
+      "columnIndexZeroBased": 7,
+      "excelColumnNumber": 8,
+      "label": "Pre-Prep (-6)"
+    },
+    {
+      "sequence": 3,
+      "columnIndexZeroBased": 8,
+      "excelColumnNumber": 9,
+      "label": "Pre-Prep (-5)"
+    },
+    {
+      "sequence": 4,
+      "columnIndexZeroBased": 9,
+      "excelColumnNumber": 10,
+      "label": "Pre-Prep (-4)"
+    },
+    {
+      "sequence": 5,
+      "columnIndexZeroBased": 10,
+      "excelColumnNumber": 11,
+      "label": "Pre-Prep (-3)"
+    },
+    {
+      "sequence": 6,
+      "columnIndexZeroBased": 11,
+      "excelColumnNumber": 12,
+      "label": "Prep Wk (-2)"
+    },
+    {
+      "sequence": 7,
+      "columnIndexZeroBased": 12,
+      "excelColumnNumber": 13,
+      "label": "Prep Wk (-1)"
+    },
+    {
+      "sequence": 8,
+      "columnIndexZeroBased": 13,
+      "excelColumnNumber": 14,
+      "label": "Shoot Wk 1"
+    },
+    {
+      "sequence": 9,
+      "columnIndexZeroBased": 14,
+      "excelColumnNumber": 15,
+      "label": "Shoot Wk 2"
+    },
+    {
+      "sequence": 10,
+      "columnIndexZeroBased": 15,
+      "excelColumnNumber": 16,
+      "label": "Shoot Wk 3"
+    },
+    {
+      "sequence": 11,
+      "columnIndexZeroBased": 16,
+      "excelColumnNumber": 17,
+      "label": "Shoot Wk 4"
+    },
+    {
+      "sequence": 12,
+      "columnIndexZeroBased": 17,
+      "excelColumnNumber": 18,
+      "label": "Shoot Wk 5"
+    },
+    {
+      "sequence": 13,
+      "columnIndexZeroBased": 18,
+      "excelColumnNumber": 19,
+      "label": "Post Wk 1"
+    },
+    {
+      "sequence": 14,
+      "columnIndexZeroBased": 19,
+      "excelColumnNumber": 20,
+      "label": "Post Wk 2"
+    },
+    {
+      "sequence": 15,
+      "columnIndexZeroBased": 20,
+      "excelColumnNumber": 21,
+      "label": "Post Wk 3"
+    },
+    {
+      "sequence": 16,
+      "columnIndexZeroBased": 21,
+      "excelColumnNumber": 22,
+      "label": "Post Wk 4"
+    },
+    {
+      "sequence": 17,
+      "columnIndexZeroBased": 22,
+      "excelColumnNumber": 23,
+      "label": "Post Wk 5"
+    },
+    {
+      "sequence": 18,
+      "columnIndexZeroBased": 23,
+      "excelColumnNumber": 24,
+      "label": "Hiatus"
+    },
+    {
+      "sequence": 19,
+      "columnIndexZeroBased": 24,
+      "excelColumnNumber": 25,
+      "label": "Hiatus"
+    },
+    {
+      "sequence": 20,
+      "columnIndexZeroBased": 25,
+      "excelColumnNumber": 26,
+      "label": "Post Wk 6"
+    },
+    {
+      "sequence": 21,
+      "columnIndexZeroBased": 26,
+      "excelColumnNumber": 27,
+      "label": "Post Wk 7"
+    },
+    {
+      "sequence": 22,
+      "columnIndexZeroBased": 27,
+      "excelColumnNumber": 28,
+      "label": "Post Wk 8"
+    },
+    {
+      "sequence": 23,
+      "columnIndexZeroBased": 28,
+      "excelColumnNumber": 29,
+      "label": "Post Wk 9"
+    },
+    {
+      "sequence": 24,
+      "columnIndexZeroBased": 29,
+      "excelColumnNumber": 30,
+      "label": "Post Wk 10"
+    },
+    {
+      "sequence": 25,
+      "columnIndexZeroBased": 30,
+      "excelColumnNumber": 31,
+      "label": "Post Wk 11"
+    },
+    {
+      "sequence": 26,
+      "columnIndexZeroBased": 31,
+      "excelColumnNumber": 32,
+      "label": "Post Wk 12"
+    },
+    {
+      "sequence": 27,
+      "columnIndexZeroBased": 32,
+      "excelColumnNumber": 33,
+      "label": "Post Wk 13"
+    },
+    {
+      "sequence": 28,
+      "columnIndexZeroBased": 33,
+      "excelColumnNumber": 34,
+      "label": "Post Wk 14"
+    },
+    {
+      "sequence": 29,
+      "columnIndexZeroBased": 34,
+      "excelColumnNumber": 35,
+      "label": "Post Wk 15"
+    },
+    {
+      "sequence": 30,
+      "columnIndexZeroBased": 35,
+      "excelColumnNumber": 36,
+      "label": "Post Wk 16"
+    }
+  ],
+  "totals": {
+    "ctd": "$137,692",
+    "commitments": "$16,290",
+    "grandTotal": "$6,062,000"
+  },
+  "totalRowPreview": [
+    null,
+    null,
+    "WEEKLY CASH FLOW TOTALS:",
+    "$137,692",
+    "$16,290",
+    " ",
+    "$5,430",
+    "$39,235",
+    "$61,994",
+    "$85,271",
+    "$130,972",
+    "$387,324",
+    "$514,159",
+    "$789,618",
+    "$725,698",
+    "$686,887",
+    "$676,564",
+    "$629,891",
+    "$255,180",
+    "$76,384",
+    "$66,557",
+    "$55,607",
+    "$77,280",
+    "$0",
+    "$0",
+    "$116,669",
+    "$45,356",
+    "$45,356",
+    "$45,356",
+    "$45,356",
+    "$45,356",
+    "$68,356",
+    "$45,356",
+    "$58,250",
+    "$74,368",
+    "$54,187",
+    "$0",
+    "$0",
+    "$0",
+    "$0",
+    "$0",
+    "$0",
+    "$6,062,000",
+    null,
+    null
+  ],
+  "cumulativeRowPreview": [
+    null,
+    null,
+    "CUMULATIVE TOTALS:",
+    "$137,692",
+    "$153,982",
+    null,
+    "$159,412",
+    "$198,647",
+    "$260,641",
+    "$345,912",
+    "$476,883",
+    "$864,207",
+    "$1,378,367",
+    "$2,167,984",
+    "$2,893,682",
+    "$3,580,569",
+    "$4,257,133",
+    "$4,887,024",
+    "$5,142,204",
+    "$5,218,588",
+    "$5,285,145",
+    "$5,340,753",
+    "$5,418,032",
+    "$5,418,032",
+    "$5,418,032",
+    "$5,534,701",
+    "$5,580,057",
+    "$5,625,413",
+    "$5,670,770",
+    "$5,716,126",
+    "$5,761,482",
+    "$5,829,838",
+    "$5,875,194",
+    "$5,933,444",
+    "$6,007,812",
+    "$6,062,000",
+    "$6,062,000",
+    "$6,062,000",
+    "$6,062,000",
+    "$6,062,000",
+    "$6,062,000",
+    "$6,062,000",
+    null,
+    null,
+    null
+  ],
+  "sectionCandidates": [
+    {
+      "rowNumber": 6,
+      "label": "RIGHTS/WRITING",
+      "colB": "RIGHTS/WRITING",
+      "colC": null
+    },
+    {
+      "rowNumber": 9,
+      "label": "SCRIPT CLEARANCE",
+      "colB": null,
+      "colC": "SCRIPT CLEARANCE"
+    },
+    {
+      "rowNumber": 10,
+      "label": "RIGHTS PURCHASED/OPTIONS",
+      "colB": null,
+      "colC": "RIGHTS PURCHASED/OPTIONS"
+    },
+    {
+      "rowNumber": 11,
+      "label": "STORY CONSULTANT",
+      "colB": null,
+      "colC": "STORY CONSULTANT"
+    },
+    {
+      "rowNumber": 12,
+      "label": "ASSISTANTS",
+      "colB": null,
+      "colC": "ASSISTANTS"
+    },
+    {
+      "rowNumber": 13,
+      "label": "SCRIPT PRINTING",
+      "colB": null,
+      "colC": "SCRIPT PRINTING"
+    },
+    {
+      "rowNumber": 14,
+      "label": "SCRIPT TIMING",
+      "colB": null,
+      "colC": "SCRIPT TIMING"
+    },
+    {
+      "rowNumber": 15,
+      "label": "AIRFARE",
+      "colB": null,
+      "colC": "AIRFARE"
+    },
+    {
+      "rowNumber": 16,
+      "label": "HOTEL",
+      "colB": null,
+      "colC": "HOTEL"
+    },
+    {
+      "rowNumber": 17,
+      "label": "PER DIEM",
+      "colB": null,
+      "colC": "PER DIEM"
+    },
+    {
+      "rowNumber": 18,
+      "label": "AUTOS/TAXIS/LIMOS",
+      "colB": null,
+      "colC": "AUTOS/TAXIS/LIMOS"
+    },
+    {
+      "rowNumber": 22,
+      "label": "PRODUCER",
+      "colB": "PRODUCER",
+      "colC": null
+    },
+    {
+      "rowNumber": 27,
+      "label": "ASSOCIATE/CO-PRODUCERS",
+      "colB": null,
+      "colC": "ASSOCIATE/CO-PRODUCERS"
+    },
+    {
+      "rowNumber": 28,
+      "label": "PRODUCERS ASSISTANTS",
+      "colB": null,
+      "colC": "PRODUCERS ASSISTANTS"
+    },
+    {
+      "rowNumber": 29,
+      "label": "LEGAL",
+      "colB": null,
+      "colC": "LEGAL"
+    },
+    {
+      "rowNumber": 30,
+      "label": "PURCHASES",
+      "colB": null,
+      "colC": "PURCHASES"
+    },
+    {
+      "rowNumber": 31,
+      "label": "RENTALS",
+      "colB": null,
+      "colC": "RENTALS"
+    },
+    {
+      "rowNumber": 32,
+      "label": "AIRFARES",
+      "colB": null,
+      "colC": "AIRFARES"
+    },
+    {
+      "rowNumber": 33,
+      "label": "HOTELS",
+      "colB": null,
+      "colC": "HOTELS"
+    },
+    {
+      "rowNumber": 34,
+      "label": "PER DIEM",
+      "colB": null,
+      "colC": "PER DIEM"
+    },
+    {
+      "rowNumber": 35,
+      "label": "LIVING ALLOWANCES",
+      "colB": null,
+      "colC": "LIVING ALLOWANCES"
+    },
+    {
+      "rowNumber": 36,
+      "label": "PRODUCERS DRIVERS/VEHICLES",
+      "colB": null,
+      "colC": "PRODUCERS DRIVERS/VEHICLES"
+    },
+    {
+      "rowNumber": 37,
+      "label": "AUTOS/TAXIS/LIMOS",
+      "colB": null,
+      "colC": "AUTOS/TAXIS/LIMOS"
+    },
+    {
+      "rowNumber": 38,
+      "label": "PRODUCERS ENTERAINMENT",
+      "colB": null,
+      "colC": "PRODUCERS ENTERAINMENT"
+    },
+    {
+      "rowNumber": 39,
+      "label": "MISC. EXPENSES",
+      "colB": null,
+      "colC": "MISC. EXPENSES"
+    },
+    {
+      "rowNumber": 42,
+      "label": "DIRECTOR",
+      "colB": "DIRECTOR",
+      "colC": null
+    },
+    {
+      "rowNumber": 43,
+      "label": "DIRECTOR",
+      "colB": null,
+      "colC": "DIRECTOR"
+    },
+    {
+      "rowNumber": 44,
+      "label": "CHOREOGRAPHER",
+      "colB": null,
+      "colC": "CHOREOGRAPHER"
+    },
+    {
+      "rowNumber": 45,
+      "label": "DIRECTOR'S ASSISTANT",
+      "colB": null,
+      "colC": "DIRECTOR'S ASSISTANT"
+    },
+    {
+      "rowNumber": 46,
+      "label": "TECHNICAL ADVISORS",
+      "colB": null,
+      "colC": "TECHNICAL ADVISORS"
+    },
+    {
+      "rowNumber": 47,
+      "label": "PURCHASES",
+      "colB": null,
+      "colC": "PURCHASES"
+    },
+    {
+      "rowNumber": 48,
+      "label": "RENTALS",
+      "colB": null,
+      "colC": "RENTALS"
+    },
+    {
+      "rowNumber": 49,
+      "label": "AIRFARES",
+      "colB": null,
+      "colC": "AIRFARES"
+    },
+    {
+      "rowNumber": 50,
+      "label": "HOTELS",
+      "colB": null,
+      "colC": "HOTELS"
+    },
+    {
+      "rowNumber": 51,
+      "label": "PER DIEM",
+      "colB": null,
+      "colC": "PER DIEM"
+    },
+    {
+      "rowNumber": 52,
+      "label": "LIVING ALLOWANCES",
+      "colB": null,
+      "colC": "LIVING ALLOWANCES"
+    },
+    {
+      "rowNumber": 53,
+      "label": "DIRECTOR'S DRIVERS/VEHICLES",
+      "colB": null,
+      "colC": "DIRECTOR'S DRIVERS/VEHICLES"
+    },
+    {
+      "rowNumber": 54,
+      "label": "DIRECTOR'S ENTERAINMENT",
+      "colB": null,
+      "colC": "DIRECTOR'S ENTERAINMENT"
+    },
+    {
+      "rowNumber": 55,
+      "label": "MISC. EXPENSES",
+      "colB": null,
+      "colC": "MISC. EXPENSES"
+    },
+    {
+      "rowNumber": 58,
+      "label": "CAST",
+      "colB": "CAST",
+      "colC": null
+    },
+    {
+      "rowNumber": 62,
+      "label": "OTHER LEAD CAST",
+      "colB": null,
+      "colC": "OTHER LEAD CAST"
+    },
+    {
+      "rowNumber": 63,
+      "label": "SUPPORTING CAST",
+      "colB": null,
+      "colC": "SUPPORTING CAST"
+    },
+    {
+      "rowNumber": 64,
+      "label": "DAY PLAYERS",
+      "colB": null,
+      "colC": "DAY PLAYERS"
+    },
+    {
+      "rowNumber": 65,
+      "label": "STUNT COORD",
+      "colB": null,
+      "colC": "STUNT COORD"
+    },
+    {
+      "rowNumber": 66,
+      "label": "STUNTS/ADJUSTMENTS",
+      "colB": null,
+      "colC": "STUNTS/ADJUSTMENTS"
+    },
+    {
+      "rowNumber": 67,
+      "label": "LOOPING",
+      "colB": null,
+      "colC": "LOOPING"
+    },
+    {
+      "rowNumber": 68,
+      "label": "ACTING/DIALOGUE COACH",
+      "colB": null,
+      "colC": "ACTING/DIALOGUE COACH"
+    },
+    {
+      "rowNumber": 69,
+      "label": "TEACHER/WELFARE WORKER",
+      "colB": null,
+      "colC": "TEACHER/WELFARE WORKER"
+    },
+    {
+      "rowNumber": 70,
+      "label": "CASTING DIRECTORS - US",
+      "colB": null,
+      "colC": "CASTING DIRECTORS - US"
+    },
+    {
+      "rowNumber": 71,
+      "label": "CASTING ASSISTANTS - US",
+      "colB": null,
+      "colC": "CASTING ASSISTANTS - US"
+    },
+    {
+      "rowNumber": 72,
+      "label": "CASTING EXPENSES - US",
+      "colB": null,
+      "colC": "CASTING EXPENSES - US"
+    },
+    {
+      "rowNumber": 73,
+      "label": "PURCHASES",
+      "colB": null,
+      "colC": "PURCHASES"
+    },
+    {
+      "rowNumber": 74,
+      "label": "REHEARSAL EXPENSES",
+      "colB": null,
+      "colC": "REHEARSAL EXPENSES"
+    },
+    {
+      "rowNumber": 75,
+      "label": "VISAS / FOREIGN APPLICATIONS",
+      "colB": null,
+      "colC": "VISAS / FOREIGN APPLICATIONS"
+    },
+    {
+      "rowNumber": 76,
+      "label": "STUNTS/PURCHASES & RENTALS",
+      "colB": null,
+      "colC": "STUNTS/PURCHASES & RENTALS"
+    },
+    {
+      "rowNumber": 77,
+      "label": "AIRFARES - CAST",
+      "colB": null,
+      "colC": "AIRFARES - CAST"
+    },
+    {
+      "rowNumber": 78,
+      "label": "HOTELS - CAST",
+      "colB": null,
+      "colC": "HOTELS - CAST"
+    },
+    {
+      "rowNumber": 79,
+      "label": "PER DIEM - CAST",
+      "colB": null,
+      "colC": "PER DIEM - CAST"
+    },
+    {
+      "rowNumber": 80,
+      "label": "LIVING ALLOWANCES - CAST",
+      "colB": null,
+      "colC": "LIVING ALLOWANCES - CAST"
+    },
+    {
+      "rowNumber": 81,
+      "label": "CAST DRIVERS/VEHICLES",
+      "colB": null,
+      "colC": "CAST DRIVERS/VEHICLES"
+    },
+    {
+      "rowNumber": 82,
+      "label": "MISC CAST EXPENSES",
+      "colB": null,
+      "colC": "MISC CAST EXPENSES"
+    },
+    {
+      "rowNumber": 85,
+      "label": "PRODUCTION STAFF",
+      "colB": "PRODUCTION STAFF",
+      "colC": null
+    },
+    {
+      "rowNumber": 86,
+      "label": "UNIT MANAGER",
+      "colB": null,
+      "colC": "UNIT MANAGER"
+    },
+    {
+      "rowNumber": 87,
+      "label": "1ST ASST DIRECTOR - EU",
+      "colB": null,
+      "colC": "1ST ASST DIRECTOR - EU"
+    },
+    {
+      "rowNumber": 88,
+      "label": "2ND AD",
+      "colB": null,
+      "colC": "2ND AD"
+    },
+    {
+      "rowNumber": 89,
+      "label": "2ND 2ND AD",
+      "colB": null,
+      "colC": "2ND 2ND AD"
+    },
+    {
+      "rowNumber": 90,
+      "label": "DGA TRAINEE",
+      "colB": null,
+      "colC": "DGA TRAINEE"
+    },
+    {
+      "rowNumber": 91,
+      "label": "SCRIPT SUPERVISOR",
+      "colB": null,
+      "colC": "SCRIPT SUPERVISOR"
+    },
+    {
+      "rowNumber": 92,
+      "label": "PRODUCTION SUPERVISOR",
+      "colB": null,
+      "colC": "PRODUCTION SUPERVISOR "
+    },
+    {
+      "rowNumber": 93,
+      "label": "LOCATION MANAGER",
+      "colB": null,
+      "colC": "LOCATION MANAGER "
+    },
+    {
+      "rowNumber": 94,
+      "label": "LOCATION ASSISTANTS/SCOUTS",
+      "colB": null,
+      "colC": "LOCATION ASSISTANTS/SCOUTS "
+    },
+    {
+      "rowNumber": 95,
+      "label": "PRODUCTION COORDINATOR",
+      "colB": null,
+      "colC": "PRODUCTION COORDINATOR"
+    },
+    {
+      "rowNumber": 96,
+      "label": "ASST PRODUCTION COORDINATOR",
+      "colB": null,
+      "colC": "ASST PRODUCTION COORDINATOR"
+    },
+    {
+      "rowNumber": 97,
+      "label": "TRAVEL/SECRETARY",
+      "colB": null,
+      "colC": "TRAVEL/SECRETARY "
+    },
+    {
+      "rowNumber": 98,
+      "label": "OFFICE STAFF ASSISTANTS",
+      "colB": null,
+      "colC": "OFFICE STAFF ASSISTANTS"
+    },
+    {
+      "rowNumber": 99,
+      "label": "SET STAFF ASSISTANTS",
+      "colB": null,
+      "colC": "SET STAFF ASSISTANTS"
+    },
+    {
+      "rowNumber": 103,
+      "label": "CLERK",
+      "colB": null,
+      "colC": "CLERK"
+    },
+    {
+      "rowNumber": 104,
+      "label": "BOARD/BUDGET PREP",
+      "colB": null,
+      "colC": "BOARD/BUDGET PREP"
+    },
+    {
+      "rowNumber": 105,
+      "label": "BOX RENTALS",
+      "colB": null,
+      "colC": "BOX RENTALS"
+    },
+    {
+      "rowNumber": 106,
+      "label": "CAR ALLOWANCES",
+      "colB": null,
+      "colC": "CAR ALLOWANCES"
+    }
+  ]
+}
