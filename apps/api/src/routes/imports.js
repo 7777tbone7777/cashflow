@@ -1,10 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import multer from 'multer';
+import xlsx from 'xlsx';
 import { Router } from 'express';
 import { importSampleCashflowWorkbook } from '../services/importers/importSampleCashflowWorkbook.js';
 import { normalizeCashflowWorkbook } from '../services/importers/normalizeCashflowWorkbook.js';
 import { persistNormalizedCashflow } from '../services/importers/persistNormalizedCashflow.js';
+import { isHotCostWorkbook, normalizeHotCostWorkbook } from '../services/importers/normalizeHotCostWorkbook.js';
 
 const uploadDir = path.resolve('apps/api/uploads');
 fs.mkdirSync(uploadDir, { recursive: true });
@@ -43,6 +45,20 @@ importsRouter.post('/upload', upload.single('workbook'), async (req, res, next) 
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Workbook file is required.' });
+    }
+
+    const workbook = xlsx.readFile(req.file.path, { cellFormula: true, cellDates: false });
+
+    if (isHotCostWorkbook(workbook)) {
+      const normalizedHotCost = normalizeHotCostWorkbook(req.file.path);
+      return res.status(501).json({
+        error: 'Hot cost workbook import is recognized but full cash flow generation from hot cost data is not implemented yet.',
+        workbookType: 'hot-cost',
+        detectedSheets: normalizedHotCost.sheetNames,
+        summarySheetName: normalizedHotCost.summarySheetName,
+        detectedDaySheets: normalizedHotCost.daySheetNames.length,
+        detectedRows: normalizedHotCost.summaryEntries.length,
+      });
     }
 
     const normalized = normalizeCashflowWorkbook(req.file.path);

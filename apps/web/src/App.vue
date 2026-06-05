@@ -303,8 +303,8 @@ onMounted(() => {
     <section class="panel upload-panel">
       <div class="panel-header">
         <div>
-          <h2>Upload workbook</h2>
-          <p>Import a new cash flow workbook directly from the UI.</p>
+          <h2>Upload hot cost workbook</h2>
+          <p>Upload the operational hot cost workbook. Cash flow generation from hot cost data is the next active build step.</p>
         </div>
         <div class="export-actions">
           <button class="secondary-button" type="button" @click="exportJson">Export JSON</button>
@@ -316,7 +316,7 @@ onMounted(() => {
         <input type="file" accept=".xlsx,.xls" @change="handleFileChange" />
         <input v-model="uploadTitle" type="text" placeholder="Optional production title" />
         <button class="import-button" type="button" :disabled="importing" @click="uploadWorkbook">
-          {{ importing ? 'Importing workbook…' : 'Upload and import workbook' }}
+          {{ importing ? 'Inspecting workbook…' : 'Upload workbook' }}
         </button>
       </div>
     </section>
