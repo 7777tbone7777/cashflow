@@ -194,6 +194,9 @@ const selectedHotCostDay = computed(() =>
   hotCostSummary.value?.persistedDays.find((day) => day.id === selectedHotCostDayId.value) || null,
 )
 
+const hasCashflowSnapshot = computed(() => Boolean(summary.value?.snapshot))
+const hasHotCostData = computed(() => Boolean(hotCostSummary.value?.persistedDays?.length))
+
 function formatMoney(value: number | string | null | undefined, currency = 'USD') {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -384,7 +387,9 @@ async function uploadWorkbook() {
       body: formData,
     })
 
-    await loadProductions(true)
+    await loadProductions(false)
+    selectedProductionId.value = response.result.productionId
+    await loadProductionData(response.result.productionId)
 
     if (response.workbookType === 'hot-cost') {
       importMessage.value = `Hot cost workbook imported for ${response.result.productionTitle}: ${response.result.daySheetCount} day sheets, ${response.result.summaryEntryCount} summary rows, ${response.result.persistedDayCount || 0} persisted day records, ${response.result.persistedLineItemSampleCount || 0} persisted hot cost rows.`
@@ -499,7 +504,9 @@ onMounted(() => {
           <strong class="stat-value">
             {{ formatMoney(totalUpcomingCash, summary?.production.currency || 'USD') }}
           </strong>
-          <small>Sum of weekly cash flow totals from the latest imported snapshot</small>
+          <small v-if="hasCashflowSnapshot">Sum of weekly cash flow totals from the latest imported snapshot</small>
+          <small v-else-if="hasHotCostData">No cash flow snapshot yet for this production — this production currently only has hot cost import data.</small>
+          <small v-else>No imported cash flow snapshot for this production yet.</small>
         </article>
 
         <article class="stat-card">
@@ -507,7 +514,8 @@ onMounted(() => {
           <strong class="stat-value">
             {{ formatMoney(summary?.snapshot?.totalCtd, summary?.production.currency || 'USD') }}
           </strong>
-          <small>Cost-to-date from imported workbook totals</small>
+          <small v-if="hasCashflowSnapshot">Cost-to-date from imported workbook totals</small>
+          <small v-else>Cash flow CTD becomes available after a cash flow workbook import.</small>
         </article>
 
         <article class="stat-card">
@@ -515,7 +523,8 @@ onMounted(() => {
           <strong class="stat-value">
             {{ formatMoney(summary?.snapshot?.totalCommitments, summary?.production.currency || 'USD') }}
           </strong>
-          <small>Outstanding committed spend from latest snapshot</small>
+          <small v-if="hasCashflowSnapshot">Outstanding committed spend from latest snapshot</small>
+          <small v-else>Commitments become available after a cash flow workbook import.</small>
         </article>
 
         <article class="stat-card">
@@ -540,7 +549,13 @@ onMounted(() => {
               <span class="pill">{{ summary?.snapshot?.weeklyTotals.length || 0 }} periods</span>
             </div>
 
-            <div class="table-scroll">
+            <div v-if="!hasCashflowSnapshot" class="empty-state">
+              <strong>No cash flow snapshot yet.</strong>
+              <p v-if="hasHotCostData">This production has hot cost import data, but it does not yet have a cash flow workbook snapshot. Upload a cash flow workbook to populate weekly period totals here.</p>
+              <p v-else>Upload a cash flow workbook to populate weekly period totals here.</p>
+            </div>
+
+            <div v-else class="table-scroll">
               <table>
                 <thead>
                   <tr>
@@ -581,7 +596,12 @@ onMounted(() => {
               <span class="pill">{{ sections.length }}</span>
             </div>
 
-            <ul class="section-list">
+            <div v-if="!sections.length" class="empty-state">
+              <strong>No cash flow sections yet.</strong>
+              <p>This production does not yet have an imported cash flow workbook.</p>
+            </div>
+
+            <ul v-else class="section-list">
               <li
                 v-for="section in sections"
                 :key="section.id"
@@ -767,6 +787,11 @@ onMounted(() => {
           </div>
 
           <div v-if="loadingSection" class="loading-panel-inline">Loading section line items…</div>
+
+          <div v-else-if="!sections.length" class="empty-state">
+            <strong>No cash flow section drilldown yet.</strong>
+            <p>Import a cash flow workbook for this production to inspect section allocations.</p>
+          </div>
 
           <div v-else class="table-scroll">
             <table>
