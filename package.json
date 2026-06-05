@@ -11,6 +11,16 @@
     "dev:api": "npm --workspace apps/api run dev",
     "dev": "sh -c 'npm run dev:api & npm run dev:web & wait'",
     "build:web": "npm --workspace apps/web run build",
-    "build:api": "npm --workspace apps/api run build"
+    "build:api": "npm --workspace apps/api run build",
+    "build": "npm install && npm --workspace apps/api run prisma:generate && npm --workspace apps/web run build",
+    "deploy": "npm --workspace apps/api run prisma db push && node apps/api/src/index.js"
+  },
+  "devDependencies": {
+    "prisma": "^6.10.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.10.1",
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3"
   }
 }

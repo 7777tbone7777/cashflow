@@ -1,8 +1,14 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import cors from 'cors';
 import { healthRouter } from './routes/health.js';
 import { importsRouter } from './routes/imports.js';
 import { productionsRouter } from './routes/productions.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const webDistPath = path.resolve(__dirname, '../../web/dist');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -17,8 +23,18 @@ app.get('/api', (_req, res) => {
   res.json({
     name: 'cashflow-api',
     version: '0.1.0',
-    status: 'bootstrapped'
+    status: 'bootstrapped',
   });
+});
+
+app.use(express.static(webDistPath));
+
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
+    return next();
+  }
+
+  return res.sendFile(path.join(webDistPath, 'index.html'));
 });
 
 app.use((error, _req, res, _next) => {
@@ -27,5 +43,5 @@ app.use((error, _req, res, _next) => {
 });
 
 app.listen(port, () => {
-  console.log(`cashflow api listening on http://localhost:${port}`);
+  console.log(`cashflow server listening on http://localhost:${port}`);
 });

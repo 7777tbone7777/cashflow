@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
-    "build": "echo \"api build placeholder\"",
+    "build": "echo \"api source served directly by node\"",
     "prisma": "prisma",
     "prisma:generate": "prisma generate",
-    "import:sample": "node scripts/import-sample-cashflow-workbook.js"
+    "import:sample": "node scripts/import-sample-cashflow-workbook.js",
+    "start": "node src/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
