@@ -64,6 +64,7 @@ function summarizeDaySheet(sheetName, sheet) {
     sheetName,
     rowCount: entries.length,
     sampleRows: entries.slice(0, 10),
+    entries,
   };
 }
 

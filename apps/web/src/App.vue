@@ -74,6 +74,8 @@ type ImportResult = {
     snapshots?: number
     daySheetCount?: number
     summaryEntryCount?: number
+    persistedDayCount?: number
+    persistedLineItemSampleCount?: number
   }
 }
 
@@ -89,6 +91,68 @@ type HotCostSummary = {
     summaryEntryCount: number
     daySheetSummaries: Array<{ sheetName: string; rowCount: number; sampleRows: unknown[] }>
   }
+  persistedDays: Array<{
+    id: string
+    sheetName: string
+    dayLabel: string | null
+    workDateLabel: string | null
+    lineItemCount: number
+  }>
+  summary?: {
+    totalDays: number
+    totalRows: number
+    totalActualDayCost: number | string | null
+  }
+  daySummaries?: Array<{
+    id: string
+    sheetName: string
+    dayLabel: string | null
+    workDateLabel: string | null
+    lineItemCount: number
+    totalActualDayCost: number | string | null
+    nonEmptyRowCount: number
+  }>
+}
+
+type HotCostLineItem = {
+  id: string
+  accountCode: string | null
+  employeeName: string | null
+  position: string | null
+  unionCode: string | null
+  rate: number | string | null
+  actualDayCost: number | string | null
+  sourceRowNumber: number | null
+}
+
+type HotCostMappingSummary = {
+  productionId: string
+  title: string
+  buckets: Array<{
+    bucketKey: string
+    label: string
+    rowCount: number
+    totalActualDayCost: number | string
+  }>
+  totals: {
+    rowCount: number
+    totalActualDayCost: number | string
+  }
+}
+
+type HotCostSectionComparison = {
+  productionId: string
+  title: string
+  rows: Array<{
+    sectionId: string
+    sectionName: string
+    sectionCode: string | null
+    mappedBucketKey: string | null
+    mappedBucketLabel: string | null
+    hotCostActualTotal: number | string
+    importedCashflowTotal: number | string
+    delta: number | string
+  }>
 }
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
@@ -107,6 +171,11 @@ const sectionLineItems = ref<SectionLineItem[]>([])
 const uploadFile = ref<File | null>(null)
 const uploadTitle = ref('')
 const hotCostSummary = ref<HotCostSummary | null>(null)
+const selectedHotCostDayId = ref('')
+const hotCostLineItems = ref<HotCostLineItem[]>([])
+const loadingHotCostDay = ref(false)
+const hotCostMappingSummary = ref<HotCostMappingSummary | null>(null)
+const hotCostSectionComparison = ref<HotCostSectionComparison | null>(null)
 
 const selectedProduction = computed(() =>
   productions.value.find((production) => production.id === selectedProductionId.value) || null,
@@ -120,6 +189,10 @@ const totalUpcomingCash = computed(() => {
   if (!summary.value?.snapshot) return 0
   return summary.value.snapshot.weeklyTotals.reduce((sum, entry) => sum + Number(entry.amount || 0), 0)
 })
+
+const selectedHotCostDay = computed(() =>
+  hotCostSummary.value?.persistedDays.find((day) => day.id === selectedHotCostDayId.value) || null,
+)
 
 function formatMoney(value: number | string | null | undefined, currency = 'USD') {
   return new Intl.NumberFormat('en-US', {
@@ -146,6 +219,22 @@ async function loadHotCostSummary(productionId: string) {
   }
 }
 
+async function loadHotCostMappingSummary(productionId: string) {
+  try {
+    hotCostMappingSummary.value = await fetchJson<HotCostMappingSummary>(`/api/imports/hot-cost/${productionId}/mapping-summary`)
+  } catch {
+    hotCostMappingSummary.value = null
+  }
+}
+
+async function loadHotCostSectionComparison(productionId: string) {
+  try {
+    hotCostSectionComparison.value = await fetchJson<HotCostSectionComparison>(`/api/imports/hot-cost/${productionId}/section-comparison`)
+  } catch {
+    hotCostSectionComparison.value = null
+  }
+}
+
 async function loadSectionLineItems(sectionId: string) {
   if (!selectedProductionId.value) return
   loadingSection.value = true
@@ -158,6 +247,18 @@ async function loadSectionLineItems(sectionId: string) {
   }
 }
 
+async function loadHotCostDayLineItems(dayId: string) {
+  if (!selectedProductionId.value) return
+  loadingHotCostDay.value = true
+  try {
+    hotCostLineItems.value = await fetchJson<HotCostLineItem[]>(
+      `/api/imports/hot-cost/${selectedProductionId.value}/days/${dayId}/line-items`,
+    )
+  } finally {
+    loadingHotCostDay.value = false
+  }
+}
+
 async function loadProductionData(productionId: string) {
   const [summaryResponse, sectionsResponse] = await Promise.all([
     fetchJson<ProductionSummary>(`/api/productions/${productionId}/summary`),
@@ -167,6 +268,16 @@ async function loadProductionData(productionId: string) {
   summary.value = summaryResponse
   sections.value = sectionsResponse
   await loadHotCostSummary(productionId)
+  await loadHotCostMappingSummary(productionId)
+  await loadHotCostSectionComparison(productionId)
+
+  if (hotCostSummary.value?.persistedDays?.length) {
+    selectedHotCostDayId.value = hotCostSummary.value.persistedDays[0].id
+    await loadHotCostDayLineItems(hotCostSummary.value.persistedDays[0].id)
+  } else {
+    selectedHotCostDayId.value = ''
+    hotCostLineItems.value = []
+  }
 
   if (sectionsResponse.length > 0) {
     selectedSectionId.value = sectionsResponse[0].id
@@ -187,6 +298,10 @@ async function loadProductions(selectFirst = false) {
     sections.value = []
     sectionLineItems.value = []
     hotCostSummary.value = null
+    hotCostMappingSummary.value = null
+    hotCostSectionComparison.value = null
+    selectedHotCostDayId.value = ''
+    hotCostLineItems.value = []
     return
   }
 
@@ -272,7 +387,7 @@ async function uploadWorkbook() {
     await loadProductions(true)
 
     if (response.workbookType === 'hot-cost') {
-      importMessage.value = `Hot cost workbook recognized for ${response.result.productionTitle}: ${response.result.daySheetCount} day sheets, ${response.result.summaryEntryCount} summary rows. Cash flow generation from this data is next.`
+      importMessage.value = `Hot cost workbook imported for ${response.result.productionTitle}: ${response.result.daySheetCount} day sheets, ${response.result.summaryEntryCount} summary rows, ${response.result.persistedDayCount || 0} persisted day records, ${response.result.persistedLineItemSampleCount || 0} persisted hot cost rows.`
     } else {
       importMessage.value = `Upload import complete for ${response.result.productionTitle}: ${response.result.sections} sections, ${response.result.lineItems} line items.`
     }
@@ -302,6 +417,15 @@ watch(selectedSectionId, async (sectionId, previousSectionId) => {
     await loadSectionLineItems(sectionId)
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to load section line items.'
+  }
+})
+
+watch(selectedHotCostDayId, async (dayId, previousDayId) => {
+  if (!dayId || dayId === previousDayId) return
+  try {
+    await loadHotCostDayLineItems(dayId)
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load hot cost line items.'
   }
 })
 
@@ -471,6 +595,163 @@ onMounted(() => {
                 <span>{{ section.lineItemCount }} lines</span>
               </li>
             </ul>
+          </article>
+        </section>
+
+        <section v-if="hotCostMappingSummary?.buckets?.length" class="panel hot-cost-grid">
+          <div class="panel-header">
+            <div>
+              <h2>Hot cost mapping summary</h2>
+              <p>First-pass heuristic mapping from hot cost account codes into cash flow-oriented buckets.</p>
+            </div>
+            <span class="pill">{{ hotCostMappingSummary.buckets.length }} buckets</span>
+          </div>
+
+          <div class="mini-stats-grid">
+            <div class="mini-stat-card">
+              <span class="stat-label">Mapped rows</span>
+              <strong>{{ hotCostMappingSummary.totals.rowCount }}</strong>
+            </div>
+            <div class="mini-stat-card">
+              <span class="stat-label">Mapped actual total</span>
+              <strong>{{ formatMoney(hotCostMappingSummary.totals.totalActualDayCost, summary?.production.currency || 'USD') }}</strong>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bucket</th>
+                  <th>Rows</th>
+                  <th>Actual total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="bucket in hotCostMappingSummary.buckets" :key="bucket.bucketKey">
+                  <td>{{ bucket.label }}</td>
+                  <td>{{ bucket.rowCount }}</td>
+                  <td>{{ formatMoney(bucket.totalActualDayCost, summary?.production.currency || 'USD') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section v-if="hotCostSectionComparison?.rows?.length" class="panel hot-cost-grid">
+          <div class="panel-header">
+            <div>
+              <h2>Section comparison</h2>
+              <p>First-pass comparison between mapped hot cost actuals and imported cash flow section totals.</p>
+            </div>
+            <span class="pill">{{ hotCostSectionComparison.rows.length }} sections</span>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Mapped bucket</th>
+                  <th>Hot cost actual</th>
+                  <th>Imported cash flow total</th>
+                  <th>Delta</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in hotCostSectionComparison.rows" :key="row.sectionId">
+                  <td>{{ row.sectionName }}</td>
+                  <td>{{ row.mappedBucketLabel || '—' }}</td>
+                  <td>{{ formatMoney(row.hotCostActualTotal, summary?.production.currency || 'USD') }}</td>
+                  <td>{{ formatMoney(row.importedCashflowTotal, summary?.production.currency || 'USD') }}</td>
+                  <td>{{ formatMoney(row.delta, summary?.production.currency || 'USD') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section v-if="hotCostSummary?.persistedDays?.length" class="content-grid hot-cost-grid">
+          <article class="panel side-panel">
+            <div class="panel-header">
+              <div>
+                <h2>Hot cost days</h2>
+                <p>Imported daily tabs from the uploaded hot cost workbook.</p>
+              </div>
+              <span class="pill">{{ hotCostSummary.persistedDays.length }} days</span>
+            </div>
+
+            <div v-if="hotCostSummary.summary" class="mini-stats-grid">
+              <div class="mini-stat-card">
+                <span class="stat-label">Imported days</span>
+                <strong>{{ hotCostSummary.summary.totalDays }}</strong>
+              </div>
+              <div class="mini-stat-card">
+                <span class="stat-label">Imported rows</span>
+                <strong>{{ hotCostSummary.summary.totalRows }}</strong>
+              </div>
+              <div class="mini-stat-card">
+                <span class="stat-label">Actual total</span>
+                <strong>{{ formatMoney(hotCostSummary.summary.totalActualDayCost, summary?.production.currency || 'USD') }}</strong>
+              </div>
+            </div>
+
+            <ul class="section-list">
+              <li
+                v-for="day in hotCostSummary.daySummaries || hotCostSummary.persistedDays"
+                :key="day.id"
+                :class="['section-item', { active: day.id === selectedHotCostDayId }]"
+                @click="selectedHotCostDayId = day.id"
+              >
+                <div>
+                  <strong>{{ day.dayLabel || day.sheetName }}</strong>
+                  <p>{{ day.workDateLabel || day.sheetName }}</p>
+                  <p v-if="'totalActualDayCost' in day">Actual: {{ formatMoney((day as { totalActualDayCost?: number | string | null }).totalActualDayCost, summary?.production.currency || 'USD') }}</p>
+                </div>
+                <span>{{ day.lineItemCount }} rows</span>
+              </li>
+            </ul>
+          </article>
+
+          <article class="panel wide-panel">
+            <div class="panel-header">
+              <div>
+                <h2>{{ selectedHotCostDay?.dayLabel || selectedHotCostDay?.sheetName || 'Hot cost day detail' }}</h2>
+                <p>
+                  {{ selectedHotCostDay ? `Imported line items for ${selectedHotCostDay.workDateLabel || selectedHotCostDay.sheetName}.` : 'Select a hot cost day to inspect imported rows.' }}
+                </p>
+              </div>
+              <span v-if="selectedHotCostDay" class="pill">{{ hotCostLineItems.length }} rows</span>
+            </div>
+
+            <div v-if="loadingHotCostDay" class="loading-panel-inline">Loading hot cost line items…</div>
+
+            <div v-else class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Row</th>
+                    <th>Acct</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Union</th>
+                    <th>Rate</th>
+                    <th>Actual</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="lineItem in hotCostLineItems" :key="lineItem.id">
+                    <td>{{ lineItem.sourceRowNumber }}</td>
+                    <td>{{ lineItem.accountCode || '—' }}</td>
+                    <td>{{ lineItem.employeeName || '—' }}</td>
+                    <td>{{ lineItem.position || '—' }}</td>
+                    <td>{{ lineItem.unionCode || '—' }}</td>
+                    <td>{{ formatMoney(lineItem.rate, summary?.production.currency || 'USD') }}</td>
+                    <td>{{ formatMoney(lineItem.actualDayCost, summary?.production.currency || 'USD') }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </article>
         </section>
 

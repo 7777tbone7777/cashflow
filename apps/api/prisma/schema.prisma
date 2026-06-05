@@ -61,6 +61,8 @@ model Production {
   sections      CashFlowSection[]
   lineItems     CashFlowLineItem[]
   snapshots     ForecastSnapshot[]
+  hotCostDays   HotCostDay[]
+  hotCostLineItems HotCostLineItem[]
 
   @@map("productions")
 }
@@ -80,6 +82,7 @@ model ImportBatch {
   createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
   production       Production       @relation(fields: [productionId], references: [id], onDelete: Cascade)
   lineItems        CashFlowLineItem[]
+  hotCostDays      HotCostDay[]
 
   @@map("import_batches")
 }
@@ -175,4 +178,43 @@ model ForecastSnapshot {
   production           Production   @relation(fields: [productionId], references: [id], onDelete: Cascade)
 
   @@map("forecast_snapshots")
+}
+
+model HotCostDay {
+  id            String            @id @default(uuid()) @db.Uuid
+  productionId  String            @map("production_id") @db.Uuid
+  importBatchId String?           @map("import_batch_id") @db.Uuid
+  workDateLabel String?           @map("work_date_label")
+  dayLabel      String?           @map("day_label")
+  sheetName     String            @map("sheet_name")
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  production    Production        @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  importBatch   ImportBatch?      @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  lineItems     HotCostLineItem[]
+
+  @@index([productionId])
+  @@index([importBatchId])
+  @@map("hot_cost_days")
+}
+
+model HotCostLineItem {
+  id              String      @id @default(uuid()) @db.Uuid
+  productionId    String      @map("production_id") @db.Uuid
+  hotCostDayId    String      @map("hot_cost_day_id") @db.Uuid
+  accountCode     String?     @map("account_code")
+  employeeName    String?     @map("employee_name")
+  position        String?
+  unionCode       String?     @map("union_code")
+  rate            Decimal?    @db.Decimal(14, 2)
+  actualDayCost   Decimal?    @map("actual_day_cost") @db.Decimal(14, 2)
+  sourceRowNumber Int?        @map("source_row_number")
+  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  production      Production  @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  hotCostDay      HotCostDay  @relation(fields: [hotCostDayId], references: [id], onDelete: Cascade)
+
+  @@index([productionId])
+  @@index([hotCostDayId])
+  @@index([accountCode])
+  @@map("hot_cost_line_items")
 }

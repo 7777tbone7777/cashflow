@@ -52,6 +52,9 @@ h1 { font-size: clamp(2rem, 3vw, 3.2rem); line-height: 1.05; margin-bottom: 12px
 .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
 .stat-card, .panel { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid var(--border); border-radius: 18px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); }
 .stat-card { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.mini-stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.mini-stat-card { background: var(--panel-soft); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.mini-stat-card strong { font-size: 1rem; }
 .stat-label { color: var(--muted); font-size: 0.9rem; }
 .stat-value { font-size: 1.5rem; line-height: 1.1; }
 .stat-card small { color: var(--muted); }
@@ -60,6 +63,7 @@ h1 { font-size: clamp(2rem, 3vw, 3.2rem); line-height: 1.05; margin-bottom: 12px
 .error-panel { border-color: rgba(252, 165, 165, 0.4); color: var(--danger); }
 .success-panel { border-color: rgba(134, 239, 172, 0.35); background: linear-gradient(180deg, var(--success-soft), rgba(255,255,255,0.01)); color: var(--success); }
 .content-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.9fr); gap: 20px; }
+.hot-cost-grid { margin-top: 20px; }
 .drilldown-panel { margin-top: 20px; }
 .panel-header { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 18px; }
 .panel-header p { color: var(--muted); font-size: 0.95rem; }
