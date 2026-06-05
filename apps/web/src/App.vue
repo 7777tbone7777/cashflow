@@ -424,6 +424,12 @@ async function uploadWorkbook() {
     return
   }
 
+  const isLikelyHotCostUpload = /\.xls$/i.test(uploadFile.value.name) || /hot\s*cost/i.test(uploadFile.value.name)
+  if (isLikelyHotCostUpload && !selectedProductionId.value) {
+    error.value = 'Select the cash flow production you want to attach this hot cost workbook to before uploading.'
+    return
+  }
+
   importing.value = true
   importMessage.value = ''
   error.value = ''
@@ -448,7 +454,7 @@ async function uploadWorkbook() {
     await loadProductionData(response.result.productionId)
 
     if (response.workbookType === 'hot-cost') {
-      importMessage.value = `Hot cost workbook imported for ${response.result.productionTitle}: ${response.result.daySheetCount} day sheets, ${response.result.summaryEntryCount} summary rows, ${response.result.persistedDayCount || 0} persisted day records, ${response.result.persistedLineItemSampleCount || 0} persisted hot cost rows.`
+      importMessage.value = `Hot cost workbook imported for ${response.result.productionTitle}: ${response.result.daySheetCount} day sheets, ${response.result.summaryEntryCount} summary rows, ${response.result.persistedDayCount || 0} persisted day records, ${response.result.persistedLineItemSampleCount || 0} persisted hot cost rows. Weekly rollups/comparisons are now attached to the selected production.`
     } else {
       importMessage.value = `Upload import complete for ${response.result.productionTitle}: ${response.result.sections} sections, ${response.result.lineItems} line items.`
     }
