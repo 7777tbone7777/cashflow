@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 type Production = {
   id: string
@@ -43,6 +43,23 @@ type Section = {
   lineItemCount: number
 }
 
+type SectionLineItem = {
+  id: string
+  accountCode: string | null
+  description: string
+  lineType: string
+  sourceRowNumber: number | null
+  ctdAmount: number | string | null
+  commitmentsAmount: number | string | null
+  importedTotal: number | string | null
+  allocations: Array<{
+    id: string
+    amount: number | string
+    periodSequence: number
+    periodLabel: string
+  }>
+}
+
 type SampleImportResult = {
   ok: true
   result: {
@@ -60,15 +77,22 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
 
 const loading = ref(true)
 const importing = ref(false)
+const loadingSection = ref(false)
 const error = ref('')
 const importMessage = ref('')
 const productions = ref<Production[]>([])
 const selectedProductionId = ref('')
 const summary = ref<ProductionSummary | null>(null)
 const sections = ref<Section[]>([])
+const selectedSectionId = ref('')
+const sectionLineItems = ref<SectionLineItem[]>([])
 
 const selectedProduction = computed(() =>
   productions.value.find((production) => production.id === selectedProductionId.value) || null,
+)
+
+const selectedSection = computed(() =>
+  sections.value.find((section) => section.id === selectedSectionId.value) || null,
 )
 
 const totalUpcomingCash = computed(() => {
@@ -76,7 +100,7 @@ const totalUpcomingCash = computed(() => {
   return summary.value.snapshot.weeklyTotals.reduce((sum, entry) => sum + Number(entry.amount || 0), 0)
 })
 
-function formatMoney(value: number | null | undefined, currency = 'USD') {
+function formatMoney(value: number | string | null | undefined, currency = 'USD') {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
@@ -92,6 +116,18 @@ async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   return response.json()
 }
 
+async function loadSectionLineItems(sectionId: string) {
+  if (!selectedProductionId.value) return
+  loadingSection.value = true
+  try {
+    sectionLineItems.value = await fetchJson<SectionLineItem[]>(
+      `/api/productions/${selectedProductionId.value}/sections/${sectionId}/line-items`,
+    )
+  } finally {
+    loadingSection.value = false
+  }
+}
+
 async function loadProductionData(productionId: string) {
   const [summaryResponse, sectionsResponse] = await Promise.all([
     fetchJson<ProductionSummary>(`/api/productions/${productionId}/summary`),
@@ -100,6 +136,14 @@ async function loadProductionData(productionId: string) {
 
   summary.value = summaryResponse
   sections.value = sectionsResponse
+
+  if (sectionsResponse.length > 0) {
+    selectedSectionId.value = sectionsResponse[0].id
+    await loadSectionLineItems(sectionsResponse[0].id)
+  } else {
+    selectedSectionId.value = ''
+    sectionLineItems.value = []
+  }
 }
 
 async function loadProductions(selectFirst = false) {
@@ -110,6 +154,7 @@ async function loadProductions(selectFirst = false) {
     selectedProductionId.value = ''
     summary.value = null
     sections.value = []
+    sectionLineItems.value = []
     return
   }
 
@@ -164,6 +209,15 @@ async function runSampleImport() {
     importing.value = false
   }
 }
+
+watch(selectedSectionId, async (sectionId, previousSectionId) => {
+  if (!sectionId || sectionId === previousSectionId) return
+  try {
+    await loadSectionLineItems(sectionId)
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Failed to load section line items.'
+  }
+})
 
 onMounted(() => {
   bootstrap()
@@ -290,13 +344,18 @@ onMounted(() => {
             <div class="panel-header">
               <div>
                 <h2>Sections</h2>
-                <p>Detected section blocks from the source workbook.</p>
+                <p>Pick a section to inspect imported line items and allocations.</p>
               </div>
               <span class="pill">{{ sections.length }}</span>
             </div>
 
             <ul class="section-list">
-              <li v-for="section in sections" :key="section.id">
+              <li
+                v-for="section in sections"
+                :key="section.id"
+                :class="['section-item', { active: section.id === selectedSectionId }]"
+                @click="selectedSectionId = section.id"
+              >
                 <div>
                   <strong>{{ section.name }}</strong>
                   <p>Acct {{ section.code || '—' }} · rows {{ section.sourceStartRow }}–{{ section.sourceEndRow }}</p>
@@ -305,6 +364,52 @@ onMounted(() => {
               </li>
             </ul>
           </article>
+        </section>
+
+        <section class="panel drilldown-panel">
+          <div class="panel-header">
+            <div>
+              <h2>{{ selectedSection?.name || 'Section drilldown' }}</h2>
+              <p>
+                {{ selectedSection ? `Imported rows for ${selectedSection.name}.` : 'Select a section to inspect imported line items.' }}
+              </p>
+            </div>
+            <span v-if="selectedSection" class="pill">{{ sectionLineItems.length }} rows</span>
+          </div>
+
+          <div v-if="loadingSection" class="loading-panel-inline">Loading section line items…</div>
+
+          <div v-else class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Row</th>
+                  <th>Acct</th>
+                  <th>Description</th>
+                  <th>Type</th>
+                  <th>Imported total</th>
+                  <th>Allocations</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="lineItem in sectionLineItems" :key="lineItem.id">
+                  <td>{{ lineItem.sourceRowNumber }}</td>
+                  <td>{{ lineItem.accountCode || '—' }}</td>
+                  <td>{{ lineItem.description }}</td>
+                  <td>{{ lineItem.lineType }}</td>
+                  <td>{{ formatMoney(lineItem.importedTotal, summary?.production.currency || 'USD') }}</td>
+                  <td>
+                    <div v-if="lineItem.allocations.length" class="allocation-list">
+                      <span v-for="allocation in lineItem.allocations" :key="allocation.id">
+                        {{ allocation.periodLabel }}: {{ formatMoney(allocation.amount, summary?.production.currency || 'USD') }}
+                      </span>
+                    </div>
+                    <span v-else class="muted">—</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
       </template>
     </template>

@@ -119,6 +119,51 @@ productionsRouter.get('/:id/sections', async (req, res, next) => {
   }
 });
 
+productionsRouter.get('/:id/sections/:sectionId/line-items', async (req, res, next) => {
+  try {
+    const lineItems = await prisma.cashFlowLineItem.findMany({
+      where: {
+        productionId: req.params.id,
+        sectionId: req.params.sectionId,
+      },
+      orderBy: { sourceRowNumber: 'asc' },
+      include: {
+        allocations: {
+          include: {
+            period: true,
+          },
+          orderBy: {
+            period: {
+              sequence: 'asc',
+            },
+          },
+        },
+      },
+    });
+
+    res.json(
+      lineItems.map((lineItem) => ({
+        id: lineItem.id,
+        accountCode: lineItem.accountCode,
+        description: lineItem.description,
+        lineType: lineItem.lineType,
+        sourceRowNumber: lineItem.sourceRowNumber,
+        ctdAmount: lineItem.ctdAmount,
+        commitmentsAmount: lineItem.commitmentsAmount,
+        importedTotal: lineItem.importedTotal,
+        allocations: lineItem.allocations.map((allocation) => ({
+          id: allocation.id,
+          amount: allocation.amount,
+          periodSequence: allocation.period.sequence,
+          periodLabel: allocation.period.label,
+        })),
+      }))
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
 productionsRouter.get('/:id/summary', async (req, res, next) => {
   try {
     const production = await prisma.production.findUnique({
