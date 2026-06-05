@@ -3,6 +3,7 @@ import path from 'node:path';
 import multer from 'multer';
 import xlsx from 'xlsx';
 import { Router } from 'express';
+import { prisma } from '../db.js';
 import { importSampleCashflowWorkbook } from '../services/importers/importSampleCashflowWorkbook.js';
 import { normalizeCashflowWorkbook } from '../services/importers/normalizeCashflowWorkbook.js';
 import { persistNormalizedCashflow } from '../services/importers/persistNormalizedCashflow.js';
@@ -32,6 +33,34 @@ importsRouter.get('/status', (_req, res) => {
   });
 });
 
+importsRouter.get('/hot-cost/:productionId', async (req, res, next) => {
+  try {
+    const production = await prisma.production.findUnique({
+      where: { id: req.params.productionId },
+      include: {
+        importBatches: {
+          where: { sourceType: 'hotcost_xls' },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+    });
+
+    if (!production) {
+      return res.status(404).json({ error: 'Production not found.' });
+    }
+
+    const batch = production.importBatches[0];
+    return res.json({
+      productionId: production.id,
+      title: production.title,
+      hotCostImport: batch?.metadataJson || null,
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 importsRouter.post('/sample', async (_req, res, next) => {
   try {
     const result = await importSampleCashflowWorkbook();
@@ -51,13 +80,45 @@ importsRouter.post('/upload', upload.single('workbook'), async (req, res, next) 
 
     if (isHotCostWorkbook(workbook)) {
       const normalizedHotCost = normalizeHotCostWorkbook(req.file.path);
-      return res.status(501).json({
-        error: 'Hot cost workbook import is recognized but full cash flow generation from hot cost data is not implemented yet.',
+      const production = await prisma.production.create({
+        data: {
+          title: req.body.productionTitle || req.file.originalname.replace(/\.[^.]+$/, ''),
+          currency: 'USD',
+          status: 'draft',
+          notes: `Hot cost workbook uploaded: ${req.file.originalname}`,
+        },
+      });
+
+      const importBatch = await prisma.importBatch.create({
+        data: {
+          productionId: production.id,
+          sourceType: 'hotcost_xls',
+          originalFilename: req.file.originalname,
+          fileStorageKey: req.file.path,
+          importStatus: 'completed',
+          parserVersion: 'hot-cost-v1',
+          metadataJson: {
+            workbookType: normalizedHotCost.workbookType,
+            summarySheetName: normalizedHotCost.summarySheetName,
+            sheetNames: normalizedHotCost.sheetNames,
+            daySheetNames: normalizedHotCost.daySheetNames,
+            dayColumns: normalizedHotCost.dayColumns,
+            summaryEntryCount: normalizedHotCost.summaryEntries.length,
+            daySheetSummaries: normalizedHotCost.daySheetSummaries,
+          },
+        },
+      });
+
+      return res.json({
+        ok: true,
         workbookType: 'hot-cost',
-        detectedSheets: normalizedHotCost.sheetNames,
-        summarySheetName: normalizedHotCost.summarySheetName,
-        detectedDaySheets: normalizedHotCost.daySheetNames.length,
-        detectedRows: normalizedHotCost.summaryEntries.length,
+        result: {
+          productionId: production.id,
+          importBatchId: importBatch.id,
+          productionTitle: production.title,
+          daySheetCount: normalizedHotCost.daySheetNames.length,
+          summaryEntryCount: normalizedHotCost.summaryEntries.length,
+        },
       });
     }
 
@@ -66,7 +127,7 @@ importsRouter.post('/upload', upload.single('workbook'), async (req, res, next) 
       productionTitle: req.body.productionTitle || req.file.originalname.replace(/\.[^.]+$/, ''),
     });
 
-    return res.json({ ok: true, result });
+    return res.json({ ok: true, workbookType: 'cash-flow', result });
   } catch (error) {
     return next(error);
   }

@@ -62,15 +62,32 @@ type SectionLineItem = {
 
 type ImportResult = {
   ok: true
+  workbookType?: string
   result: {
     productionId: string
     importBatchId: string
     productionTitle: string
-    periods: number
-    sections: number
-    lineItems: number
-    allocations: number
-    snapshots: number
+    periods?: number
+    sections?: number
+    lineItems?: number
+    allocations?: number
+    snapshots?: number
+    daySheetCount?: number
+    summaryEntryCount?: number
+  }
+}
+
+type HotCostSummary = {
+  productionId: string
+  title: string
+  hotCostImport: null | {
+    workbookType: string
+    summarySheetName: string
+    sheetNames: string[]
+    daySheetNames: string[]
+    dayColumns: Array<{ columnIndexZeroBased: number; dayLabel: string; dateLabel: string }>
+    summaryEntryCount: number
+    daySheetSummaries: Array<{ sheetName: string; rowCount: number; sampleRows: unknown[] }>
   }
 }
 
@@ -89,6 +106,7 @@ const selectedSectionId = ref('')
 const sectionLineItems = ref<SectionLineItem[]>([])
 const uploadFile = ref<File | null>(null)
 const uploadTitle = ref('')
+const hotCostSummary = ref<HotCostSummary | null>(null)
 
 const selectedProduction = computed(() =>
   productions.value.find((production) => production.id === selectedProductionId.value) || null,
@@ -120,6 +138,14 @@ async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   return response.json()
 }
 
+async function loadHotCostSummary(productionId: string) {
+  try {
+    hotCostSummary.value = await fetchJson<HotCostSummary>(`/api/imports/hot-cost/${productionId}`)
+  } catch {
+    hotCostSummary.value = null
+  }
+}
+
 async function loadSectionLineItems(sectionId: string) {
   if (!selectedProductionId.value) return
   loadingSection.value = true
@@ -140,6 +166,7 @@ async function loadProductionData(productionId: string) {
 
   summary.value = summaryResponse
   sections.value = sectionsResponse
+  await loadHotCostSummary(productionId)
 
   if (sectionsResponse.length > 0) {
     selectedSectionId.value = sectionsResponse[0].id
@@ -159,6 +186,7 @@ async function loadProductions(selectFirst = false) {
     summary.value = null
     sections.value = []
     sectionLineItems.value = []
+    hotCostSummary.value = null
     return
   }
 
@@ -242,7 +270,13 @@ async function uploadWorkbook() {
     })
 
     await loadProductions(true)
-    importMessage.value = `Upload import complete for ${response.result.productionTitle}: ${response.result.sections} sections, ${response.result.lineItems} line items.`
+
+    if (response.workbookType === 'hot-cost') {
+      importMessage.value = `Hot cost workbook recognized for ${response.result.productionTitle}: ${response.result.daySheetCount} day sheets, ${response.result.summaryEntryCount} summary rows. Cash flow generation from this data is next.`
+    } else {
+      importMessage.value = `Upload import complete for ${response.result.productionTitle}: ${response.result.sections} sections, ${response.result.lineItems} line items.`
+    }
+
     uploadFile.value = null
     uploadTitle.value = ''
   } catch (err) {
@@ -319,6 +353,10 @@ onMounted(() => {
           {{ importing ? 'Inspecting workbook…' : 'Upload workbook' }}
         </button>
       </div>
+    </section>
+
+    <section v-if="hotCostSummary?.hotCostImport" class="panel success-panel">
+      Hot cost workbook detected for <strong>{{ hotCostSummary.title }}</strong> — {{ hotCostSummary.hotCostImport.daySheetNames.length }} day sheets, {{ hotCostSummary.hotCostImport.summaryEntryCount }} summary rows, summary sheet {{ hotCostSummary.hotCostImport.summarySheetName }}.
     </section>
 
     <section v-if="importMessage" class="panel success-panel">

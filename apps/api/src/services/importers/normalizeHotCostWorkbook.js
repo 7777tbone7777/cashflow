@@ -6,7 +6,7 @@ function cleanText(value) {
 
 function looksLikeHotCostDaySheet(sheetName) {
   const normalized = cleanText(sheetName);
-  return /^\d{6}(\s+PRESHOOT)?$/.test(normalized) || /^\d{6}$/.test(normalized) || /PRESHOOT/i.test(normalized);
+  return /^\d{6}(\s+PRESHOOT)?$/i.test(normalized) || /^\d{6}$/i.test(normalized) || /PRESHOOT/i.test(normalized);
 }
 
 function toNumber(value) {
@@ -19,6 +19,52 @@ function toNumber(value) {
   const parsed = Number.parseFloat(cleaned);
   if (Number.isNaN(parsed)) return null;
   return negative ? -parsed : parsed;
+}
+
+function summarizeDaySheet(sheetName, sheet) {
+  const rows = xlsx.utils.sheet_to_json(sheet, {
+    header: 1,
+    raw: false,
+    defval: null,
+  });
+
+  const headerRowIndex = rows.findIndex((row) => Array.isArray(row) && row[0] === 'ACCT' && row[1] === 'NAME');
+  if (headerRowIndex < 0) {
+    return {
+      sheetName,
+      rowCount: 0,
+      sampleRows: [],
+    };
+  }
+
+  const entries = [];
+  for (let i = headerRowIndex + 1; i < rows.length; i += 1) {
+    const row = rows[i] || [];
+    const accountCode = cleanText(row[0]);
+    const name = cleanText(row[1]);
+    const position = cleanText(row[2]);
+    const union = cleanText(row[3]);
+    const rate = toNumber(row[4]);
+    const amount = toNumber(row[17]);
+
+    if (!accountCode && !name && !position && amount === null) continue;
+
+    entries.push({
+      rowNumber: i + 1,
+      accountCode: accountCode || null,
+      name: name || null,
+      position: position || null,
+      union: union || null,
+      rate,
+      actualAmount: amount,
+    });
+  }
+
+  return {
+    sheetName,
+    rowCount: entries.length,
+    sampleRows: entries.slice(0, 10),
+  };
 }
 
 export function isHotCostWorkbook(workbook) {
@@ -93,6 +139,10 @@ export function normalizeHotCostWorkbook(workbookPath) {
     }
   }
 
+  const daySheetSummaries = daySheetNames.map((sheetName) =>
+    summarizeDaySheet(sheetName, workbook.Sheets[sheetName])
+  );
+
   return {
     sourceFile: workbookPath,
     workbookType: 'hot-cost',
@@ -101,5 +151,6 @@ export function normalizeHotCostWorkbook(workbookPath) {
     daySheetNames,
     dayColumns,
     summaryEntries,
+    daySheetSummaries,
   };
 }
