@@ -16,14 +16,25 @@ function toSummaryMetadata(normalizedHotCost) {
 export async function persistNormalizedHotCostWorkbook(normalizedHotCost, options = {}) {
   const productionTitle = options.productionTitle || path.basename(normalizedHotCost.sourceFile).replace(/\.[^.]+$/, '');
 
-  const production = await prisma.production.create({
-    data: {
-      title: productionTitle,
-      currency: 'USD',
-      status: 'draft',
-      notes: `Hot cost workbook uploaded: ${path.basename(normalizedHotCost.sourceFile)}`,
-    },
-  });
+  const production = options.productionId
+    ? await prisma.production.update({
+        where: { id: options.productionId },
+        data: {
+          title: productionTitle || undefined,
+          notes: `Hot cost workbook uploaded: ${path.basename(normalizedHotCost.sourceFile)}`,
+        },
+      })
+    : await prisma.production.create({
+        data: {
+          title: productionTitle,
+          currency: 'USD',
+          status: 'draft',
+          notes: `Hot cost workbook uploaded: ${path.basename(normalizedHotCost.sourceFile)}`,
+        },
+      });
+
+  await prisma.hotCostLineItem.deleteMany({ where: { productionId: production.id } });
+  await prisma.hotCostDay.deleteMany({ where: { productionId: production.id } });
 
   const importBatch = await prisma.importBatch.create({
     data: {

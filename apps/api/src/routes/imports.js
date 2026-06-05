@@ -475,6 +475,7 @@ importsRouter.post('/upload', upload.single('workbook'), async (req, res, next) 
     if (isHotCostWorkbook(workbook)) {
       const normalizedHotCost = normalizeHotCostWorkbook(req.file.path);
       const result = await persistNormalizedHotCostWorkbook(normalizedHotCost, {
+        productionId: req.body.productionId || undefined,
         productionTitle: req.body.productionTitle || req.file.originalname.replace(/\.[^.]+$/, ''),
       });
 

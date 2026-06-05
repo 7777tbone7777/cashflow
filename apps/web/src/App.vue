@@ -431,6 +431,9 @@ async function uploadWorkbook() {
   try {
     const formData = new FormData()
     formData.append('workbook', uploadFile.value)
+    if (selectedProductionId.value) {
+      formData.append('productionId', selectedProductionId.value)
+    }
     if (uploadTitle.value.trim()) {
       formData.append('productionTitle', uploadTitle.value.trim())
     }
@@ -520,7 +523,7 @@ onMounted(() => {
       <div class="panel-header">
         <div>
           <h2>Upload hot cost workbook</h2>
-          <p>Upload the operational hot cost workbook. Cash flow generation from hot cost data is the next active build step.</p>
+          <p>Upload the operational hot cost workbook. If a production is currently selected, the hot cost import will attach to that production.</p>
         </div>
         <div class="export-actions">
           <button class="secondary-button" type="button" @click="exportJson">Export JSON</button>
