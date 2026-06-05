@@ -155,6 +155,37 @@ type HotCostSectionComparison = {
   }>
 }
 
+type HotCostWeeklyRollup = {
+  productionId: string
+  title: string
+  weeks: Array<{
+    weekLabel: string
+    dayCount: number
+    rowCount: number
+    totalActualDayCost: number | string
+    days: Array<{
+      hotCostDayId: string
+      sheetName: string
+      dayLabel: string | null
+      workDateLabel: string | null
+      totalActualDayCost: number | string
+    }>
+  }>
+}
+
+type HotCostWeeklyComparison = {
+  productionId: string
+  title: string
+  rows: Array<{
+    periodLabel: string
+    periodSequence: number
+    matchedActualBucket: string | null
+    plannedAmount: number | string
+    actualAmount: number | string
+    delta: number | string
+  }>
+}
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 const loading = ref(true)
@@ -176,6 +207,8 @@ const hotCostLineItems = ref<HotCostLineItem[]>([])
 const loadingHotCostDay = ref(false)
 const hotCostMappingSummary = ref<HotCostMappingSummary | null>(null)
 const hotCostSectionComparison = ref<HotCostSectionComparison | null>(null)
+const hotCostWeeklyRollup = ref<HotCostWeeklyRollup | null>(null)
+const hotCostWeeklyComparison = ref<HotCostWeeklyComparison | null>(null)
 
 const selectedProduction = computed(() =>
   productions.value.find((production) => production.id === selectedProductionId.value) || null,
@@ -238,6 +271,22 @@ async function loadHotCostSectionComparison(productionId: string) {
   }
 }
 
+async function loadHotCostWeeklyRollup(productionId: string) {
+  try {
+    hotCostWeeklyRollup.value = await fetchJson<HotCostWeeklyRollup>(`/api/imports/hot-cost/${productionId}/weekly-rollup`)
+  } catch {
+    hotCostWeeklyRollup.value = null
+  }
+}
+
+async function loadHotCostWeeklyComparison(productionId: string) {
+  try {
+    hotCostWeeklyComparison.value = await fetchJson<HotCostWeeklyComparison>(`/api/imports/hot-cost/${productionId}/weekly-comparison`)
+  } catch {
+    hotCostWeeklyComparison.value = null
+  }
+}
+
 async function loadSectionLineItems(sectionId: string) {
   if (!selectedProductionId.value) return
   loadingSection.value = true
@@ -273,6 +322,8 @@ async function loadProductionData(productionId: string) {
   await loadHotCostSummary(productionId)
   await loadHotCostMappingSummary(productionId)
   await loadHotCostSectionComparison(productionId)
+  await loadHotCostWeeklyRollup(productionId)
+  await loadHotCostWeeklyComparison(productionId)
 
   if (hotCostSummary.value?.persistedDays?.length) {
     selectedHotCostDayId.value = hotCostSummary.value.persistedDays[0].id
@@ -303,6 +354,8 @@ async function loadProductions(selectFirst = false) {
     hotCostSummary.value = null
     hotCostMappingSummary.value = null
     hotCostSectionComparison.value = null
+    hotCostWeeklyRollup.value = null
+    hotCostWeeklyComparison.value = null
     selectedHotCostDayId.value = ''
     hotCostLineItems.value = []
     return
@@ -652,6 +705,70 @@ onMounted(() => {
                   <td>{{ bucket.label }}</td>
                   <td>{{ bucket.rowCount }}</td>
                   <td>{{ formatMoney(bucket.totalActualDayCost, summary?.production.currency || 'USD') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section v-if="hotCostWeeklyRollup?.weeks?.length" class="panel hot-cost-grid">
+          <div class="panel-header">
+            <div>
+              <h2>Weekly hot cost rollup</h2>
+              <p>Day-level hot cost imports grouped into inferred production week buckets.</p>
+            </div>
+            <span class="pill">{{ hotCostWeeklyRollup.weeks.length }} week buckets</span>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Week bucket</th>
+                  <th>Days</th>
+                  <th>Rows</th>
+                  <th>Actual total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="week in hotCostWeeklyRollup.weeks" :key="week.weekLabel">
+                  <td>{{ week.weekLabel }}</td>
+                  <td>{{ week.dayCount }}</td>
+                  <td>{{ week.rowCount }}</td>
+                  <td>{{ formatMoney(week.totalActualDayCost, summary?.production.currency || 'USD') }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section v-if="hotCostWeeklyComparison?.rows?.length" class="panel hot-cost-grid">
+          <div class="panel-header">
+            <div>
+              <h2>Weekly actual vs planned</h2>
+              <p>First-pass comparison between inferred hot cost actual buckets and imported cash flow periods.</p>
+            </div>
+            <span class="pill">{{ hotCostWeeklyComparison.rows.length }} periods</span>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Period</th>
+                  <th>Matched actual bucket</th>
+                  <th>Planned</th>
+                  <th>Actual</th>
+                  <th>Delta</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in hotCostWeeklyComparison.rows" :key="row.periodSequence">
+                  <td>{{ row.periodLabel }}</td>
+                  <td>{{ row.matchedActualBucket || '—' }}</td>
+                  <td>{{ formatMoney(row.plannedAmount, summary?.production.currency || 'USD') }}</td>
+                  <td>{{ formatMoney(row.actualAmount, summary?.production.currency || 'USD') }}</td>
+                  <td>{{ formatMoney(row.delta, summary?.production.currency || 'USD') }}</td>
                 </tr>
               </tbody>
             </table>

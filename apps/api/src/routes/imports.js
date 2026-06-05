@@ -70,6 +70,24 @@ function normalizeSectionName(sectionName) {
   return String(sectionName || '').trim().toUpperCase();
 }
 
+function inferWeekBucketLabelFromSheetName(sheetName) {
+  const value = String(sheetName || '').trim();
+  const normalized = value.replace(/\s+/g, ' ');
+  if (/PRESHOOT/i.test(normalized)) return 'Pre-Shoot';
+  if (!/^\d{6}$/.test(normalized)) return 'Unknown';
+
+  const month = Number.parseInt(normalized.slice(0, 2), 10);
+  const day = Number.parseInt(normalized.slice(2, 4), 10);
+  const year = Number.parseInt(`20${normalized.slice(4, 6)}`, 10);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (Number.isNaN(date.getTime())) return 'Unknown';
+
+  const start = new Date(Date.UTC(2017, 9, 16));
+  const diffDays = Math.floor((date.getTime() - start.getTime()) / 86400000);
+  if (diffDays < 0) return 'Pre-Shoot';
+  return `Shoot Week ${Math.floor(diffDays / 5) + 1}`;
+}
+
 function mapBucketToCashflowSectionNames(bucketKey) {
   const mapping = {
     cast: ['CAST'],
@@ -288,6 +306,123 @@ importsRouter.get('/hot-cost/:productionId/section-comparison', async (req, res,
         hotCostActualTotal: matchingBucketEntry?.[1] || 0,
         importedCashflowTotal: importedSectionTotal,
         delta: (matchingBucketEntry?.[1] || 0) - importedSectionTotal,
+      };
+    });
+
+    return res.json({
+      productionId: production.id,
+      title: production.title,
+      rows,
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+importsRouter.get('/hot-cost/:productionId/weekly-rollup', async (req, res, next) => {
+  try {
+    const production = await prisma.production.findUnique({
+      where: { id: req.params.productionId },
+      include: {
+        hotCostDays: {
+          orderBy: { createdAt: 'asc' },
+          include: {
+            lineItems: true,
+          },
+        },
+      },
+    });
+
+    if (!production) {
+      return res.status(404).json({ error: 'Production not found.' });
+    }
+
+    const buckets = new Map();
+    for (const day of production.hotCostDays) {
+      const weekLabel = inferWeekBucketLabelFromSheetName(day.sheetName);
+      const totalActual = day.lineItems.reduce((sum, lineItem) => sum + Number(lineItem.actualDayCost || 0), 0);
+      const existing = buckets.get(weekLabel) || {
+        weekLabel,
+        dayCount: 0,
+        rowCount: 0,
+        totalActualDayCost: 0,
+        days: [],
+      };
+
+      existing.dayCount += 1;
+      existing.rowCount += day.lineItems.length;
+      existing.totalActualDayCost += totalActual;
+      existing.days.push({
+        hotCostDayId: day.id,
+        sheetName: day.sheetName,
+        dayLabel: day.dayLabel,
+        workDateLabel: day.workDateLabel,
+        totalActualDayCost: totalActual,
+      });
+
+      buckets.set(weekLabel, existing);
+    }
+
+    const rows = Array.from(buckets.values()).sort((a, b) => a.weekLabel.localeCompare(b.weekLabel, undefined, { numeric: true }));
+
+    return res.json({
+      productionId: production.id,
+      title: production.title,
+      weeks: rows,
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+importsRouter.get('/hot-cost/:productionId/weekly-comparison', async (req, res, next) => {
+  try {
+    const production = await prisma.production.findUnique({
+      where: { id: req.params.productionId },
+      include: {
+        hotCostDays: {
+          orderBy: { createdAt: 'asc' },
+          include: {
+            lineItems: true,
+          },
+        },
+        snapshots: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+    });
+
+    if (!production) {
+      return res.status(404).json({ error: 'Production not found.' });
+    }
+
+    const weeklyActuals = new Map();
+    for (const day of production.hotCostDays) {
+      const weekLabel = inferWeekBucketLabelFromSheetName(day.sheetName);
+      const totalActual = day.lineItems.reduce((sum, lineItem) => sum + Number(lineItem.actualDayCost || 0), 0);
+      weeklyActuals.set(weekLabel, (weeklyActuals.get(weekLabel) || 0) + totalActual);
+    }
+
+    const snapshot = production.snapshots[0] || null;
+    const plannedRows = snapshot?.weeklyTotalsJson || [];
+
+    const rows = plannedRows.map((period, index) => {
+      const planned = Number(period.amount || 0);
+      const actualLabel = index < 5
+        ? 'Pre-Shoot'
+        : index >= 7 && index <= 11
+          ? `Shoot Week ${index - 6}`
+          : null;
+      const actual = actualLabel ? Number(weeklyActuals.get(actualLabel) || 0) : 0;
+
+      return {
+        periodLabel: period.label,
+        periodSequence: period.periodSequence,
+        matchedActualBucket: actualLabel,
+        plannedAmount: planned,
+        actualAmount: actual,
+        delta: actual - planned,
       };
     });
 
