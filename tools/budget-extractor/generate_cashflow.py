@@ -34,6 +34,8 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from typing import Any
 
+from overrides import (AMEND, OverrideSet, target_keys)
+
 DAYS_PER_WEEK = 5.0
 
 # Fallback spreads, expressed as the share of a department's money landing in
@@ -193,7 +195,8 @@ class Placement:
 
 class Generator:
     def __init__(self, budget: dict[str, Any], cfg: dict[str, Any],
-                 archetypes: dict[str, Any] | None = None) -> None:
+                 archetypes: dict[str, Any] | None = None,
+                 overrides: OverrideSet | None = None) -> None:
         self.budget = budget
         self.cfg = cfg
         self.calendar = build_calendar(cfg)
@@ -202,6 +205,10 @@ class Generator:
         self.by_basis: dict[str, float] = defaultdict(float)
         self.learned = archetypes or {}
         self.archetype_hits: dict[str, int] = defaultdict(int)
+        self.overrides = overrides or OverrideSet()
+        self.live_keys: set[str] = set()
+        # Accounts whose stated total was placed whole, fringes included.
+        self.absorbed_fringe_accounts: set[str] = set()
 
     def _shape_for(self, acct: str, department: str) -> tuple[dict[str, float], str]:
         """Best available spread for an account, most specific first.
@@ -259,6 +266,13 @@ class Generator:
             return (cal.indices_for_phase("wrap")
                     or cal.indices_for_phase("shoot")[-1:])
         if phase == "prep":
+            lead = self.overrides.resolve(
+                "prep_lead_weeks",
+                target_keys(department=detail.get("_department"),
+                            account=detail.get("_account")),
+                default=None)
+            if lead:
+                weeks = max(weeks, int(lead))
             anchor = parse_iso(detail.get("start_date"))
             if anchor:
                 begin = cal.index_for(anchor)
@@ -379,11 +393,19 @@ class Generator:
         for account in self.budget["accounts"]:
             department = account["acct"][:2] + "00"
 
+            # Register identity before any shortcut, so an override that targets
+            # this account is never reported as orphaned.
+            account_keys = target_keys(department=department,
+                                       account=account["acct"])
+            self.live_keys.update(account_keys.values())
+            steered = any(o.key in account_keys.values()
+                          for o in self.overrides.overrides)
+
             # Where a past production shows how this exact account was actually
             # spread, that observation beats anything inferred from durations.
-            # The budget supplies the amount; the profile supplies the shape —
-            # which is how an experienced accountant works.
-            if prefer_observed and account.get("total"):
+            # But a human override beats both: a learned profile is what usually
+            # happens, and the person typing knows what is happening on this show.
+            if prefer_observed and account.get("total") and not steered:
                 learned = self._profile_for(account["acct"], department)
                 if learned:
                     profile, provenance = learned
@@ -392,15 +414,25 @@ class Generator:
                         account["name_display"],
                         any(d.get("is_labour") for d in account["details"]))
                     self.archetype_hits[provenance.split(":")[0]] += 1
+                    self.absorbed_fringe_accounts.add(account["acct"])
                     continue
 
             for detail in account["details"]:
                 is_labour = detail.get("is_labour", False)
+                detail["_department"] = department
+                detail["_account"] = account["acct"]
+                keys = target_keys(department=department, account=account["acct"],
+                                   sub=detail.get("sub"), person=detail.get("person"))
+                self.live_keys.update(keys.values())
+
                 for line in detail["phases"]:
                     amount = line.get("amount") or 0.0
                     if not amount:
                         continue
-                    phase = line["phase"]
+                    # A human can move a line to a different phase entirely —
+                    # the crane wanted a week early sits here.
+                    phase = self.overrides.resolve("phase_window", keys,
+                                                   default=line["phase"])
                     basis = "phase_line"
                     if phase in ("allowance", "travel"):
                         indices = self._allowance_window(line, department)
@@ -435,8 +467,10 @@ class Generator:
                         description=detail.get("person")
                         or detail.get("sub_display") or account["name_display"],
                         basis=basis, phase=phase,
-                        cash_class=self._cash_class(
-                            department, account["name_display"], is_labour))
+                        cash_class=self.overrides.resolve(
+                            "cash_class", keys,
+                            default=self._cash_class(
+                                department, account["name_display"], is_labour)))
 
     def place_fringes(self) -> None:
         """Fringes ride the wages they are charged on, then remit on a lag."""
@@ -448,6 +482,8 @@ class Generator:
         for account in self.budget["accounts"]:
             if not account.get("fringes"):
                 continue
+            if account["acct"] in self.absorbed_fringe_accounts:
+                continue    # already inside the account total placed by profile
             department = account["acct"][:2] + "00"
             shape = wage_shape.get(department)
             for fringe in account["fringes"]:
@@ -516,8 +552,18 @@ class Generator:
 
     def build(self) -> dict[str, Any]:
         self.place_phase_lines()
+        placed_before_remainder = sum(p.amount for p in self.placements)
         self.place_fringes()
         self.place_remainder()
+
+        # Redistribution may change when money lands, never how much. Assert it.
+        budget_total = self.budget["totals"].get("grand_total") or 0.0
+        self.overrides.find_orphans(self.live_keys)
+        self.overrides.collect_amendments()
+        if self.overrides.overrides:
+            self.overrides.assert_total_preserved(
+                budget_total, sum(p.amount for p in self.placements), tolerance=2.0)
+
         cost, cash = self.to_cash()
 
         by_department: dict[str, list[float]] = defaultdict(
@@ -554,6 +600,12 @@ class Generator:
             },
             "assumptions": self.notes,
             "archetype_provenance": dict(self.archetype_hits),
+            "overrides": {
+                "loaded": len(self.overrides.overrides),
+                "applied": dict(self.overrides.applied),
+                "orphaned": [o.key for o in self.overrides.unused],
+                "amendments_not_applied": [o.key for o in self.overrides.amendments],
+            },
         }
 
 
@@ -606,6 +658,33 @@ def compare_to_real(result: dict[str, Any], path: str) -> None:
           f"{gen_total - real_total:>13,.0f}")
 
 
+def guard_production_type(budget: dict[str, Any], force: bool) -> None:
+    """Refuse a television budget rather than quietly treating it as a feature.
+
+    Television is episodic, with pattern and amortised costs and no single shoot
+    block, and its detail pages nest subtotals differently — a feature-shaped
+    schedule built from one would reconcile and still be meaningless. Detection
+    exists precisely so this can fail loudly.
+    """
+    detected = (budget.get("production") or {}).get("production_type") or {}
+    kind, confidence = detected.get("type"), detected.get("confidence", 0)
+    if kind != "television":
+        return
+    if force:
+        print(f"WARNING: this looks like a television budget "
+              f"({confidence:.0%} confidence) and --force was given. The output "
+              f"will not be trustworthy.\n")
+        return
+    reasons = "; ".join(detected.get("evidence", [])[:3])
+    raise SystemExit(
+        f"This appears to be a TELEVISION budget ({confidence:.0%} confidence: "
+        f"{reasons}).\n\nTelevision is not supported yet — it is episodic, with "
+        f"pattern and amortised costs and no single shoot block, so a "
+        f"feature-shaped cash flow built from it would reconcile and still be "
+        f"wrong.\n\nPass --force to override this check if the detection is "
+        f"mistaken.")
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("budget_json")
@@ -613,12 +692,18 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("-o", "--out")
     ap.add_argument("--compare", help="a real cash flow xlsx to hold this against")
     ap.add_argument("--archetypes", help="learned spreads from learn_archetypes.py")
+    ap.add_argument("--overrides", help="human corrections, applied over the defaults")
+    ap.add_argument("--force", action="store_true",
+                    help="generate even if the budget is not a feature")
     args = ap.parse_args(argv)
 
     budget = json.load(open(args.budget_json))
     cfg = json.load(open(args.production_json))
+    guard_production_type(budget, args.force)
+
     archetypes = json.load(open(args.archetypes)) if args.archetypes else None
-    generator = Generator(budget, cfg, archetypes)
+    generator = Generator(budget, cfg, archetypes,
+                          OverrideSet.load(args.overrides))
     result = generator.build()
 
     if args.out:
@@ -647,6 +732,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"\nassumptions ({len(result['assumptions'])}) — every one is reviewable:")
         for note in result["assumptions"][:8]:
             print(f"   · {note}")
+
+    generator.overrides.report()
 
     if args.compare:
         compare_to_real(result, args.compare)

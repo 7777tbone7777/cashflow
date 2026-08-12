@@ -425,3 +425,109 @@ liability worth catching, which is exactly why a false one is worse than silence
 3. **A proper key.** Scale varies by `(local, region, tier/panel, effective date,
    production type)` — the IA 667 card prices Feature and Television separately.
    Anything less than the full key is not a rate.
+
+---
+
+# Overrides
+
+```bash
+python overrides.py --example > overrides.json
+python generate_cashflow.py budget.json production.json \
+    --archetypes archetypes.json --overrides overrides.json -o cashflow.json
+```
+
+Inputs are what the system does not know. **Overrides are what it decided** — and
+on the reference budget it decides a great deal without being asked: 420 phase
+lines whose timing is a guess, 218 inferred rate bases, 31 multipliers rebuilt
+arithmetically, 22 archetype placements.
+
+## Reconciliation is sacred
+
+The whole trust argument is *this sums to the budget*, so overrides come in two
+kinds and the distinction is load-bearing:
+
+| Kind | Changes | Ceremony |
+|---|---|---|
+| `redistribute` | **when** money lands | none — total asserted afterwards |
+| `amend` | **how much** | reported, never applied; needs a versioned budget amendment |
+
+A redistribution that moves the total fails loudly:
+
+```
+redistribution changed the total by 42,000.00 (6,062,000.00 -> 6,104,000.00).
+A redistribute override may change when money lands, never how much.
+Use kind='amend' if the amount really is changing.
+```
+
+Amendments are collected whether or not any code path consults that field. A user
+who asks for a change is owed an answer even when nothing queried it.
+
+## Five scopes, most specific wins
+
+`line` → `account` → `department` → `production` → `company`. Design so people
+work at the **department** level; nobody wants to override 979 phase lines.
+
+Worked example — the crane wanted a week early, as an account-level override:
+
+```
+Set Operations, account 2519
+   Prep Wk (-1)      +19,300
+   Shoot Wk 1         -3,860
+   Shoot Wk 2         -3,860 ...
+   department total  287,115 -> 287,115   preserved
+```
+
+## Human knowledge beats a learned prior
+
+Wiring this up exposed a real precedence bug. The `prefer_learned_profiles`
+shortcut placed an account's whole total by its observed shape and **skipped the
+override layer entirely** — 4 overrides loaded, 0 applied, and three wrongly
+reported as orphaned. A learned profile is what *usually* happens; the person
+typing knows what *is* happening on this show, so overrides are now checked
+first and the shortcut is bypassed for any account a human has steered.
+
+The same pass caught fringes being placed twice under that shortcut, which had
+been generating negative archetype gaps. Assumptions dropped from 22 to 1.
+
+## Orphans, and why keying matters
+
+Overrides must survive re-import, because the product is the weekly reforecast.
+But budgets re-version underneath you — 30 of 35 departments moved between two
+versions of this production while the total held. So keys are identity
+(`account|sub|person`), never row position, and anything pointing at something
+the budget no longer has is reported rather than dropped:
+
+```
+3 ORPHANED — the budget no longer has what these point at:
+   department:3300 prep_lead_weeks   (line producer, 2017-09-05)
+```
+
+## Corrections are not overrides
+
+Every entry records `origin`:
+
+- **`correction`** — the parser got it wrong. A bug report with a repro attached;
+  should be fixed upstream and never repeated on the next show.
+- **`judgement`** — the human knows what no document states. Permanent.
+
+Corrections should trend to zero as the parser improves; judgements should not.
+Those two curves are the clearest health metric the product has — and if most
+users override the same default, the default is wrong.
+
+---
+
+# Television budgets are refused, not mishandled
+
+```
+This appears to be a TELEVISION budget (88% confidence: splits below-the-line
+into Production and Other; pilot; editorial at 5100 rather than 4500).
+
+Television is not supported yet — it is episodic, with pattern and amortised
+costs and no single shoot block, so a feature-shaped cash flow built from it
+would reconcile and still be wrong.
+
+Pass --force to override this check if the detection is mistaken.
+```
+
+Detection exists precisely so this can fail loudly. A schedule that reconciles
+and is meaningless is worse than an error, because it still looks authoritative.
