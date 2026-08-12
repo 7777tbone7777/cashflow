@@ -6,6 +6,7 @@ import { healthRouter } from './routes/health.js';
 import { importsRouter } from './routes/imports.js';
 import { productionsRouter } from './routes/productions.js';
 import { exportsRouter } from './routes/exports.js';
+import { budgetsRouter } from './routes/budgets.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,7 @@ app.use('/health', healthRouter);
 app.use('/api/imports', importsRouter);
 app.use('/api/productions', productionsRouter);
 app.use('/api/exports', exportsRouter);
+app.use('/api/budgets', budgetsRouter);
 app.get('/api', (_req, res) => {
   res.json({
     name: 'cashflow-api',

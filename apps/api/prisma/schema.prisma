@@ -8,6 +8,9 @@ datasource db {
 }
 
 enum ImportSourceType {
+  // The primary input. Everything else is either a document from a production
+  // already under way, or a past show to learn spread shapes from.
+  budget_pdf
   cashflow_xlsx
   hotcost_xls
 }
