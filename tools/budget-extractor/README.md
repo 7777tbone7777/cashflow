@@ -323,3 +323,105 @@ its own labour. The reference budget yields rates from **28.5% (Locations) to
 Where a department's labour base is too small to give a meaningful rate — Set
 Construction is mostly materials, not wages — it falls back to the
 production-wide average rather than emitting a 200% rate.
+
+---
+
+# Production type detection
+
+The budget says whether it is a feature or television, so the app should not ask.
+
+```bash
+python extract_budget.py BUDGET.pdf --summary
+# detected: FEATURE  (confidence 100%)
+#    + single production-period block
+#    + editorial at 4500
+```
+
+Ten weighted signals, with the evidence reported either way. Measured:
+
+| Budget | Detected | Confidence |
+|---|---|---|
+| The Children (feature) | FEATURE | 100% |
+| WB One Hour Pilot | TELEVISION | 88% |
+| Cable Amort 9 Eps | TELEVISION | 89% |
+| Multicam Pattern 12 Eps | TELEVISION | 83% |
+
+It matters because the two need different cash flow models — television is
+episodic, with pattern and amortised costs and no single shoot block. Detection
+also carries its counter-evidence, so a low-confidence call is visible rather
+than silent.
+
+---
+
+# Rate card repository
+
+```bash
+python ingest_rate_cards.py "Guild Agreements/" -o rates.json
+python check_rates.py budget.json rates.json --region "Los Angeles"
+```
+
+Parses **rate cards, not collective bargaining agreements**. A CBA is a couple of
+hundred pages of legal prose; the rate schedule attached to it is a table, and the
+table is the only part a budget tool needs. Derived rate tables are stored — never
+copies of the source documents, which are licensed.
+
+## Results on a 39-document collection
+
+| | |
+|---|---|
+| Documents | 39 |
+| Yielded a rate table | 35 |
+| **Trusted after confidence filtering** | **13** |
+| Trusted rates | 486 |
+
+Confidence is scored **per page, best page wins**. A genuine rate card has at
+least one page that is mostly rate rows; a 200-page agreement with a wage
+appendix has exactly one too, and that appendix is the part worth keeping.
+Averaging across a document hides both.
+
+Without filtering, the 2023 WGA MBA yielded 65 confident-looking rates built from
+clause fragments — `The provisions of the → $2,020.00` is the *year* 2020 read as
+money. Two filters fixed it: bare four-digit integers in running text are years,
+not money; and a classification must look like a job title rather than a sentence
+fragment, a street address or a URL. The Local 600 card was otherwise offering
+`70 W 36th Street 9th Floor` at $877/hour.
+
+## What a rate card gives that a budget cannot
+
+Beyond scale itself, the Local 600 card states its own conditions in words, and
+these parse: **`Minimum Call - 8 Hours`, `1-1/2 after 8`, `43.2 hour guarantee`**.
+
+That is the authoritative version of what `generate_hotcost.py` currently derives
+empirically from whatever guarantees a budget happens to state — which leaves it
+blind to any local the budget does not quantify.
+
+## The checker reports no coverage rather than false findings
+
+Against the reference budget it currently finds nothing, and that is the correct
+answer:
+
+```
+crew records with a rate                 139
+no local identified                      112
+no rate card for this region              27
+  BELOW scale                              0
+
+No applicable rate card for Los Angeles. Cards on hand cover: Eastern Region.
+```
+
+A first version without region gating reported two crew as dramatically below
+scale. Both were artefacts — the cards to hand are **Eastern Region** and the
+production shot in **Los Angeles**. Scale is regional, so comparing across that
+boundary manufactures compliance findings out of nothing. Below-scale is a
+liability worth catching, which is exactly why a false one is worse than silence.
+
+## What would make it useful
+
+1. **Western Region / LA rate cards.** The single biggest gap; the collection to
+   hand is Eastern Region and Canadian.
+2. **Occupation codes in the budget.** The Local 600 card keys on them (`1901`
+   Director of Photography). Budgets carry account codes instead, so matching
+   falls back to fuzzy classification names.
+3. **A proper key.** Scale varies by `(local, region, tier/panel, effective date,
+   production type)` — the IA 667 card prices Feature and Television separately.
+   Anything less than the full key is not a rate.

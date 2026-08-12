@@ -83,6 +83,62 @@ PHASE_RULES: list[tuple[re.Pattern[str], str]] = [
 ]
 
 
+# Signals that separate a television budget from a feature. Weighted, because no
+# single one is decisive — a feature can mention a pilot in a note, and a TV
+# budget can carry a feature-style top sheet. Detected rather than asked, since
+# the document already knows.
+PRODUCTION_TYPE_SIGNALS: list[tuple[re.Pattern[str], str, int, str]] = [
+    (re.compile(r"TotalBelow-The-Line(Production|Other)"), "television", 3,
+     "splits below-the-line into Production and Other"),
+    (re.compile(r"\b(\d{1,2})\s?Eps\b|Episodes?\b", re.I), "television", 3,
+     "counts episodes"),
+    (re.compile(r"\bPattern\b|\bAmort(iz|is)", re.I), "television", 3,
+     "pattern or amortised budget"),
+    (re.compile(r"\bPilot\b", re.I), "television", 2, "pilot"),
+    (re.compile(r"\bSeason\s?\d|\bEpisodic\b|\bSVOD\b", re.I), "television", 2,
+     "season or episodic"),
+    (re.compile(r"^5100\b", re.M), "television", 2,
+     "editorial at 5100 rather than 4500"),
+    (re.compile(r"TOTALPRODUCTIONPERIOD", re.I), "feature", 3,
+     "single production-period block"),
+    (re.compile(r"^4500\s*EDITORIAL", re.M | re.I), "feature", 2,
+     "editorial at 4500"),
+    (re.compile(r"TOTALPOSTPRODUCTION", re.I), "feature", 1,
+     "discrete post-production block"),
+    (re.compile(r"\bTOTALSHOOTDAYS\b", re.I), "feature", 1,
+     "states total shoot days"),
+]
+
+
+def detect_production_type(text: str) -> dict[str, Any]:
+    """Feature or television, decided from the budget rather than asked.
+
+    The two need different cash flow models — television is episodic with
+    pattern and amortised costs and no single shoot block — so the answer
+    changes what the generator should do. It is also one fewer question, which
+    is always the better trade.
+    """
+    scores = {"feature": 0, "television": 0}
+    evidence: dict[str, list[str]] = {"feature": [], "television": []}
+    for pattern, kind, weight, description in PRODUCTION_TYPE_SIGNALS:
+        if pattern.search(text):
+            scores[kind] += weight
+            evidence[kind].append(description)
+
+    total = scores["feature"] + scores["television"]
+    if total == 0:
+        return {"type": "unknown", "confidence": 0.0, "evidence": [],
+                "counter_evidence": []}
+    kind = max(scores, key=scores.get)
+    other = "feature" if kind == "television" else "television"
+    return {
+        "type": kind,
+        "confidence": round(scores[kind] / total, 2),
+        "evidence": evidence[kind],
+        "counter_evidence": evidence[other],
+    }
+
+
 def classify_phase(label: str) -> str:
     for pattern, name in PHASE_RULES:
         if pattern.search(label):
@@ -427,6 +483,13 @@ class BudgetParser:
 
     # ---------- detail pages --------------------------------------------------
 
+    def _detect_type(self) -> None:
+        """Read enough of the document to tell a feature from a television budget."""
+        import pdfplumber as _pp
+        with _pp.open(self.path) as pdf:
+            sample = "\n".join((p.extract_text() or "") for p in pdf.pages[:6])
+        self.production_type = detect_production_type(sample)
+
     def _adopt_column_layout(self, words: list[dict[str, Any]]) -> bool:
         """Learn this template's column boundaries from its own header row.
 
@@ -562,6 +625,7 @@ class BudgetParser:
         return False
 
     def parse(self) -> None:
+        self._detect_type()
         current_account: Account | None = None
         current_detail: DetailRecord | None = None
         in_topsheet = True
@@ -896,7 +960,8 @@ class BudgetParser:
     def to_dict(self) -> dict[str, Any]:
         return {
             "source": {"file": self.path, "parser_version": "budget-extract-1.0"},
-            "production": self.production,
+            "production": {**self.production,
+                           "production_type": getattr(self, "production_type", None)},
             "totals": self.totals,
             "department_totals": self.department_totals,
             "department_rollup": {k: round(v, 2)
@@ -932,6 +997,14 @@ class BudgetParser:
 
 def print_summary(data: dict[str, Any]) -> None:
     prod = data["production"]
+    detected = prod.get("production_type") or {}
+    if detected:
+        print(f"\ndetected: {detected.get('type', '?').upper()}  "
+              f"(confidence {detected.get('confidence', 0):.0%})")
+        for reason in detected.get("evidence", [])[:4]:
+            print(f"   + {reason}")
+        for reason in detected.get("counter_evidence", [])[:2]:
+            print(f"   - {reason}")
     print(f"\n{prod.get('production_number', '—')}  "
           f"{prod.get('shoot_days', '?')} shoot days  ·  "
           f"post {prod.get('post_weeks', '?')} wks  ·  "

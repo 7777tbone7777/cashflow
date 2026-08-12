@@ -1,0 +1,5251 @@
+{
+  "card_count": 35,
+  "trusted_card_count": 13,
+  "trusted_rate_count": 486,
+  "rate_count": 663,
+  "cards": [
+    {
+      "source": "2021 IATSE Local 873 Long Term Agreement - July 20, 2021 (FINAL) (00249683xBE9D7).pdf",
+      "local": "IATSE Local 873",
+      "region": null,
+      "panel": null,
+      "effective_from": "April 1, 2021",
+      "effective_to": "March 31, 2024",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "April 1,",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "LOCAL",
+          "basis": "hour",
+          "amount": 873.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "than eighteen dollars (",
+          "basis": "hour",
+          "amount": 18.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "(5) A completed Local",
+          "basis": "hour",
+          "amount": 873.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.25,
+      "candidate_lines": 40,
+      "trusted": false
+    },
+    {
+      "source": "2021-Local-399-817-Casting-Directors-Agreement-Final-00315151xBE9D7.pdf",
+      "local": "IATSE Local 399",
+      "region": null,
+      "panel": null,
+      "effective_from": "October 1, 2021",
+      "effective_to": "September 30, 2024",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "with the \"Certification of Representative\" signed on July",
+          "basis": "hour",
+          "amount": 11.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "National Labor Relations Board Case #31-RC-",
+          "basis": "hour",
+          "amount": 8497.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "period October 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "thirty and one-half cents (",
+          "basis": "hour",
+          "amount": 2012.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Medical (Premium Rate)",
+          "basis": "hour",
+          "amount": 34.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "a theatrical motion picture (or on an (",
+          "basis": "hour",
+          "amount": 3500.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "a television motion picture or on an (",
+          "basis": "hour",
+          "amount": 2800.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "For Associate Casting Directors",
+          "basis": "hour",
+          "amount": 1000.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "employed on a theatrical motion (",
+          "basis": "hour",
+          "amount": 1500.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.6153846153846154,
+      "candidate_lines": 66,
+      "trusted": true
+    },
+    {
+      "source": "2022-2024-CSP-HWO-Contract-Summary-Final-1 (2).pdf",
+      "local": null,
+      "region": null,
+      "panel": null,
+      "effective_from": "January 1, 2023",
+      "effective_to": "December 31, 2022",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "December",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "the Producer will complete a T",
+          "basis": "hour",
+          "amount": 2200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "and fifty cents (",
+          "basis": "hour",
+          "amount": 17.5,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.7272727272727273,
+      "candidate_lines": 192,
+      "trusted": true
+    },
+    {
+      "source": "2023 WGA MBA MOA.pdf",
+      "local": "WGA",
+      "region": null,
+      "panel": null,
+      "effective_from": "September 25, 2023",
+      "effective_to": "May 1, 2026",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "October",
+          "basis": "hour",
+          "amount": 12.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "was on or after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "such professional writers on or after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "professional writers on or after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "the next option which occurs after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "New Media Productions",
+          "basis": "hour",
+          "amount": 874.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "New Media Productions",
+          "basis": "hour",
+          "amount": 510.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "hundred percent (",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.5714285714285714,
+      "candidate_lines": 96,
+      "trusted": false
+    },
+    {
+      "source": "2023_WGA_mba_moa.pdf",
+      "local": "WGA",
+      "region": null,
+      "panel": null,
+      "effective_from": "September 25, 2023",
+      "effective_to": "May 1, 2026",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "October",
+          "basis": "hour",
+          "amount": 12.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "was on or after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "such professional writers on or after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "professional writers on or after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "the next option which occurs after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "after May 2,",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "New Media Productions",
+          "basis": "hour",
+          "amount": 874.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "New Media Productions",
+          "basis": "hour",
+          "amount": 510.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "hundred percent (",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.5714285714285714,
+      "candidate_lines": 96,
+      "trusted": false
+    },
+    {
+      "source": "2024-Casting-Directors-MOA-2024-09-30-00324386xBE9D7.pdf",
+      "local": "IATSE Local 817",
+      "region": null,
+      "panel": null,
+      "effective_from": "September 29, 2024",
+      "effective_to": "September 30, 2024",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "STUDIO TRANSPORTATION DRIVERS LOCAL UNION NO",
+          "basis": "hour",
+          "amount": 399.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Union No",
+          "basis": "hour",
+          "amount": 399.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "National Labor Relations Board Case #31-RC-",
+          "basis": "hour",
+          "amount": 8497.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "signed on August",
+          "basis": "hour",
+          "amount": 20.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "compensated at no less than",
+          "basis": "week",
+          "amount": 7000.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "shall be compensated at no less than",
+          "basis": "week",
+          "amount": 5850.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "compensated at no less than",
+          "basis": "week",
+          "amount": 2210.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "October",
+          "basis": "hour",
+          "amount": 13.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "October 3,",
+          "basis": "hour",
+          "amount": 2021.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 29.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 29.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 28.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "through September",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "1September",
+          "basis": "hour",
+          "amount": 29.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "As of September",
+          "basis": "hour",
+          "amount": 29.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Active Employees Health Plan",
+          "basis": "hour",
+          "amount": 10.34,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Pension Plan",
+          "basis": "hour",
+          "amount": 5.2,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "October",
+          "basis": "hour",
+          "amount": 13.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "For such Casting Directors",
+          "basis": "hour",
+          "amount": 4725.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "employed on a theatrical motion",
+          "basis": "hour",
+          "amount": 4914.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "picture (or on an SVOD Program",
+          "basis": "hour",
+          "amount": 5086.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "For such Casting Directors",
+          "basis": "hour",
+          "amount": 3750.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "employed on a television motion",
+          "basis": "hour",
+          "amount": 3900.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "picture or on an SVOD Program",
+          "basis": "hour",
+          "amount": 4050.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "For such Associate Casting",
+          "basis": "hour",
+          "amount": 1000.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Directors employed on a theatrical (",
+          "basis": "hour",
+          "amount": 1500.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.6,
+      "candidate_lines": 114,
+      "trusted": true
+    },
+    {
+      "source": "2024-IATSE-Basic-Agreement-MOA-FINAL.pdf",
+      "local": "IATSE Local 52",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "two hundred (",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.9285714285714286,
+      "candidate_lines": 82,
+      "trusted": false
+    },
+    {
+      "source": "2024_EPC_ON_Ratebook_SDTV[60].pdf",
+      "local": "IATSE Local 667",
+      "region": null,
+      "panel": null,
+      "effective_from": "January 1, 2024",
+      "effective_to": "December 31, 2024",
+      "minimum_call_hours": 3.0,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Scale Rates",
+          "basis": "hour",
+          "amount": 104.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Scale Rates",
+          "basis": "hour",
+          "amount": 108.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Pay Hours",
+          "basis": "hour",
+          "amount": 109.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "ACTRA DGC NBT",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Pension / Retirement (%)",
+          "basis": "hour",
+          "amount": 7.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Health & Welfare / Insurance (%",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Canada Pension Plan N/Ay",
+          "basis": "hour",
+          "amount": 6.56,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Individuals",
+          "basis": "hour",
+          "amount": 15.93,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Corporations",
+          "basis": "hour",
+          "amount": 15.93,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Canada Pension Plan - 1",
+          "basis": "hour",
+          "amount": 5.95,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Canada Pension Plan - 2",
+          "basis": "hour",
+          "amount": 4700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Employment Insurance",
+          "basis": "hour",
+          "amount": 63200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Workers Compensation",
+          "basis": "hour",
+          "amount": 12500.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Occasion Date DGC NABET",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Cost if Worked",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Minimum Wage",
+          "basis": "hour",
+          "amount": 16.55,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "British Columbia GST",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Alberta GST",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Saskatchewan GST",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Manitoba GST",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Ontario HST",
+          "basis": "hour",
+          "amount": 13.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Quebec* GST",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Nova Scotia HST",
+          "basis": "hour",
+          "amount": 15.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "New Brunswick HST",
+          "basis": "hour",
+          "amount": 15.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PEI HST 1d",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Newfoundland HST",
+          "basis": "hour",
+          "amount": 15.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Yukon Territories GST",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Nunavut GST",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Northwest Territories kGST",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Fringes Retirement*",
+          "basis": "hour",
+          "amount": 7.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Health & Welfare / Insurance **",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "*Retirement",
+          "basis": "hour",
+          "amount": 7.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "** ACTRA - H&W",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Over",
+          "basis": "hour",
+          "amount": 3000.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Non-Member",
+          "basis": "hour",
+          "amount": 5.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "**** ACTRA - PRS",
+          "basis": "hour",
+          "amount": 50000.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Over",
+          "basis": "hour",
+          "amount": 5700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Non Residents",
+          "basis": "hour",
+          "amount": 225.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Principal Performers",
+          "basis": "hour",
+          "amount": 260.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Other Performers",
+          "basis": "hour",
+          "amount": 210.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Extras-",
+          "basis": "hour",
+          "amount": 7.5,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "COVID Stipend",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Breakfast e",
+          "basis": "hour",
+          "amount": 15.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Lunch",
+          "basis": "hour",
+          "amount": 20.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Dinner T",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Accommodations",
+          "basis": "hour",
+          "amount": 85.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "If more than two changes,",
+          "basis": "hour",
+          "amount": 20.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Formal or specialty clothing",
+          "basis": "day",
+          "amount": 35.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Cancellation Of performers engagement",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "8 / Daily rate",
+          "basis": "day",
+          "amount": 5.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.8666666666666667,
+      "candidate_lines": 134,
+      "trusted": true
+    },
+    {
+      "source": "2024_IATSE_Area_Standards_Agreement_MOA_07_03_2024.pdf",
+      "local": "IATSE Local 720",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "terminating on July",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "IATSE Local",
+          "basis": "hour",
+          "amount": 720.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "allocated to the IATSE Local",
+          "basis": "hour",
+          "amount": 665.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "5(A) by an additional",
+          "basis": "day",
+          "amount": 15.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "of classifications represented by Local",
+          "basis": "hour",
+          "amount": 161.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Who Are Participants in the Local USA",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "United Scenic Artists Local USA",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "contributions to the United Scenic Artists Local USA",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "which commence principal photography on or after February",
+          "basis": "hour",
+          "amount": 13.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.75,
+      "candidate_lines": 92,
+      "trusted": true
+    },
+    {
+      "source": "2024_IATSE_Basic_Agreement_MOA_07_03_2024.pdf",
+      "local": "IATSE Local 52",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "two hundred (",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.9285714285714286,
+      "candidate_lines": 82,
+      "trusted": false
+    },
+    {
+      "source": "2024_SUMMARY_OF_BASIC_AGREEMENT_NEGOTIATIONS_6.28.24_FINAL.pdf",
+      "local": null,
+      "region": null,
+      "panel": null,
+      "effective_from": "July 1, 2025",
+      "effective_to": "June 30, 2026",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Bonus Residual requires a Producer to pay",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 28.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "on October",
+          "basis": "hour",
+          "amount": 14.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.25,
+      "candidate_lines": 39,
+      "trusted": false
+    },
+    {
+      "source": "600 Rate Card 2023 to 2024 (V4).pdf",
+      "local": "IATSE Local 600",
+      "region": "Eastern Region",
+      "panel": null,
+      "effective_from": "July 31, 2023",
+      "effective_to": "July 29, 2024",
+      "minimum_call_hours": 8.0,
+      "overtime_after_hours": 8.0,
+      "weekly_guarantee_hours": 40.0,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Director of Photography",
+          "basis": "hour",
+          "amount": 1025.14,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 768.31,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "1st Assistant Photographer",
+          "basis": "hour",
+          "amount": 507.22,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "2nd Assistant Photographer",
+          "basis": "hour",
+          "amount": 427.03,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Still Photographer",
+          "basis": "hour",
+          "amount": 610.87,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Film Loader",
+          "basis": "hour",
+          "amount": 366.92,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Imaging Technician",
+          "basis": "hour",
+          "amount": 78.43,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Controller (Shader)",
+          "basis": "hour",
+          "amount": 62.48,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Utility Person",
+          "basis": "hour",
+          "amount": 59.53,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Utility Person",
+          "basis": "hour",
+          "amount": 40.95,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 570.96,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "1st Assistant Photographer",
+          "basis": "hour",
+          "amount": 463.04,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "2nd Assistant Photographer",
+          "basis": "hour",
+          "amount": 419.68,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Still Photographer",
+          "basis": "hour",
+          "amount": 512.4,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Film Loader",
+          "basis": "hour",
+          "amount": 364.08,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Imaging Technician",
+          "basis": "hour",
+          "amount": 80.78,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Controller (Shader)",
+          "basis": "hour",
+          "amount": 64.35,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Utility Person",
+          "basis": "hour",
+          "amount": 61.32,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Utility Person",
+          "basis": "hour",
+          "amount": 42.18,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "- Occupation Code",
+          "basis": "hour",
+          "amount": 1961.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 506.32,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "1st Assistant Photographer",
+          "basis": "hour",
+          "amount": 463.04,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "2nd Assistant Photographer",
+          "basis": "hour",
+          "amount": 419.68,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Still Photographer",
+          "basis": "hour",
+          "amount": 448.24,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Film Loader",
+          "basis": "hour",
+          "amount": 364.08,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Imaging Technician",
+          "basis": "hour",
+          "amount": 80.78,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Controller (Shader)",
+          "basis": "hour",
+          "amount": 64.35,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Utility Person",
+          "basis": "hour",
+          "amount": 61.32,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Utility Person",
+          "basis": "hour",
+          "amount": 42.18,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "- Occupation Code",
+          "basis": "hour",
+          "amount": 1961.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Kodak Panavision Preview",
+          "basis": "hour",
+          "amount": 31.48,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "GUILD IATSE LOCAL",
+          "basis": "hour",
+          "amount": 600.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Directors of Photography",
+          "basis": "hour",
+          "amount": 523.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Camerapersons (Operator)",
+          "basis": "hour",
+          "amount": 465.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Imaging Technician (DIT)",
+          "basis": "hour",
+          "amount": 584.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Controller (Shader)",
+          "basis": "hour",
+          "amount": 465.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Utility Person",
+          "basis": "hour",
+          "amount": 444.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Utility Person",
+          "basis": "hour",
+          "amount": 306.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Other Technical Department Persons",
+          "basis": "hour",
+          "amount": 465.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.8888888888888888,
+      "candidate_lines": 110,
+      "trusted": true
+    },
+    {
+      "source": "2024-IATSE-Basic-Agreement-MOA-FINAL1.pdf",
+      "local": "IATSE Local 52",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "two hundred (",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.9285714285714286,
+      "candidate_lines": 75,
+      "trusted": false
+    },
+    {
+      "source": "2024-IATSE-Basic-Agreement-MOA-FINAL3.pdf",
+      "local": "IATSE Local 700",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "or after [insert date that is August 4,",
+          "basis": "hour",
+          "amount": 29.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "that is August 4,",
+          "basis": "hour",
+          "amount": 29.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "of the Local",
+          "basis": "hour",
+          "amount": 600.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Local",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "with the period January 1,",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "continuing in the period January 1,",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "in the period January 1,",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "and Graphic Artists),",
+          "basis": "hour",
+          "amount": 871.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.4,
+      "candidate_lines": 62,
+      "trusted": false
+    },
+    {
+      "source": "2024-IATSE-Basic-Agreement-MOA-FINAL4.pdf",
+      "local": "IATSE Local 700",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Artists) and Local",
+          "basis": "hour",
+          "amount": 800.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "1 to Paragraph 1 of the Local",
+          "basis": "hour",
+          "amount": 706.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Local",
+          "basis": "hour",
+          "amount": 892.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "changes are required for the Local",
+          "basis": "hour",
+          "amount": 871.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Local",
+          "basis": "hour",
+          "amount": 695.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Local",
+          "basis": "hour",
+          "amount": 729.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Modify Paragraph 43 of the Local",
+          "basis": "hour",
+          "amount": 600.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.36363636363636365,
+      "candidate_lines": 65,
+      "trusted": false
+    },
+    {
+      "source": "2024-IATSE-Basic-Agreement-MOA-FINAL5.pdf",
+      "local": "IATSE Local 871",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "California tax incentive legislation (California SB",
+          "basis": "hour",
+          "amount": 735.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Paragraph 19 of the Local",
+          "basis": "hour",
+          "amount": 871.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Paragraph 30 of the Local",
+          "basis": "hour",
+          "amount": 871.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Local Agreements (and Paragraph 19 of the Local",
+          "basis": "hour",
+          "amount": 871.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "qualifying year if the employee worked",
+          "basis": "hour",
+          "amount": 170.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Local",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.5714285714285714,
+      "candidate_lines": 54,
+      "trusted": false
+    },
+    {
+      "source": "2024-IATSE-Basic-Agreement-MOA-FINAL6.pdf",
+      "local": "IATSE Local 884",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Safe Leave Ordinance (Chapter 6-",
+          "basis": "hour",
+          "amount": 130.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Cook County Earned Paid Sick Leave Ordinance (Chapter",
+          "basis": "hour",
+          "amount": 42.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "COVID-19 (amended June",
+          "basis": "hour",
+          "amount": 24.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "the Santa Monica Paid Sick Leave Ordinance (Chapter",
+          "basis": "hour",
+          "amount": 25.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Chapter",
+          "basis": "hour",
+          "amount": 18.1,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Ordinance (Chapter",
+          "basis": "hour",
+          "amount": 463.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Ordinance (Chapter",
+          "basis": "hour",
+          "amount": 132.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "(Chapter",
+          "basis": "hour",
+          "amount": 128.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Paterson Sick Leave for Private Employees Ordinance (Chapter",
+          "basis": "hour",
+          "amount": 412.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Accrued Safe and Sick Leave Act (Section 32-",
+          "basis": "hour",
+          "amount": 531.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "January 1,",
+          "basis": "hour",
+          "amount": 2025.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "hundredths cents (",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "cents (",
+          "basis": "hour",
+          "amount": 2026.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Local",
+          "basis": "hour",
+          "amount": 871.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "cents (",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "hundredths cents (",
+          "basis": "hour",
+          "amount": 2026.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "International Cinematographers Guild Local",
+          "basis": "hour",
+          "amount": 600.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Picture Editors Guild Local",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Picture Costumers Local",
+          "basis": "hour",
+          "amount": 705.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Make-Up Artists and Hair Stylists Local",
+          "basis": "hour",
+          "amount": 706.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Studio Electrical Lighting Technicians Local",
+          "basis": "hour",
+          "amount": 728.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Picture Set Painters and Sign Writers Local",
+          "basis": "hour",
+          "amount": 729.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Art Directors Guild Local",
+          "basis": "hour",
+          "amount": 800.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "The Animation Guild Local",
+          "basis": "hour",
+          "amount": 839.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Allied Production Specialists Guild Local",
+          "basis": "hour",
+          "amount": 871.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Picture Studio Teachers and Welfare Workers Local",
+          "basis": "hour",
+          "amount": 884.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Costume Designers Guild Local",
+          "basis": "hour",
+          "amount": 892.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.8461538461538461,
+      "candidate_lines": 89,
+      "trusted": true
+    },
+    {
+      "source": "2024-IATSE-Basic-Agreement-MOA-FINAL7.pdf",
+      "local": "IATSE Local 700",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "The Lippin Group Inc (except IATSE Local",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "The Power LLC Local",
+          "basis": "hour",
+          "amount": 683.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Seasons 3+:",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Seasons 3+:",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Seasons 3+:",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Seasons 3+:",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Seasons 3+:",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Seasons 3+:",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "LOCAL",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "\u2022 Local",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "LOCAL",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "LOCAL",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "LOCAL",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "\u25aa Budgeted at \u2265",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "\u25aa Budgeted at \u2265",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "LOCAL",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Local",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.6666666666666666,
+      "candidate_lines": 62,
+      "trusted": true
+    },
+    {
+      "source": "DGA-BasicAgreement2020-2023.pdf",
+      "local": "DGA",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Section 1-",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 1-",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 1-",
+          "basis": "hour",
+          "amount": 300.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 1-",
+          "basis": "hour",
+          "amount": 400.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 1-",
+          "basis": "hour",
+          "amount": 500.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 2-",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 2-",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 2-",
+          "basis": "hour",
+          "amount": 300.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 2-",
+          "basis": "hour",
+          "amount": 400.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 2-",
+          "basis": "hour",
+          "amount": 500.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 2-",
+          "basis": "hour",
+          "amount": 600.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 2-",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 3-",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 4-",
+          "basis": "hour",
+          "amount": 101.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 5-",
+          "basis": "hour",
+          "amount": 101.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 6-",
+          "basis": "hour",
+          "amount": 101.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 300.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 400.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 500.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 600.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 700.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 800.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 900.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 1000.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 1100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 1200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 1300.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 1400.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 7-",
+          "basis": "hour",
+          "amount": 1500.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 8-",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 8-",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 8-",
+          "basis": "hour",
+          "amount": 300.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Director's Screen Credit",
+          "basis": "hour",
+          "amount": 118.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Theatrically",
+          "basis": "hour",
+          "amount": 120.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 9-",
+          "basis": "hour",
+          "amount": 101.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 10-",
+          "basis": "hour",
+          "amount": 101.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Pictures at Employer's Discretion",
+          "basis": "hour",
+          "amount": 139.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 11-",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Provisions Hereof Are Applicable",
+          "basis": "hour",
+          "amount": 161.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 11-",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Compensation Applicable",
+          "basis": "hour",
+          "amount": 168.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Charge",
+          "basis": "hour",
+          "amount": 173.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 11-",
+          "basis": "hour",
+          "amount": 300.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "of Television Motion Pictures",
+          "basis": "hour",
+          "amount": 175.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Minimum Salaries",
+          "basis": "hour",
+          "amount": 178.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 12-",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 12-",
+          "basis": "hour",
+          "amount": 200.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 12-",
+          "basis": "hour",
+          "amount": 300.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Section 13-",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Assistant Directors and Associate Directors",
+          "basis": "hour",
+          "amount": 188.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Assistant Directors and UPMs",
+          "basis": "hour",
+          "amount": 191.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Associate Directors",
+          "basis": "hour",
+          "amount": 192.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Assistant Directors",
+          "basis": "hour",
+          "amount": 194.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Assistant Directors",
+          "basis": "hour",
+          "amount": 199.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Director",
+          "basis": "hour",
+          "amount": 207.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Workweek",
+          "basis": "hour",
+          "amount": 208.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Directors",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Associate Directors",
+          "basis": "hour",
+          "amount": 213.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.37037037037037035,
+      "candidate_lines": 310,
+      "trusted": false
+    },
+    {
+      "source": "DGA240529Rates2024thru2025.pdf",
+      "local": "DGA",
+      "region": null,
+      "panel": null,
+      "effective_from": "July 1, 2024",
+      "effective_to": "June 30, 2025",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Weekly Salary",
+          "basis": "week",
+          "amount": 23767.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Compensation for Days Worked Beyond Guarantee",
+          "basis": "hour",
+          "amount": 4753.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Daily Employment Where Permitted",
+          "basis": "day",
+          "amount": 5942.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 32642.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "COMPENSATION FOR DAYS",
+          "basis": "hour",
+          "amount": 4663.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "DAILY EMPLOYMENT",
+          "basis": "day",
+          "amount": 5829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 14666.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 92393.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "BEYOND",
+          "basis": "hour",
+          "amount": 6599.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "EMPLOYMENT",
+          "basis": "hour",
+          "amount": 8249.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "0-15 Minutes",
+          "basis": "hour",
+          "amount": 34966.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "but in no event less than",
+          "basis": "hour",
+          "amount": 34966.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "to June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 48963.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "COMPENSATION FOR DAYS WORKED",
+          "basis": "hour",
+          "amount": 6995.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 32661.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "DAILY EMPLOYMENT",
+          "basis": "day",
+          "amount": 5832.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "WORKED",
+          "basis": "hour",
+          "amount": 2644.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "EMPLOYMENT",
+          "basis": "hour",
+          "amount": 3305.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 18509.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "EMPLOYMENT",
+          "basis": "hour",
+          "amount": 3305.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 92393.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "EMPLOYMENT",
+          "basis": "hour",
+          "amount": 8249.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "to June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 48992.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "DAILY EMPLOYMENT WHERE",
+          "basis": "day",
+          "amount": 8748.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "0-15 Minutes",
+          "basis": "hour",
+          "amount": 34966.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "less than",
+          "basis": "hour",
+          "amount": 34966.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 18509.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "BEYOND",
+          "basis": "hour",
+          "amount": 2644.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 55436.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "COMPENSATION",
+          "basis": "hour",
+          "amount": 3960.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "DAILY",
+          "basis": "day",
+          "amount": 4950.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Television - Episodic:",
+          "basis": "hour",
+          "amount": 250.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "BUDGET SIDELETTER)",
+          "basis": "hour",
+          "amount": 1381.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "less than",
+          "basis": "hour",
+          "amount": 1000.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.75,
+      "candidate_lines": 124,
+      "trusted": true
+    },
+    {
+      "source": "DGA240626Rates2024thru2025.pdf",
+      "local": "DGA",
+      "region": null,
+      "panel": null,
+      "effective_from": "July 1, 2024",
+      "effective_to": "June 30, 2025",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Weekly Salary",
+          "basis": "week",
+          "amount": 23767.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Compensation for Days Worked Beyond Guarantee",
+          "basis": "hour",
+          "amount": 4753.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Daily Employment Where Permitted",
+          "basis": "day",
+          "amount": 5942.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 32642.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "COMPENSATION FOR DAYS",
+          "basis": "hour",
+          "amount": 4663.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "DAILY EMPLOYMENT",
+          "basis": "day",
+          "amount": 5829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 14666.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 92393.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "BEYOND",
+          "basis": "hour",
+          "amount": 6599.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "EMPLOYMENT",
+          "basis": "hour",
+          "amount": 8249.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "0-15 Minutes",
+          "basis": "hour",
+          "amount": 34966.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "but in no event less than",
+          "basis": "hour",
+          "amount": 34966.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "to June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 48963.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "COMPENSATION FOR DAYS WORKED",
+          "basis": "hour",
+          "amount": 6995.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 32661.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "DAILY EMPLOYMENT",
+          "basis": "day",
+          "amount": 5832.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "WORKED",
+          "basis": "hour",
+          "amount": 2644.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "EMPLOYMENT",
+          "basis": "hour",
+          "amount": 3305.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 18509.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "EMPLOYMENT",
+          "basis": "hour",
+          "amount": 3305.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 92393.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "EMPLOYMENT",
+          "basis": "hour",
+          "amount": 8249.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "to June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 48992.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "DAILY EMPLOYMENT WHERE",
+          "basis": "day",
+          "amount": 8748.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "0-15 Minutes",
+          "basis": "hour",
+          "amount": 34966.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "less than",
+          "basis": "hour",
+          "amount": 34966.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 18509.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "BEYOND",
+          "basis": "hour",
+          "amount": 2644.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "July 1,",
+          "basis": "hour",
+          "amount": 2024.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "PROGRAM RATE",
+          "basis": "hour",
+          "amount": 55436.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "COMPENSATION",
+          "basis": "hour",
+          "amount": 3960.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "DAILY",
+          "basis": "day",
+          "amount": 4950.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Television - Episodic:",
+          "basis": "hour",
+          "amount": 250.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.75,
+      "candidate_lines": 123,
+      "trusted": true
+    },
+    {
+      "source": "DGARates2023thru2024pg11ADUPMGeneralRates240213.pdf",
+      "local": "DGA",
+      "region": null,
+      "panel": null,
+      "effective_from": "7/1/23",
+      "effective_to": "6/30/24",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "June",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Weekly Studio Salary",
+          "basis": "week",
+          "amount": 6523.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Weekly Location Salary",
+          "basis": "week",
+          "amount": 9133.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Daily Employment Salary,",
+          "basis": "day",
+          "amount": 2283.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "& UPMS SHALL BE COMPENSATED AT",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.5294117647058824,
+      "candidate_lines": 17,
+      "trusted": false
+    },
+    {
+      "source": "DGC-Core-Standard-Agreement-2023-2025-Apr.122023.pdf",
+      "local": "DGA",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "SOUND EDITING DEPARTMENT",
+          "basis": "hour",
+          "amount": 14.13,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.00847457627118644,
+      "candidate_lines": 367,
+      "trusted": false
+    },
+    {
+      "source": "DGC-Directors-2023-2025-FINAL-DGC-FINAL-approved-Mar.24.2023.pdf",
+      "local": null,
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "The provisions of Articles DR",
+          "basis": "hour",
+          "amount": 5.02,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "and DR",
+          "basis": "hour",
+          "amount": 5.02,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Article DR",
+          "basis": "hour",
+          "amount": 9.08,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "for in Article DR",
+          "basis": "hour",
+          "amount": 9.08,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "assemblage of sequences provided for in Article DR",
+          "basis": "hour",
+          "amount": 9.08,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "assemblage of sequences provided for in Article DR",
+          "basis": "hour",
+          "amount": 9.08,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "assemblage of sequences provided for in Article DR",
+          "basis": "hour",
+          "amount": 9.08,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "assemblage of sequences provided for in Article DR",
+          "basis": "hour",
+          "amount": 9.08,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "which includes one hundred percent (",
+          "basis": "hour",
+          "amount": 100.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.3,
+      "candidate_lines": 241,
+      "trusted": false
+    },
+    {
+      "source": "DGC-Ontario-Standard-Agreement-2023-2025-June-5.pdf",
+      "local": null,
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "dollars (",
+          "basis": "day",
+          "amount": 40.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Seven Hundred and Fifty Dollars (",
+          "basis": "hour",
+          "amount": 4750.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Five Dollars (",
+          "basis": "hour",
+          "amount": 2375.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "dollars (",
+          "basis": "hour",
+          "amount": 50000.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.16666666666666666,
+      "candidate_lines": 237,
+      "trusted": false
+    },
+    {
+      "source": "IA 667 Rate & Fringe Summary 2024 2.pdf",
+      "local": "IATSE Local 667",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "IATSE LOCAL",
+          "basis": "hour",
+          "amount": 667.0,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Director of Photography",
+          "basis": "hour",
+          "amount": 118.75,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Director of Photography",
+          "basis": "hour",
+          "amount": 114.25,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Director of Photography (weekly)",
+          "basis": "week",
+          "amount": 8311.9,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Director of Photography (weekly)",
+          "basis": "week",
+          "amount": 7994.6,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 81.3,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 77.4,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "1st Assistant",
+          "basis": "hour",
+          "amount": 63.1,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "1st Assistant",
+          "basis": "hour",
+          "amount": 59.15,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "2nd Assistant",
+          "basis": "hour",
+          "amount": 46.1,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "2nd Assistant",
+          "basis": "hour",
+          "amount": 41.95,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Utility",
+          "basis": "hour",
+          "amount": 42.9,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Utility",
+          "basis": "hour",
+          "amount": 38.8,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Publicist (weekly)",
+          "basis": "week",
+          "amount": 4605.5,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Publicist (weekly)",
+          "basis": "week",
+          "amount": 3498.45,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Publicist (daily on TV only) $ -",
+          "basis": "day",
+          "amount": 810.95,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Still Photographers*",
+          "basis": "hour",
+          "amount": 68.65,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Still Photographers*",
+          "basis": "hour",
+          "amount": 75.35,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Engineer",
+          "basis": "hour",
+          "amount": 99.5,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Engineer",
+          "basis": "hour",
+          "amount": 95.5,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Technician / Data Management Technician",
+          "basis": "hour",
+          "amount": 58.15,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Digital Technician / Data Management Technician",
+          "basis": "hour",
+          "amount": 56.6,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Picture Video Coordinator",
+          "basis": "hour",
+          "amount": 54.15,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Picture Video Coordinator",
+          "basis": "hour",
+          "amount": 54.15,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Assist 1",
+          "basis": "hour",
+          "amount": 37.55,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Assist 1",
+          "basis": "hour",
+          "amount": 34.15,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Assist 2",
+          "basis": "hour",
+          "amount": 22.35,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Video Assist 2",
+          "basis": "hour",
+          "amount": 22.35,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "EPK/BTS Camera (daily)**",
+          "basis": "day",
+          "amount": 81.3,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "EPK/BTS Camera (daily)**",
+          "basis": "day",
+          "amount": 77.4,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "EPK/BTS Camera (full time)***",
+          "basis": "hour",
+          "amount": 489.1,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "EPK/BTS Camera (full time)***",
+          "basis": "hour",
+          "amount": 489.1,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "EPK/BTS Sound (daily)**",
+          "basis": "day",
+          "amount": 81.3,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "EPK/BTS Sound (daily)**",
+          "basis": "day",
+          "amount": 77.4,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "VFX Lead Data Wrangler",
+          "basis": "hour",
+          "amount": 36.35,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "VFX Assistant Data Wrangler",
+          "basis": "hour",
+          "amount": 33.45,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Camera Trainee Ontario",
+          "basis": "hour",
+          "amount": 18.45,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "HEADS & Stabilized Remote Head Technician",
+          "basis": "hour",
+          "amount": 82.15,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "CRANES Non-stabilized Remote Head Technician",
+          "basis": "hour",
+          "amount": 60.25,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Aerial Remote Head Operator",
+          "basis": "hour",
+          "amount": 102.75,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Control Operator / Techno Dolly",
+          "basis": "hour",
+          "amount": 102.75,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Control Technician",
+          "basis": "hour",
+          "amount": 68.55,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Telescopic Crane Operator",
+          "basis": "hour",
+          "amount": 82.15,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Crane Technician",
+          "basis": "hour",
+          "amount": 54.85,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "CAMERA Camera Car Operator",
+          "basis": "hour",
+          "amount": 116.3,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "CAR Camera Car Technician",
+          "basis": "hour",
+          "amount": 64.65,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "UAV Pilot",
+          "basis": "hour",
+          "amount": 118.75,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "UAV UAV Operator",
+          "basis": "hour",
+          "amount": 81.4,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "UAV Safety Supervisor",
+          "basis": "hour",
+          "amount": 63.1,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "3D 3D Stereography categories Contact the Local",
+          "basis": "hour",
+          "amount": 667.0,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "* Still Photographers will receive an additional",
+          "basis": "day",
+          "amount": 205.45,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "IATSE",
+          "basis": "hour",
+          "amount": 667.0,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "IATSE",
+          "basis": "hour",
+          "amount": 229.0,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "NTERNATIONAL INEMATOGRAPHERS UILD \u2013 I.A.T.S.E",
+          "basis": "hour",
+          "amount": 667.0,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "IATSE",
+          "basis": "hour",
+          "amount": 667.0,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Health & ALL Camera",
+          "basis": "hour",
+          "amount": 12.0,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Welfare $ Personnel* plus PST per Person I.A.T.S.E",
+          "basis": "hour",
+          "amount": 667.0,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Welfare $ Personnel* plus PST per Person I.A.T.S.E",
+          "basis": "hour",
+          "amount": 669.0,
+          "production_type": "television"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Personnel* per Person Tax & I.A.T.S.E",
+          "basis": "hour",
+          "amount": 667.0,
+          "production_type": "feature"
+        },
+        {
+          "occupation_code": null,
+          "classification": "Personnel* per Person Tax & I.A.T.S.E",
+          "basis": "hour",
+          "amount": 669.0,
+          "production_type": "television"
+        }
+      ],
+      "notes": [],
+      "confidence": 0.9487179487179487,
+      "candidate_lines": 51,
+      "trusted": true
+    },
+    {
+      "source": "IATSE 411 2024 PC Agreement - MASTER FILLABLE.pdf",
+      "local": "IATSE Local 411",
+      "region": "Brampton Region",
+      "panel": null,
+      "effective_from": "January 1, 2024",
+      "effective_to": "December 31, 2024",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "January 1,",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "dollars (",
+          "basis": "hour",
+          "amount": 20.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "paying the twenty dollars (",
+          "basis": "hour",
+          "amount": 20.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.3333333333333333,
+      "candidate_lines": 16,
+      "trusted": false
+    },
+    {
+      "source": "IATSE 411 2024 PC Rate Sheet.pdf",
+      "local": "IATSE Local 411",
+      "region": "Brampton Region",
+      "panel": null,
+      "effective_from": "January 1, 2024",
+      "effective_to": "December 31, 2024",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "1st Assistant Production Coordinator",
+          "basis": "hour",
+          "amount": 2515.27,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "2nd Assistant Production Coordinator",
+          "basis": "hour",
+          "amount": 1779.12,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Travel Coordinator",
+          "basis": "hour",
+          "amount": 2515.27,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Production Assistant",
+          "basis": "hour",
+          "amount": 1350.6,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "1st Assistant Production Coordinator",
+          "basis": "hour",
+          "amount": 503.05,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Travel Coordinator",
+          "basis": "hour",
+          "amount": 503.05,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Script/Story Coordinator",
+          "basis": "hour",
+          "amount": 435.28,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Other Coordinator Positions include a Local",
+          "basis": "hour",
+          "amount": 411.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "meal period and thirty-five dollars (",
+          "basis": "hour",
+          "amount": 35.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Seventy (",
+          "basis": "day",
+          "amount": 70.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Breakfast -",
+          "basis": "hour",
+          "amount": 15.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "(Article 10) (Brampton Regional Road",
+          "basis": "hour",
+          "amount": 107.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.5,
+      "candidate_lines": 41,
+      "trusted": false
+    },
+    {
+      "source": "IATSE-2024-Basic-Trust-Skydance-Pictures-LLC.pdf",
+      "local": null,
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Industry Pension Plan dated October",
+          "basis": "hour",
+          "amount": 26.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Plan dated August 1,",
+          "basis": "hour",
+          "amount": 1979.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.2222222222222222,
+      "candidate_lines": 9,
+      "trusted": false
+    },
+    {
+      "source": "IATSE-2024-MPI-Skydance-Pictures-LLC.pdf",
+      "local": null,
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Address",
+          "basis": "hour",
+          "amount": 2900.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Name:KevinBennett Title:SVP,TVProductionFinance Phone:",
+          "basis": "hour",
+          "amount": 424.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Name:HildaValenzuela Title:VP,TVProductionFinance Phone:",
+          "basis": "hour",
+          "amount": 424.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.8,
+      "candidate_lines": 6,
+      "trusted": false
+    },
+    {
+      "source": "IATSE-2024-Term-Letter-Agreement-Skydance-Pictures-LLC.pdf",
+      "local": "IATSE Local 52",
+      "region": null,
+      "panel": null,
+      "effective_from": "May 16, 2021",
+      "effective_to": "September 30, 2024",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "Producers / May",
+          "basis": "hour",
+          "amount": 16.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "September",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Attachment to the March 3,",
+          "basis": "hour",
+          "amount": 161.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Motion Picture Producers / March 1,",
+          "basis": "hour",
+          "amount": 28.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "February",
+          "basis": "hour",
+          "amount": 28.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "United Scenic Artists - Local USA",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "October 1,",
+          "basis": "hour",
+          "amount": 30.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "United Scenic Artists Local USA-",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "United Scenic Artists Local USA-",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "United Scenic Artists Local USA-",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "United Scenic Artists Local USA-",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "IATSE-CMPA Local",
+          "basis": "hour",
+          "amount": 411.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "IATSE Local",
+          "basis": "hour",
+          "amount": 873.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Pension Plans of IATSE Locals USA",
+          "basis": "hour",
+          "amount": 829.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "IATSE Local",
+          "basis": "hour",
+          "amount": 665.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.4838709677419355,
+      "candidate_lines": 38,
+      "trusted": false
+    },
+    {
+      "source": "IATSE-Local-411-2022-2024-CSP-HWO-Agreement-w-LOU-MASTER-FILLABLE-17-7-1 (1).pdf",
+      "local": "IATSE Local 411",
+      "region": null,
+      "panel": null,
+      "effective_from": "February 2, 2022",
+      "effective_to": "December 31, 2024",
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "February 2,",
+          "basis": "hour",
+          "amount": 31.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "LOCAL",
+          "basis": "hour",
+          "amount": 411.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.0,
+      "candidate_lines": 5,
+      "trusted": false
+    },
+    {
+      "source": "Local 600 Rate Sheet.xlsx",
+      "local": "IATSE Local 600",
+      "region": "Eastern Region",
+      "panel": "PANEL 2",
+      "effective_from": "July 31, 2023",
+      "effective_to": "July 29, 2024",
+      "minimum_call_hours": 8.0,
+      "overtime_after_hours": 8.0,
+      "weekly_guarantee_hours": 43.2,
+      "rates": [
+        {
+          "occupation_code": "1901",
+          "classification": "Director of Photography",
+          "basis": "hour",
+          "amount": 130.71,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1901",
+          "classification": "Director of Photography",
+          "basis": "day",
+          "amount": 1045.68,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1901",
+          "classification": "Director of Photography",
+          "basis": "hour",
+          "amount": 116.42,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1901",
+          "classification": "Director of Photography",
+          "basis": "week",
+          "amount": 5029.34,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1901",
+          "classification": "Director of Photography",
+          "basis": "hour",
+          "amount": 135.9384,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1901",
+          "classification": "Director of Photography",
+          "basis": "day",
+          "amount": 1087.5072,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1901",
+          "classification": "Director of Photography",
+          "basis": "hour",
+          "amount": 121.0768,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1901",
+          "classification": "Director of Photography",
+          "basis": "week",
+          "amount": 5230.5136,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1911",
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 80.79,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1911",
+          "classification": "Camera Operator",
+          "basis": "day",
+          "amount": 646.32,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1911",
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 74.04,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1911",
+          "classification": "Camera Operator",
+          "basis": "week",
+          "amount": 3198.53,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1911",
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 84.0216,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1911",
+          "classification": "Camera Operator",
+          "basis": "day",
+          "amount": 672.1728,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1911",
+          "classification": "Camera Operator",
+          "basis": "hour",
+          "amount": 77.00160000000001,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1911",
+          "classification": "Camera Operator",
+          "basis": "week",
+          "amount": 3326.4712000000004,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1921",
+          "classification": "Portrait Photographer",
+          "basis": "hour",
+          "amount": 80.79,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1921",
+          "classification": "Portrait Photographer",
+          "basis": "day",
+          "amount": 646.32,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1921",
+          "classification": "Portrait Photographer",
+          "basis": "hour",
+          "amount": 74.04,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1921",
+          "classification": "Portrait Photographer",
+          "basis": "week",
+          "amount": 3198.53,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1921",
+          "classification": "Portrait Photographer",
+          "basis": "hour",
+          "amount": 84.0216,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1921",
+          "classification": "Portrait Photographer",
+          "basis": "day",
+          "amount": 672.1728,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1921",
+          "classification": "Portrait Photographer",
+          "basis": "hour",
+          "amount": 77.00160000000001,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1921",
+          "classification": "Portrait Photographer",
+          "basis": "week",
+          "amount": 3326.4712000000004,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1931",
+          "classification": "Still Photographer *",
+          "basis": "hour",
+          "amount": 70.42,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1931",
+          "classification": "Still Photographer *",
+          "basis": "day",
+          "amount": 563.36,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1931",
+          "classification": "Still Photographer *",
+          "basis": "hour",
+          "amount": 65.32,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1931",
+          "classification": "Still Photographer *",
+          "basis": "week",
+          "amount": 2612.8,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1931",
+          "classification": "Still Photographer *",
+          "basis": "hour",
+          "amount": 73.2368,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1931",
+          "classification": "Still Photographer *",
+          "basis": "day",
+          "amount": 585.8944,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1931",
+          "classification": "Still Photographer *",
+          "basis": "hour",
+          "amount": 67.9328,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1931",
+          "classification": "Still Photographer *",
+          "basis": "week",
+          "amount": 2717.3120000000004,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1961",
+          "classification": "Technician",
+          "basis": "hour",
+          "amount": 70.42,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1961",
+          "classification": "Technician",
+          "basis": "hour",
+          "amount": 66.77,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1961",
+          "classification": "Technician",
+          "basis": "week",
+          "amount": 2991.3,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1961",
+          "classification": "Technician",
+          "basis": "hour",
+          "amount": 73.2368,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1961",
+          "classification": "Technician",
+          "basis": "hour",
+          "amount": 69.4408,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1961",
+          "classification": "Technician",
+          "basis": "week",
+          "amount": 3110.952,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1971",
+          "classification": "Film Loader",
+          "basis": "hour",
+          "amount": 46.78,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1971",
+          "classification": "Film Loader",
+          "basis": "hour",
+          "amount": 48.6512,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1981",
+          "classification": "Digital Imaging Technician",
+          "basis": "hour",
+          "amount": 80.78,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1981",
+          "classification": "Digital Imaging Technician",
+          "basis": "day",
+          "amount": 646.24,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1981",
+          "classification": "Digital Imaging Technician",
+          "basis": "hour",
+          "amount": 74.04,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1981",
+          "classification": "Digital Imaging Technician",
+          "basis": "week",
+          "amount": 2961.6,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1981",
+          "classification": "Digital Imaging Technician",
+          "basis": "hour",
+          "amount": 84.0112,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1981",
+          "classification": "Digital Imaging Technician",
+          "basis": "day",
+          "amount": 672.0896,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1981",
+          "classification": "Digital Imaging Technician",
+          "basis": "hour",
+          "amount": 77.00160000000001,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1981",
+          "classification": "Digital Imaging Technician",
+          "basis": "week",
+          "amount": 3080.0640000000003,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1982",
+          "classification": "Video Controller (Shader)",
+          "basis": "hour",
+          "amount": 64.35,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1982",
+          "classification": "Video Controller (Shader)",
+          "basis": "day",
+          "amount": 514.8,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1982",
+          "classification": "Video Controller (Shader)",
+          "basis": "hour",
+          "amount": 59.73,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1982",
+          "classification": "Video Controller (Shader)",
+          "basis": "week",
+          "amount": 2389.2,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1982",
+          "classification": "Video Controller (Shader)",
+          "basis": "hour",
+          "amount": 66.92399999999999,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1982",
+          "classification": "Video Controller (Shader)",
+          "basis": "day",
+          "amount": 535.3919999999999,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1982",
+          "classification": "Video Controller (Shader)",
+          "basis": "hour",
+          "amount": 62.1192,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1982",
+          "classification": "Video Controller (Shader)",
+          "basis": "week",
+          "amount": 2484.768,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1983",
+          "classification": "Camera Utility Person",
+          "basis": "hour",
+          "amount": 61.32,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1983",
+          "classification": "Camera Utility Person",
+          "basis": "day",
+          "amount": 490.56,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1983",
+          "classification": "Camera Utility Person",
+          "basis": "hour",
+          "amount": 54.95,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1983",
+          "classification": "Camera Utility Person",
+          "basis": "week",
+          "amount": 2198.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1983",
+          "classification": "Camera Utility Person",
+          "basis": "hour",
+          "amount": 63.772800000000004,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1983",
+          "classification": "Camera Utility Person",
+          "basis": "day",
+          "amount": 510.18240000000003,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1983",
+          "classification": "Camera Utility Person",
+          "basis": "hour",
+          "amount": 57.148,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1983",
+          "classification": "Camera Utility Person",
+          "basis": "week",
+          "amount": 2285.92,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1984",
+          "classification": "Digital Utility Person",
+          "basis": "hour",
+          "amount": 42.18,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1984",
+          "classification": "Digital Utility Person",
+          "basis": "day",
+          "amount": 337.44,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1984",
+          "classification": "Digital Utility Person",
+          "basis": "hour",
+          "amount": 43.867200000000004,
+          "production_type": null
+        },
+        {
+          "occupation_code": "1984",
+          "classification": "Digital Utility Person",
+          "basis": "day",
+          "amount": 350.93760000000003,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 1.0,
+      "candidate_lines": 0,
+      "trusted": true
+    },
+    {
+      "source": "PRIVILEGED - MSK 2023 WGA MOA Summary(15888461.3).pdf",
+      "local": "WGA",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "entered into as of 10/15/",
+          "basis": "hour",
+          "amount": 2023.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "programs,",
+          "basis": "hour",
+          "amount": 250.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.5,
+      "candidate_lines": 41,
+      "trusted": false
+    },
+    {
+      "source": "WGA 2023_Schedule_of_Minimums_Year_3NEW.pdf",
+      "local": "WGA",
+      "region": null,
+      "panel": null,
+      "effective_from": null,
+      "effective_to": null,
+      "minimum_call_hours": null,
+      "overtime_after_hours": null,
+      "weekly_guarantee_hours": null,
+      "rates": [
+        {
+          "occupation_code": null,
+          "classification": "MAIN SWITCHBOARD (",
+          "basis": "hour",
+          "amount": 323.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "MAIN SWITCHBOARD (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "AGENCY (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "CLAIMS (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "CONTRACTS (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "CREDITS (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "LEGAL SERVICES (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "MEMBERSHIP (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "ORGANIZING (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "REGISTRATION (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "RESIDUALS (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "SIGNATORIES (",
+          "basis": "hour",
+          "amount": 212.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Original Treatment",
+          "basis": "hour",
+          "amount": 63979.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of First Draft Screenplay",
+          "basis": "hour",
+          "amount": 63979.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 32126.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Treatment",
+          "basis": "hour",
+          "amount": 42653.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of First Draft Screenplay",
+          "basis": "hour",
+          "amount": 63979.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 32124.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of First Draft Screenplay",
+          "basis": "hour",
+          "amount": 85307.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 31972.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Sale/Purchase of Non-Original Screenplay",
+          "basis": "hour",
+          "amount": 95951.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of First Draft Screenplay",
+          "basis": "hour",
+          "amount": 63979.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 31972.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Story included in Screenplay",
+          "basis": "hour",
+          "amount": 21328.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "First Draft Screenplay",
+          "basis": "hour",
+          "amount": 63979.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 42653.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Original Treatment",
+          "basis": "hour",
+          "amount": 38636.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of First Draft Screenplay",
+          "basis": "hour",
+          "amount": 33578.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 13067.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Treatment",
+          "basis": "hour",
+          "amount": 27978.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of First Draft Screenplay",
+          "basis": "hour",
+          "amount": 33578.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 13058.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Sale/Purchase of Original Screenplay",
+          "basis": "hour",
+          "amount": 57289.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of First Draft Screenplay",
+          "basis": "hour",
+          "amount": 44245.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 13044.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Sale/Purchase of Non-Original Screenplay",
+          "basis": "hour",
+          "amount": 46622.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of First Draft Screenplay",
+          "basis": "hour",
+          "amount": 33578.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Delivery of Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 13044.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Story included in Screenplay",
+          "basis": "hour",
+          "amount": 10667.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "First Draft Screenplay",
+          "basis": "hour",
+          "amount": 33578.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Second Draft Screenplay",
+          "basis": "hour",
+          "amount": 22380.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Week-to-week",
+          "basis": "hour",
+          "amount": 6941.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "14 out of 14 weeks",
+          "basis": "hour",
+          "amount": 6442.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "20 out of 26 weeks",
+          "basis": "hour",
+          "amount": 5948.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "40 out of 52 weeks",
+          "basis": "hour",
+          "amount": 5475.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Credited writers must receive",
+          "basis": "hour",
+          "amount": 12500.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "Two minutes or less",
+          "basis": "hour",
+          "amount": 1302.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "STORY+",
+          "basis": "hour",
+          "amount": 5424.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "TELEPLAY",
+          "basis": "hour",
+          "amount": 13173.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "STORY & TELEPLAY",
+          "basis": "hour",
+          "amount": 16294.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "STORY+",
+          "basis": "hour",
+          "amount": 9944.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "TELEPLAY",
+          "basis": "hour",
+          "amount": 21389.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "STORY & TELEPLAY",
+          "basis": "hour",
+          "amount": 29823.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "STORY+",
+          "basis": "hour",
+          "amount": 17502.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "TELEPLAY",
+          "basis": "hour",
+          "amount": 28858.0,
+          "production_type": null
+        },
+        {
+          "occupation_code": null,
+          "classification": "STORY & TELEPLAY",
+          "basis": "hour",
+          "amount": 43862.0,
+          "production_type": null
+        }
+      ],
+      "notes": [],
+      "confidence": 0.75,
+      "candidate_lines": 123,
+      "trusted": true
+    }
+  ],
+  "skipped": [
+    "2024-IATSE-Basic-Agreement-MOA-FINAL2.pdf: no rate table found",
+    "DGA2023_BAFLTTA_MemorandumOfAgreement.pdf: no rate table found",
+    "IATSE-2024-Basic-Consent-Skydance-Pictures-LLC.pdf: no rate table found",
+    "Local 600 Rate Sheet.pdf: no rate table found"
+  ],
+  "_note": "Derived scale tables. Source agreements are licensed and are deliberately not reproduced here."
+}
