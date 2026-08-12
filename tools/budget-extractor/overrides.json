@@ -1,0 +1,48 @@
+{
+  "overrides": [
+    {
+      "field": "prep_lead_weeks",
+      "value": 2,
+      "scope": "department",
+      "key": "3300",
+      "kind": "redistribute",
+      "origin": "judgement",
+      "reason": "Camera preps two weeks ahead on this show",
+      "author": "line producer",
+      "created": "2017-09-05"
+    },
+    {
+      "field": "phase_window",
+      "value": "prep",
+      "scope": "account",
+      "key": "2519",
+      "kind": "redistribute",
+      "origin": "judgement",
+      "reason": "crane wanted a week early for rigging",
+      "author": "key grip",
+      "created": "2017-09-12"
+    },
+    {
+      "field": "rate_basis",
+      "value": "hour",
+      "scope": "line",
+      "key": "3302|*002/\"B\"CAMERAOP|CRAIG BAUER",
+      "kind": "redistribute",
+      "origin": "correction",
+      "reason": "parser read the loaded weekly figure as the rate",
+      "author": "accountant",
+      "created": "2017-09-18"
+    },
+    {
+      "field": "amount",
+      "value": 42000,
+      "scope": "account",
+      "key": "2400",
+      "kind": "amend",
+      "origin": "judgement",
+      "reason": "set strike re-quoted after the location change",
+      "author": "UPM",
+      "created": "2017-10-02"
+    }
+  ]
+}

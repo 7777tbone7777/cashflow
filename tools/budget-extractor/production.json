@@ -1,0 +1,71 @@
+{
+  "_comment": "The human input. Six answers, most of them confirmable from the budget header rather than typed cold.",
+  "title": "The Children",
+  "shoot_start": "2017-10-16",
+  "shoot_weeks": 5,
+  "prep_weeks": 7,
+  "wrap_weeks": 0,
+  "post_weeks": 16,
+  "hiatus_after_post_week": [
+    5
+  ],
+  "hiatus_weeks": 2,
+  "payment_timing": {
+    "labour": {
+      "lag_days": 7,
+      "note": "payroll funded the week after work"
+    },
+    "fringe": {
+      "lag_days": 21,
+      "note": "statutory and union remittance"
+    },
+    "vendor": {
+      "lag_days": 14,
+      "note": "mixed terms, most spend settles inside two weeks"
+    },
+    "prepaid": {
+      "lag_days": -14,
+      "note": "premiums and deposits paid ahead"
+    }
+  },
+  "funding_sources": [
+    {
+      "name": "Equity",
+      "amount": null,
+      "draws": []
+    },
+    {
+      "name": "Senior debt",
+      "amount": null,
+      "draws": []
+    },
+    {
+      "name": "CA Film & TV Tax Credit (Tier 1)",
+      "amount": null,
+      "note": "receivable \u2014 lands after delivery, must be bridged"
+    }
+  ],
+  "financing_lines_not_in_budget": {
+    "contingency": null,
+    "completion_bond_fee": null,
+    "financing_interest": null
+  },
+  "rental_deposit_share": 0.35,
+  "_rental_deposit_note": "share of equipment/stage rentals paid as a deposit the week before the hire starts",
+  "prefer_learned_profiles": true,
+  "_prefer_note": "use observed account spreads from past productions in place of duration inference where available",
+  "shoot_days": 25,
+  "shoot_days_per_week": 5,
+  "preshoot_day_offsets": [
+    -3
+  ],
+  "hot_cost_conventions": {
+    "flat_rate_bills_shoot_day": true,
+    "minimum_prep_units": 11.0,
+    "preshoot_at_shoot_hours": [
+      "2500",
+      "2700",
+      "2800"
+    ]
+  }
+}

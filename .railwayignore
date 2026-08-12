@@ -1,0 +1,4 @@
+# Railway builds this repo as a Node app. The Python tooling under tools/ is
+# run locally, never on the server, and its requirements.txt would otherwise
+# risk the builder detecting a second language provider and changing the build.
+tools/
