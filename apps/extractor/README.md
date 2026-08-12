@@ -47,3 +47,31 @@ authoritative.
 in the budget itself, so it is never a question the user has to answer. TV is
 episodic with pattern and amortised costs and no single shoot block — a
 feature-shaped schedule built from one would reconcile and still be meaningless.
+
+## Deployment
+
+Runs as its own Railway service in the `awake-imagination` project, alongside
+the Node app and Postgres, on the same private network.
+
+    https://extractor-production-aadb.up.railway.app
+
+Verified in production against the reference documents: `/extract` returns exact
+reconciliation at 100% coverage in ~10s for a 72-page budget; `/generate/hotcost`
+returns 122 crew across 26 day sheets in ~1.6s, matching the accountant's own
+budgeted day costs 52 times out of 55; `/generate/cashflow` reconciles exactly.
+
+### One setting still to make by hand
+
+The service was first deployed by direct upload, which proved it builds and runs
+but leaves it disconnected from GitHub. To restore auto-deploy:
+
+> Railway → project → **extractor** → Settings → Source → **Root Directory** →
+> `apps/extractor`
+
+Railway builds a monorepo service from its root directory, and the repo root is
+a Node app — without this the builder detects Node, looks for a start script and
+fails. The setting cannot be made from the CLI, and the GraphQL mutation is
+blocked to CLI tokens.
+
+Once set, pushes to `main` redeploy this service the same way they redeploy the
+Node app, and `apps/extractor/railway.json` supplies the start command.
