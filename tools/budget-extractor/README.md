@@ -531,3 +531,70 @@ Pass --force to override this check if the detection is mistaken.
 
 Detection exists precisely so this can fail loudly. A schedule that reconciles
 and is meaningless is worse than an error, because it still looks authoritative.
+
+---
+
+# Preferred input: ask for the JSON export, not the PDF
+
+Movie Magic Budgeting **10.25.20** (November 2023) added a JSON export,
+described in EP's own release notes as being "for easier parsing". Alongside
+XML (Advanced), it carries **all detail-level information plus Fringes, Groups,
+Globals, Sets and Locations for each detail line**.
+
+That is a materially better input than a print-out, and it changes what this
+tool should ask for.
+
+| | PDF (what we parse today) | JSON export |
+|---|---|---|
+| Detail lines | reconstructed from x-positions | native |
+| Intra-word spaces | lost — `PRODUCTIONSTAFF` | intact |
+| Page-break damage | repaired arithmetically (31 multipliers) | none |
+| Fringes | scraped from a printed table | structured, per line |
+| **Globals** | **absent** | **per detail line** |
+| Sets / Locations | absent | per detail line |
+
+## Why Globals are the prize
+
+A Movie Magic budget is *parameterised*. Globals are named values — prep days,
+shoot days, wrap days, crew rates — defined once and referenced throughout, and
+the export records which globals each detail line uses.
+
+Two consequences:
+
+**The calendar stops being a question.** Prep, shoot and wrap durations are
+named variables in the budget rather than something inferred from phase
+quantities. That is most of intake Class 1 and Class 2 answered outright.
+
+**Reforecasting becomes native.** MMB's own value proposition for globals is
+that changing an assumption ripples through every dependent line. Knowing the
+dependency graph means a schedule change — 25 shoot days becomes 27 — can
+re-drive the budget the way MMB itself would, instead of being approximated.
+That is exactly what the weekly reforecast loop needs.
+
+## The ask
+
+One JSON export from a budget already in MMB 10.25.20 or later. The `.mbd`
+files to hand are MMB7-era and encrypted (magic bytes `EP_fG`, entropy 8.00),
+but MMB 10 imports `.mbd` and can re-export as JSON — so an old budget can still
+be converted.
+
+**Not yet implemented, deliberately.** EP publishes no schema for the JSON
+export, and writing an importer against a guessed structure would be exactly the
+kind of speculation this codebase has avoided. One sample file is enough to
+build it properly; without one it would be fiction.
+
+The PDF parser stays regardless — plenty of budgets arrive as print-outs, and it
+reconciles exactly. It just should not be the preferred path when a better one
+exists.
+
+## On finding a second production
+
+Searched for publicly available budget and cash flow pairs and came up empty.
+Blank templates are widely published; **real paired documents from the same
+production are not**, and templates teach nothing about spread shapes because
+they carry no allocations. Film commissions require budgets and cash flows for
+incentive applications but do not publish them.
+
+The realistic sources are therefore private: past shows from the same production
+company, or productions reachable through existing relationships. That remains
+the highest-value thing to acquire, and it is an ask rather than a search.
