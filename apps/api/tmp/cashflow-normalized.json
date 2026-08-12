@@ -1,186 +1,305 @@
 {
-  "sourceFile": "/home/cpetrula/projects/cashflow-app/Cash Flow The Children California Full 083117.xlsx",
+  "sourceFile": "Cash Flow The Children California Full 083117.xlsx",
   "detailSheetName": "The Nun Cash Flow - USD",
+  "reconciliation": {
+    "ctd": 137692,
+    "commitments": 16290,
+    "weeklySum": 5908017,
+    "computedTotal": 6061999,
+    "statedTotal": 6062000,
+    "periodCount": 36,
+    "unlabelledPeriods": 6,
+    "difference": -1,
+    "reconciles": true
+  },
   "periods": [
     {
       "sequence": 1,
       "label": "Pre-Prep (-7)",
+      "labelled": true,
+      "weekEndingDate": "2017-09-02",
       "periodType": "preprep",
       "columnIndexZeroBased": 6
     },
     {
       "sequence": 2,
       "label": "Pre-Prep (-6)",
+      "labelled": true,
+      "weekEndingDate": "2017-09-09",
       "periodType": "preprep",
       "columnIndexZeroBased": 7
     },
     {
       "sequence": 3,
       "label": "Pre-Prep (-5)",
+      "labelled": true,
+      "weekEndingDate": "2017-09-16",
       "periodType": "preprep",
       "columnIndexZeroBased": 8
     },
     {
       "sequence": 4,
       "label": "Pre-Prep (-4)",
+      "labelled": true,
+      "weekEndingDate": "2017-09-23",
       "periodType": "preprep",
       "columnIndexZeroBased": 9
     },
     {
       "sequence": 5,
       "label": "Pre-Prep (-3)",
+      "labelled": true,
+      "weekEndingDate": "2017-09-30",
       "periodType": "preprep",
       "columnIndexZeroBased": 10
     },
     {
       "sequence": 6,
       "label": "Prep Wk (-2)",
+      "labelled": true,
+      "weekEndingDate": "2017-10-07",
       "periodType": "prep",
       "columnIndexZeroBased": 11
     },
     {
       "sequence": 7,
       "label": "Prep Wk (-1)",
+      "labelled": true,
+      "weekEndingDate": "2017-10-14",
       "periodType": "prep",
       "columnIndexZeroBased": 12
     },
     {
       "sequence": 8,
       "label": "Shoot Wk 1",
+      "labelled": true,
+      "weekEndingDate": "2017-10-21",
       "periodType": "shoot",
       "columnIndexZeroBased": 13
     },
     {
       "sequence": 9,
       "label": "Shoot Wk 2",
+      "labelled": true,
+      "weekEndingDate": "2017-10-28",
       "periodType": "shoot",
       "columnIndexZeroBased": 14
     },
     {
       "sequence": 10,
       "label": "Shoot Wk 3",
+      "labelled": true,
+      "weekEndingDate": "2017-11-04",
       "periodType": "shoot",
       "columnIndexZeroBased": 15
     },
     {
       "sequence": 11,
       "label": "Shoot Wk 4",
+      "labelled": true,
+      "weekEndingDate": "2017-11-11",
       "periodType": "shoot",
       "columnIndexZeroBased": 16
     },
     {
       "sequence": 12,
       "label": "Shoot Wk 5",
+      "labelled": true,
+      "weekEndingDate": "2017-11-18",
       "periodType": "shoot",
       "columnIndexZeroBased": 17
     },
     {
       "sequence": 13,
       "label": "Post Wk 1",
+      "labelled": true,
+      "weekEndingDate": "2017-11-25",
       "periodType": "post",
       "columnIndexZeroBased": 18
     },
     {
       "sequence": 14,
       "label": "Post Wk 2",
+      "labelled": true,
+      "weekEndingDate": "2017-12-02",
       "periodType": "post",
       "columnIndexZeroBased": 19
     },
     {
       "sequence": 15,
       "label": "Post Wk 3",
+      "labelled": true,
+      "weekEndingDate": "2017-12-09",
       "periodType": "post",
       "columnIndexZeroBased": 20
     },
     {
       "sequence": 16,
       "label": "Post Wk 4",
+      "labelled": true,
+      "weekEndingDate": "2017-12-16",
       "periodType": "post",
       "columnIndexZeroBased": 21
     },
     {
       "sequence": 17,
       "label": "Post Wk 5",
+      "labelled": true,
+      "weekEndingDate": "2017-12-23",
       "periodType": "post",
       "columnIndexZeroBased": 22
     },
     {
       "sequence": 18,
       "label": "Hiatus",
+      "labelled": true,
+      "weekEndingDate": "2017-12-30",
       "periodType": "hiatus",
       "columnIndexZeroBased": 23
     },
     {
       "sequence": 19,
       "label": "Hiatus",
+      "labelled": true,
+      "weekEndingDate": "2018-01-06",
       "periodType": "hiatus",
       "columnIndexZeroBased": 24
     },
     {
       "sequence": 20,
       "label": "Post Wk 6",
+      "labelled": true,
+      "weekEndingDate": "2018-01-13",
       "periodType": "post",
       "columnIndexZeroBased": 25
     },
     {
       "sequence": 21,
       "label": "Post Wk 7",
+      "labelled": true,
+      "weekEndingDate": "2018-01-20",
       "periodType": "post",
       "columnIndexZeroBased": 26
     },
     {
       "sequence": 22,
       "label": "Post Wk 8",
+      "labelled": true,
+      "weekEndingDate": "2018-01-27",
       "periodType": "post",
       "columnIndexZeroBased": 27
     },
     {
       "sequence": 23,
       "label": "Post Wk 9",
+      "labelled": true,
+      "weekEndingDate": "2018-02-03",
       "periodType": "post",
       "columnIndexZeroBased": 28
     },
     {
       "sequence": 24,
       "label": "Post Wk 10",
+      "labelled": true,
+      "weekEndingDate": "2018-02-10",
       "periodType": "post",
       "columnIndexZeroBased": 29
     },
     {
       "sequence": 25,
       "label": "Post Wk 11",
+      "labelled": true,
+      "weekEndingDate": "2018-02-17",
       "periodType": "post",
       "columnIndexZeroBased": 30
     },
     {
       "sequence": 26,
       "label": "Post Wk 12",
+      "labelled": true,
+      "weekEndingDate": "2018-02-24",
       "periodType": "post",
       "columnIndexZeroBased": 31
     },
     {
       "sequence": 27,
       "label": "Post Wk 13",
+      "labelled": true,
+      "weekEndingDate": "2018-03-03",
       "periodType": "post",
       "columnIndexZeroBased": 32
     },
     {
       "sequence": 28,
       "label": "Post Wk 14",
+      "labelled": true,
+      "weekEndingDate": "2018-03-10",
       "periodType": "post",
       "columnIndexZeroBased": 33
     },
     {
       "sequence": 29,
       "label": "Post Wk 15",
+      "labelled": true,
+      "weekEndingDate": "2018-03-17",
       "periodType": "post",
       "columnIndexZeroBased": 34
     },
     {
       "sequence": 30,
       "label": "Post Wk 16",
+      "labelled": true,
+      "weekEndingDate": "2018-03-24",
       "periodType": "post",
       "columnIndexZeroBased": 35
+    },
+    {
+      "sequence": 31,
+      "label": "WE 2018-03-31",
+      "labelled": false,
+      "weekEndingDate": "2018-03-31",
+      "periodType": "post",
+      "columnIndexZeroBased": 36
+    },
+    {
+      "sequence": 32,
+      "label": "WE 2018-04-07",
+      "labelled": false,
+      "weekEndingDate": "2018-04-07",
+      "periodType": "post",
+      "columnIndexZeroBased": 37
+    },
+    {
+      "sequence": 33,
+      "label": "WE 2018-04-14",
+      "labelled": false,
+      "weekEndingDate": "2018-04-14",
+      "periodType": "post",
+      "columnIndexZeroBased": 38
+    },
+    {
+      "sequence": 34,
+      "label": "WE 2018-04-21",
+      "labelled": false,
+      "weekEndingDate": "2018-04-21",
+      "periodType": "post",
+      "columnIndexZeroBased": 39
+    },
+    {
+      "sequence": 35,
+      "label": "WE 2018-04-28",
+      "labelled": false,
+      "weekEndingDate": "2018-04-28",
+      "periodType": "post",
+      "columnIndexZeroBased": 40
+    },
+    {
+      "sequence": 36,
+      "label": "WE 2018-05-05",
+      "labelled": false,
+      "weekEndingDate": "2018-05-05",
+      "periodType": "post",
+      "columnIndexZeroBased": 41
     }
   ],
   "sections": [
@@ -370,6 +489,62 @@
     },
     {
       "key": "section-24",
+      "name": "VFX",
+      "rowNumber": 430,
+      "sourceStartRow": 430,
+      "accountCode": "4400",
+      "sourceEndRow": 439
+    },
+    {
+      "key": "section-25",
+      "name": "EDITORIAL",
+      "rowNumber": 440,
+      "sourceStartRow": 440,
+      "accountCode": "4500",
+      "sourceEndRow": 456
+    },
+    {
+      "key": "section-26",
+      "name": "MUSIC",
+      "rowNumber": 457,
+      "sourceStartRow": 457,
+      "accountCode": "4600",
+      "sourceEndRow": 471
+    },
+    {
+      "key": "section-27",
+      "name": "POST PRODUCTION SOUND",
+      "rowNumber": 472,
+      "sourceStartRow": 472,
+      "accountCode": "4700",
+      "sourceEndRow": 486
+    },
+    {
+      "key": "section-28",
+      "name": "POST PRODUCTION DI & FILM",
+      "rowNumber": 487,
+      "sourceStartRow": 487,
+      "accountCode": "4800",
+      "sourceEndRow": 501
+    },
+    {
+      "key": "section-29",
+      "name": "MAIN & END TITLES",
+      "rowNumber": 502,
+      "sourceStartRow": 502,
+      "accountCode": "4900",
+      "sourceEndRow": 515
+    },
+    {
+      "key": "section-30",
+      "name": "PUBLICITY",
+      "rowNumber": 516,
+      "sourceStartRow": 516,
+      "accountCode": "6500",
+      "sourceEndRow": 530
+    },
+    {
+      "key": "section-31",
       "name": "INSURANCE",
       "rowNumber": 531,
       "sourceStartRow": 531,
@@ -377,12 +552,20 @@
       "sourceEndRow": 535
     },
     {
-      "key": "section-25",
+      "key": "section-32",
       "name": "GENERAL EXPENSE",
       "rowNumber": 536,
       "sourceStartRow": 536,
       "accountCode": "6800",
       "sourceEndRow": 546
+    },
+    {
+      "key": "section-33",
+      "name": "DEPOSITS",
+      "rowNumber": 547,
+      "sourceStartRow": 547,
+      "accountCode": "",
+      "sourceEndRow": 550
     }
   ],
   "lineItems": [
@@ -750,6 +933,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 12500
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -1482,6 +1695,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -1643,6 +1886,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -2200,6 +2473,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -2361,6 +2664,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -3365,6 +3698,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -4775,6 +5138,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -5308,6 +5701,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -6177,6 +6600,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -7017,6 +7470,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -7919,6 +8402,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -8624,6 +9137,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -9400,6 +9943,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -9961,6 +10534,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -10806,6 +11409,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -11209,6 +11842,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -11905,6 +12568,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -12660,6 +13353,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -13409,6 +14132,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -14006,6 +14759,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -14744,6 +15527,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -15911,6 +16724,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -16261,6 +17104,36 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
@@ -16467,6 +17340,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -16846,15 +17749,45 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
     {
       "rowNumber": 430,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4400",
       "description": "VFX",
-      "lineType": "detail",
+      "lineType": "header",
       "ctdAmount": null,
       "commitmentsAmount": null,
       "importedTotal": null,
@@ -16862,7 +17795,7 @@
     },
     {
       "rowNumber": 431,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4401",
       "description": "VFX SUPERVISOR",
       "lineType": "detail",
@@ -16899,7 +17832,7 @@
     },
     {
       "rowNumber": 432,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4425",
       "description": "DIGITAL PRODUCTION",
       "lineType": "detail",
@@ -16936,7 +17869,7 @@
     },
     {
       "rowNumber": 433,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4428",
       "description": "DIGITAL LAB",
       "lineType": "detail",
@@ -16973,7 +17906,7 @@
     },
     {
       "rowNumber": 434,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4432",
       "description": "VENDOR CONTRACT",
       "lineType": "detail",
@@ -17090,7 +18023,7 @@
     },
     {
       "rowNumber": 435,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4435",
       "description": "TEMP & INHOUSE",
       "lineType": "detail",
@@ -17207,7 +18140,7 @@
     },
     {
       "rowNumber": 436,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4490",
       "description": "VFX OFFICE EXPENSE",
       "lineType": "detail",
@@ -17324,7 +18257,7 @@
     },
     {
       "rowNumber": 437,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4495",
       "description": "MISC EXPENSES",
       "lineType": "detail",
@@ -17441,7 +18374,7 @@
     },
     {
       "rowNumber": 438,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": "4499",
       "description": "FRINGES",
       "lineType": "fringe",
@@ -17488,7 +18421,7 @@
     },
     {
       "rowNumber": 439,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "VFX",
       "accountCode": null,
       "description": "VFX - SUBTOTAL",
       "lineType": "subtotal",
@@ -17645,15 +18578,45 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 3896
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
     {
       "rowNumber": 440,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4500",
       "description": "EDITORIAL",
-      "lineType": "detail",
+      "lineType": "header",
       "ctdAmount": null,
       "commitmentsAmount": null,
       "importedTotal": null,
@@ -17661,7 +18624,7 @@
     },
     {
       "rowNumber": 441,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4501",
       "description": "EDITOR",
       "lineType": "detail",
@@ -17783,7 +18746,7 @@
     },
     {
       "rowNumber": 442,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4502",
       "description": "ASST EDITOR",
       "lineType": "detail",
@@ -17905,7 +18868,7 @@
     },
     {
       "rowNumber": 443,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4504",
       "description": "MUSIC EDITOR",
       "lineType": "detail",
@@ -17957,7 +18920,7 @@
     },
     {
       "rowNumber": 444,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4506",
       "description": "DIGITAL TRANSCRIPTION",
       "lineType": "detail",
@@ -18024,7 +18987,7 @@
     },
     {
       "rowNumber": 445,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4510",
       "description": "PROJECTION",
       "lineType": "detail",
@@ -18091,7 +19054,7 @@
     },
     {
       "rowNumber": 446,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4515",
       "description": "MUSIC EDITOR PRO TOOLS",
       "lineType": "detail",
@@ -18143,7 +19106,7 @@
     },
     {
       "rowNumber": 447,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4516",
       "description": "SHIPPING",
       "lineType": "detail",
@@ -18154,7 +19117,7 @@
     },
     {
       "rowNumber": 448,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4517",
       "description": "POST PROD SUPERVISOR",
       "lineType": "detail",
@@ -18246,7 +19209,7 @@
     },
     {
       "rowNumber": 449,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4517",
       "description": "POST PROD PA",
       "lineType": "detail",
@@ -18368,7 +19331,7 @@
     },
     {
       "rowNumber": 450,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4530",
       "description": "PICTURE EDITING SYSTEMS",
       "lineType": "detail",
@@ -18485,7 +19448,7 @@
     },
     {
       "rowNumber": 451,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4545",
       "description": "PIX SYSTEM",
       "lineType": "detail",
@@ -18522,7 +19485,7 @@
     },
     {
       "rowNumber": 452,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4585",
       "description": "OTHER COSTS",
       "lineType": "detail",
@@ -18639,7 +19602,7 @@
     },
     {
       "rowNumber": 453,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4595",
       "description": "EDITING ROOM",
       "lineType": "detail",
@@ -18756,7 +19719,7 @@
     },
     {
       "rowNumber": 454,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4512",
       "description": "",
       "lineType": "detail",
@@ -18767,7 +19730,7 @@
     },
     {
       "rowNumber": 455,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": "4599",
       "description": "FRINGES",
       "lineType": "fringe",
@@ -18899,7 +19862,7 @@
     },
     {
       "rowNumber": 456,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "EDITORIAL",
       "accountCode": null,
       "description": "EDITORIAL - SUBTOTAL",
       "lineType": "subtotal",
@@ -19061,10 +20024,10 @@
     },
     {
       "rowNumber": 457,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4600",
       "description": "MUSIC",
-      "lineType": "detail",
+      "lineType": "header",
       "ctdAmount": null,
       "commitmentsAmount": null,
       "importedTotal": null,
@@ -19072,7 +20035,7 @@
     },
     {
       "rowNumber": 458,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4601",
       "description": "SCORING COST",
       "lineType": "detail",
@@ -19089,7 +20052,7 @@
     },
     {
       "rowNumber": 459,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4602",
       "description": "",
       "lineType": "detail",
@@ -19100,7 +20063,7 @@
     },
     {
       "rowNumber": 460,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4603",
       "description": "",
       "lineType": "detail",
@@ -19111,7 +20074,7 @@
     },
     {
       "rowNumber": 461,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4604",
       "description": "",
       "lineType": "detail",
@@ -19122,7 +20085,7 @@
     },
     {
       "rowNumber": 462,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4605",
       "description": "",
       "lineType": "detail",
@@ -19133,7 +20096,7 @@
     },
     {
       "rowNumber": 463,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4606",
       "description": "",
       "lineType": "detail",
@@ -19144,7 +20107,7 @@
     },
     {
       "rowNumber": 464,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4607",
       "description": "",
       "lineType": "detail",
@@ -19155,7 +20118,7 @@
     },
     {
       "rowNumber": 465,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4608",
       "description": "",
       "lineType": "detail",
@@ -19166,7 +20129,7 @@
     },
     {
       "rowNumber": 466,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4609",
       "description": "",
       "lineType": "detail",
@@ -19177,7 +20140,7 @@
     },
     {
       "rowNumber": 467,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4610",
       "description": "",
       "lineType": "detail",
@@ -19188,7 +20151,7 @@
     },
     {
       "rowNumber": 468,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4611",
       "description": "",
       "lineType": "detail",
@@ -19199,7 +20162,7 @@
     },
     {
       "rowNumber": 469,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4695",
       "description": "MUSIC SERVICES",
       "lineType": "detail",
@@ -19216,7 +20179,7 @@
     },
     {
       "rowNumber": 470,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": "4699",
       "description": "FRINGES",
       "lineType": "fringe",
@@ -19227,7 +20190,7 @@
     },
     {
       "rowNumber": 471,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MUSIC",
       "accountCode": null,
       "description": "MUSIC - SUBTOTAL",
       "lineType": "subtotal",
@@ -19384,15 +20347,45 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
     {
       "rowNumber": 472,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4700",
       "description": "POST PRODUCTION SOUND",
-      "lineType": "detail",
+      "lineType": "header",
       "ctdAmount": null,
       "commitmentsAmount": null,
       "importedTotal": null,
@@ -19400,7 +20393,7 @@
     },
     {
       "rowNumber": 473,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4701",
       "description": "",
       "lineType": "detail",
@@ -19411,7 +20404,7 @@
     },
     {
       "rowNumber": 474,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4702",
       "description": "",
       "lineType": "detail",
@@ -19422,7 +20415,7 @@
     },
     {
       "rowNumber": 475,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4703",
       "description": "DATA ARCHIVAL",
       "lineType": "detail",
@@ -19514,7 +20507,7 @@
     },
     {
       "rowNumber": 476,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4704",
       "description": "SOUND MIX",
       "lineType": "detail",
@@ -19606,7 +20599,7 @@
     },
     {
       "rowNumber": 477,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4706",
       "description": "ADR / FOLEY / SFX RECORDING",
       "lineType": "detail",
@@ -19698,7 +20691,7 @@
     },
     {
       "rowNumber": 478,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4706",
       "description": "",
       "lineType": "detail",
@@ -19709,7 +20702,7 @@
     },
     {
       "rowNumber": 479,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4707",
       "description": "",
       "lineType": "detail",
@@ -19720,7 +20713,7 @@
     },
     {
       "rowNumber": 480,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4708",
       "description": "",
       "lineType": "detail",
@@ -19731,7 +20724,7 @@
     },
     {
       "rowNumber": 481,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4709",
       "description": "",
       "lineType": "detail",
@@ -19742,7 +20735,7 @@
     },
     {
       "rowNumber": 482,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4710",
       "description": "",
       "lineType": "detail",
@@ -19753,7 +20746,7 @@
     },
     {
       "rowNumber": 483,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4711",
       "description": "",
       "lineType": "detail",
@@ -19764,7 +20757,7 @@
     },
     {
       "rowNumber": 484,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4790",
       "description": "DOLBY LICENCE FEE",
       "lineType": "detail",
@@ -19781,7 +20774,7 @@
     },
     {
       "rowNumber": 485,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": "4713",
       "description": "",
       "lineType": "detail",
@@ -19792,7 +20785,7 @@
     },
     {
       "rowNumber": 486,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION SOUND",
       "accountCode": null,
       "description": "POST PRODUCTION SOUND - TOTAL",
       "lineType": "subtotal",
@@ -19949,15 +20942,45 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 10313
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
     {
       "rowNumber": 487,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4800",
       "description": "POST PRODUCTION DI & FILM",
-      "lineType": "detail",
+      "lineType": "header",
       "ctdAmount": null,
       "commitmentsAmount": null,
       "importedTotal": null,
@@ -19965,7 +20988,7 @@
     },
     {
       "rowNumber": 488,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4820",
       "description": "OPTICAL TRACK",
       "lineType": "detail",
@@ -20057,7 +21080,7 @@
     },
     {
       "rowNumber": 489,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4825",
       "description": "DI",
       "lineType": "detail",
@@ -20149,7 +21172,7 @@
     },
     {
       "rowNumber": 490,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4826",
       "description": "FILM DELIVERABLE",
       "lineType": "detail",
@@ -20241,7 +21264,7 @@
     },
     {
       "rowNumber": 491,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4827",
       "description": "DIGITAL OPTICS",
       "lineType": "detail",
@@ -20333,7 +21356,7 @@
     },
     {
       "rowNumber": 492,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4840",
       "description": "DUBS",
       "lineType": "detail",
@@ -20425,7 +21448,7 @@
     },
     {
       "rowNumber": 493,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4806",
       "description": "",
       "lineType": "detail",
@@ -20436,7 +21459,7 @@
     },
     {
       "rowNumber": 494,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4807",
       "description": "",
       "lineType": "detail",
@@ -20447,7 +21470,7 @@
     },
     {
       "rowNumber": 495,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4808",
       "description": "",
       "lineType": "detail",
@@ -20458,7 +21481,7 @@
     },
     {
       "rowNumber": 496,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4809",
       "description": "",
       "lineType": "detail",
@@ -20469,7 +21492,7 @@
     },
     {
       "rowNumber": 497,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4810",
       "description": "",
       "lineType": "detail",
@@ -20480,7 +21503,7 @@
     },
     {
       "rowNumber": 498,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4811",
       "description": "",
       "lineType": "detail",
@@ -20491,7 +21514,7 @@
     },
     {
       "rowNumber": 499,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4812",
       "description": "",
       "lineType": "detail",
@@ -20502,7 +21525,7 @@
     },
     {
       "rowNumber": 500,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": "4813",
       "description": "",
       "lineType": "detail",
@@ -20513,7 +21536,7 @@
     },
     {
       "rowNumber": 501,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "POST PRODUCTION DI & FILM",
       "accountCode": null,
       "description": "POST PRODUCTION DI & FILM - SUBTOTAL",
       "lineType": "subtotal",
@@ -20670,15 +21693,45 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 9066
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
     {
       "rowNumber": 502,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4900",
       "description": "MAIN & END TITLES",
-      "lineType": "detail",
+      "lineType": "header",
       "ctdAmount": null,
       "commitmentsAmount": null,
       "importedTotal": null,
@@ -20686,7 +21739,7 @@
     },
     {
       "rowNumber": 503,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4901",
       "description": "MAIN & END TITLES",
       "lineType": "detail",
@@ -20703,7 +21756,7 @@
     },
     {
       "rowNumber": 504,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4902",
       "description": "",
       "lineType": "detail",
@@ -20714,7 +21767,7 @@
     },
     {
       "rowNumber": 505,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4903",
       "description": "",
       "lineType": "detail",
@@ -20725,7 +21778,7 @@
     },
     {
       "rowNumber": 506,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4904",
       "description": "",
       "lineType": "detail",
@@ -20736,7 +21789,7 @@
     },
     {
       "rowNumber": 507,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4905",
       "description": "",
       "lineType": "detail",
@@ -20747,7 +21800,7 @@
     },
     {
       "rowNumber": 508,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4906",
       "description": "",
       "lineType": "detail",
@@ -20758,7 +21811,7 @@
     },
     {
       "rowNumber": 509,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4907",
       "description": "",
       "lineType": "detail",
@@ -20769,7 +21822,7 @@
     },
     {
       "rowNumber": 510,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4908",
       "description": "",
       "lineType": "detail",
@@ -20780,7 +21833,7 @@
     },
     {
       "rowNumber": 511,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4909",
       "description": "",
       "lineType": "detail",
@@ -20791,7 +21844,7 @@
     },
     {
       "rowNumber": 512,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4910",
       "description": "",
       "lineType": "detail",
@@ -20802,7 +21855,7 @@
     },
     {
       "rowNumber": 513,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4911",
       "description": "",
       "lineType": "detail",
@@ -20813,7 +21866,7 @@
     },
     {
       "rowNumber": 514,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": "4912",
       "description": "",
       "lineType": "detail",
@@ -20824,7 +21877,7 @@
     },
     {
       "rowNumber": 515,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "MAIN & END TITLES",
       "accountCode": null,
       "description": "MAIN & END TITLES - TOTAL",
       "lineType": "subtotal",
@@ -20981,15 +22034,45 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
     {
       "rowNumber": 516,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6500",
       "description": "PUBLICITY",
-      "lineType": "detail",
+      "lineType": "header",
       "ctdAmount": null,
       "commitmentsAmount": null,
       "importedTotal": null,
@@ -20997,7 +22080,7 @@
     },
     {
       "rowNumber": 517,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6501",
       "description": "PUBLICIST",
       "lineType": "detail",
@@ -21039,7 +22122,7 @@
     },
     {
       "rowNumber": 518,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6515",
       "description": "WB STILL LAB COSTS",
       "lineType": "detail",
@@ -21076,7 +22159,7 @@
     },
     {
       "rowNumber": 519,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6595",
       "description": "PREVIEW SCREENINGS",
       "lineType": "detail",
@@ -21098,7 +22181,7 @@
     },
     {
       "rowNumber": 520,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6504",
       "description": "",
       "lineType": "detail",
@@ -21109,7 +22192,7 @@
     },
     {
       "rowNumber": 521,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6505",
       "description": "",
       "lineType": "detail",
@@ -21120,7 +22203,7 @@
     },
     {
       "rowNumber": 522,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6506",
       "description": "",
       "lineType": "detail",
@@ -21131,7 +22214,7 @@
     },
     {
       "rowNumber": 523,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6507",
       "description": "",
       "lineType": "detail",
@@ -21142,7 +22225,7 @@
     },
     {
       "rowNumber": 524,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6508",
       "description": "",
       "lineType": "detail",
@@ -21153,7 +22236,7 @@
     },
     {
       "rowNumber": 525,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6509",
       "description": "",
       "lineType": "detail",
@@ -21164,7 +22247,7 @@
     },
     {
       "rowNumber": 526,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6510",
       "description": "",
       "lineType": "detail",
@@ -21175,7 +22258,7 @@
     },
     {
       "rowNumber": 527,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6511",
       "description": "",
       "lineType": "detail",
@@ -21186,7 +22269,7 @@
     },
     {
       "rowNumber": 528,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6512",
       "description": "",
       "lineType": "detail",
@@ -21197,7 +22280,7 @@
     },
     {
       "rowNumber": 529,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": "6599",
       "description": "FRINGES",
       "lineType": "fringe",
@@ -21239,7 +22322,7 @@
     },
     {
       "rowNumber": 530,
-      "sectionName": "STAGE RENTALS & FACILITIES",
+      "sectionName": "PUBLICITY",
       "accountCode": null,
       "description": "PUBLICITY - SUBTOTAL",
       "lineType": "subtotal",
@@ -21395,6 +22478,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -21619,6 +22732,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -22128,12 +23271,42 @@
           "periodSequence": 30,
           "label": "Post Wk 16",
           "amount": 222
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
+          "amount": 0
         }
       ]
     },
     {
       "rowNumber": 547,
-      "sectionName": "GENERAL EXPENSE",
+      "sectionName": "DEPOSITS",
       "accountCode": null,
       "description": "DEPOSITS",
       "lineType": "header",
@@ -22144,7 +23317,7 @@
     },
     {
       "rowNumber": 548,
-      "sectionName": "GENERAL EXPENSE",
+      "sectionName": "DEPOSITS",
       "accountCode": "7201",
       "description": "OFFICE",
       "lineType": "detail",
@@ -22155,7 +23328,7 @@
     },
     {
       "rowNumber": 549,
-      "sectionName": "GENERAL EXPENSE",
+      "sectionName": "DEPOSITS",
       "accountCode": "7202",
       "description": "PC ADVANCES",
       "lineType": "detail",
@@ -22166,7 +23339,7 @@
     },
     {
       "rowNumber": 550,
-      "sectionName": "GENERAL EXPENSE",
+      "sectionName": "DEPOSITS",
       "accountCode": null,
       "description": "DEPOSITS - SUBTOTAL",
       "lineType": "subtotal",
@@ -22322,6 +23495,36 @@
         {
           "periodSequence": 30,
           "label": "Post Wk 16",
+          "amount": 0
+        },
+        {
+          "periodSequence": 31,
+          "label": "WE 2018-03-31",
+          "amount": 0
+        },
+        {
+          "periodSequence": 32,
+          "label": "WE 2018-04-07",
+          "amount": 0
+        },
+        {
+          "periodSequence": 33,
+          "label": "WE 2018-04-14",
+          "amount": 0
+        },
+        {
+          "periodSequence": 34,
+          "label": "WE 2018-04-21",
+          "amount": 0
+        },
+        {
+          "periodSequence": 35,
+          "label": "WE 2018-04-28",
+          "amount": 0
+        },
+        {
+          "periodSequence": 36,
+          "label": "WE 2018-05-05",
           "amount": 0
         }
       ]
@@ -22480,6 +23683,36 @@
         "periodSequence": 30,
         "label": "Post Wk 16",
         "amount": 54187
+      },
+      {
+        "periodSequence": 31,
+        "label": "WE 2018-03-31",
+        "amount": 0
+      },
+      {
+        "periodSequence": 32,
+        "label": "WE 2018-04-07",
+        "amount": 0
+      },
+      {
+        "periodSequence": 33,
+        "label": "WE 2018-04-14",
+        "amount": 0
+      },
+      {
+        "periodSequence": 34,
+        "label": "WE 2018-04-21",
+        "amount": 0
+      },
+      {
+        "periodSequence": 35,
+        "label": "WE 2018-04-28",
+        "amount": 0
+      },
+      {
+        "periodSequence": 36,
+        "label": "WE 2018-05-05",
+        "amount": 0
       }
     ],
     "grandTotal": 6062000
@@ -22633,6 +23866,36 @@
     {
       "periodSequence": 30,
       "label": "Post Wk 16",
+      "amount": 6062000
+    },
+    {
+      "periodSequence": 31,
+      "label": "WE 2018-03-31",
+      "amount": 6062000
+    },
+    {
+      "periodSequence": 32,
+      "label": "WE 2018-04-07",
+      "amount": 6062000
+    },
+    {
+      "periodSequence": 33,
+      "label": "WE 2018-04-14",
+      "amount": 6062000
+    },
+    {
+      "periodSequence": 34,
+      "label": "WE 2018-04-21",
+      "amount": 6062000
+    },
+    {
+      "periodSequence": 35,
+      "label": "WE 2018-04-28",
+      "amount": 6062000
+    },
+    {
+      "periodSequence": 36,
+      "label": "WE 2018-05-05",
       "amount": 6062000
     }
   ]
