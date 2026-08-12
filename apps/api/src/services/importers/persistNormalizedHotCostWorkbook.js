@@ -58,8 +58,9 @@ export async function persistNormalizedHotCostWorkbook(normalizedHotCost, option
         productionId: production.id,
         importBatchId: importBatch.id,
         sheetName: daySummary.sheetName,
+        workDate: daySummary.workDate ? new Date(daySummary.workDate) : null,
         dayLabel: dayColumnMatch?.dayLabel || null,
-        workDateLabel: dayColumnMatch?.dateLabel || null,
+        workDateLabel: dayColumnMatch?.dateLabel || daySummary.workDate || null,
       },
     });
 
@@ -75,7 +76,9 @@ export async function persistNormalizedHotCostWorkbook(normalizedHotCost, option
           position: row.position || null,
           unionCode: row.union || null,
           rate: row.rate,
-          actualDayCost: row.actualAmount,
+          actualDayCost: row.actualDayCost,
+          budgetDayCost: row.budgetDayCost,
+          dayVariance: row.dayVariance,
           sourceRowNumber: row.rowNumber || null,
         })),
       });
@@ -93,5 +96,10 @@ export async function persistNormalizedHotCostWorkbook(normalizedHotCost, option
       (sum, day) => sum + (day.entries?.length || 0),
       0,
     ),
+    totals: normalizedHotCost.daySheetSummaries.reduce((acc, day) => ({
+      actual: acc.actual + (day.dayTotals?.actual || 0),
+      budget: acc.budget + (day.dayTotals?.budget || 0),
+      variance: acc.variance + (day.dayTotals?.variance || 0),
+    }), { actual: 0, budget: 0, variance: 0 }),
   };
 }

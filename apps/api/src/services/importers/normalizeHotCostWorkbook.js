@@ -21,6 +21,28 @@ function toNumber(value) {
   return negative ? -parsed : parsed;
 }
 
+// The day sheet header reads:
+//   ... 15 TOTAL/DAY | 16 BUDGET/DAY | 17 (OVER)/UNDER
+// Column 17 is the variance, not the cost. Reading it as an actual understates
+// the shoot's labour by a factor of twenty-two and reports negative day costs.
+const COL_TOTAL_DAY = 15;
+const COL_BUDGET_DAY = 16;
+const COL_VARIANCE = 17;
+
+// Every day sheet states its own date in D2, which removes any need to parse it
+// out of the sheet name.
+function readSheetDate(rows) {
+  const value = (rows[1] || [])[3];
+  if (value == null || value === '') return null;
+  if (typeof value === 'number' && value > 20000 && value < 60000) {
+    return new Date(Date.UTC(1899, 11, 30) + value * 86400000).toISOString().slice(0, 10);
+  }
+  const parsed = new Date(String(value).trim());
+  return Number.isNaN(parsed.getTime()) || parsed.getUTCFullYear() < 1950
+    ? null
+    : parsed.toISOString().slice(0, 10);
+}
+
 function summarizeDaySheet(sheetName, sheet) {
   const rows = xlsx.utils.sheet_to_json(sheet, {
     header: 1,
@@ -28,12 +50,15 @@ function summarizeDaySheet(sheetName, sheet) {
     defval: null,
   });
 
+  const workDate = readSheetDate(rows);
   const headerRowIndex = rows.findIndex((row) => Array.isArray(row) && row[0] === 'ACCT' && row[1] === 'NAME');
   if (headerRowIndex < 0) {
     return {
       sheetName,
+      workDate,
       rowCount: 0,
       sampleRows: [],
+      entries: [],
     };
   }
 
@@ -45,9 +70,23 @@ function summarizeDaySheet(sheetName, sheet) {
     const position = cleanText(row[2]);
     const union = cleanText(row[3]);
     const rate = toNumber(row[4]);
-    const amount = toNumber(row[17]);
+    const actualDayCost = toNumber(row[COL_TOTAL_DAY]);
+    const budgetDayCost = toNumber(row[COL_BUDGET_DAY]);
+    const dayVariance = toNumber(row[COL_VARIANCE]);
 
-    if (!accountCode && !name && !position && amount === null) continue;
+    // Department roll-up rows put a label in the TOTAL/DAY column and restate a
+    // variance the crew rows above already carry. Summing them alongside the
+    // detail is what turned a real number into a meaningless one.
+    // xlsx returns every cell as a formatted string here, so "is it text" is
+    // not the test — "is it text that will not parse as money" is.
+    const totalCell = cleanText(row[COL_TOTAL_DAY]);
+    const isRollUp = totalCell !== '' && actualDayCost === null;
+    if (isRollUp) continue;
+
+    // A crew row is identified by an account code, a name or a position. The
+    // day summary block at the foot of each sheet carries money and none of
+    // those, and counting it alongside the crew doubles the day exactly.
+    if (!accountCode && !name && !position) continue;
 
     entries.push({
       rowNumber: i + 1,
@@ -56,15 +95,23 @@ function summarizeDaySheet(sheetName, sheet) {
       position: position || null,
       union: union || null,
       rate,
-      actualAmount: amount,
+      actualDayCost,
+      budgetDayCost,
+      dayVariance,
     });
   }
 
   return {
     sheetName,
+    workDate,
     rowCount: entries.length,
     sampleRows: entries.slice(0, 10),
     entries,
+    dayTotals: {
+      actual: entries.reduce((sum, e) => sum + (e.actualDayCost || 0), 0),
+      budget: entries.reduce((sum, e) => sum + (e.budgetDayCost || 0), 0),
+      variance: entries.reduce((sum, e) => sum + (e.dayVariance || 0), 0),
+    },
   };
 }
 

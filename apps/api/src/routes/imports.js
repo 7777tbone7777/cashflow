@@ -70,22 +70,20 @@ function normalizeSectionName(sectionName) {
   return String(sectionName || '').trim().toUpperCase();
 }
 
-function inferWeekBucketLabelFromSheetName(sheetName) {
-  const value = String(sheetName || '').trim();
-  const normalized = value.replace(/\s+/g, ' ');
-  if (/PRESHOOT/i.test(normalized)) return 'Pre-Shoot';
-  if (!/^\d{6}$/.test(normalized)) return 'Unknown';
-
-  const month = Number.parseInt(normalized.slice(0, 2), 10);
-  const day = Number.parseInt(normalized.slice(2, 4), 10);
-  const year = Number.parseInt(`20${normalized.slice(4, 6)}`, 10);
-  const date = new Date(Date.UTC(year, month - 1, day));
-  if (Number.isNaN(date.getTime())) return 'Unknown';
-
-  const start = new Date(Date.UTC(2017, 9, 16));
-  const diffDays = Math.floor((date.getTime() - start.getTime()) / 86400000);
-  if (diffDays < 0) return 'Pre-Shoot';
-  return `Shoot Week ${Math.floor(diffDays / 5) + 1}`;
+// Group days into weeks by the date each sheet states in D2, matched against
+// the cash flow's own week-ending dates. The previous version parsed the sheet
+// name and counted forward from a hardcoded 2017-10-16 shoot start, which is
+// wrong for every other production.
+function weekEndingFor(day, periods) {
+  const workDate = day.workDate ? new Date(day.workDate) : null;
+  if (!workDate || Number.isNaN(workDate.getTime())) return null;
+  const dated = periods.filter((period) => period.weekEndingDate);
+  for (const period of dated) {
+    const ends = new Date(period.weekEndingDate);
+    const starts = new Date(ends.getTime() - 6 * 86400000);
+    if (workDate >= starts && workDate <= ends) return period;
+  }
+  return null;
 }
 
 function mapBucketToCashflowSectionNames(bucketKey) {
@@ -154,7 +152,7 @@ importsRouter.get('/hot-cost/:productionId', async (req, res, next) => {
 
     const aggregate = await prisma.hotCostLineItem.aggregate({
       where: { productionId: production.id },
-      _sum: { actualDayCost: true },
+      _sum: { actualDayCost: true, budgetDayCost: true, dayVariance: true },
       _count: { _all: true },
     });
 
@@ -165,17 +163,20 @@ importsRouter.get('/hot-cost/:productionId', async (req, res, next) => {
             productionId: production.id,
             hotCostDayId: day.id,
           },
-          _sum: { actualDayCost: true },
+          _sum: { actualDayCost: true, budgetDayCost: true, dayVariance: true },
           _count: { _all: true },
         });
 
         return {
           id: day.id,
           sheetName: day.sheetName,
+          workDate: day.workDate,
           dayLabel: day.dayLabel,
           workDateLabel: day.workDateLabel,
           lineItemCount: day._count.lineItems,
           totalActualDayCost: aggregates._sum.actualDayCost,
+          totalBudgetDayCost: aggregates._sum.budgetDayCost,
+          totalDayVariance: aggregates._sum.dayVariance,
           nonEmptyRowCount: aggregates._count._all,
         };
       }),
@@ -190,6 +191,8 @@ importsRouter.get('/hot-cost/:productionId', async (req, res, next) => {
         totalDays: production.hotCostDays.length,
         totalRows: aggregate._count._all,
         totalActualDayCost: aggregate._sum.actualDayCost,
+        totalBudgetDayCost: aggregate._sum.budgetDayCost,
+        totalDayVariance: aggregate._sum.dayVariance,
       },
       daySummaries,
     });
@@ -223,6 +226,8 @@ importsRouter.get('/hot-cost/:productionId/mapping-summary', async (req, res, ne
       select: {
         accountCode: true,
         actualDayCost: true,
+        budgetDayCost: true,
+        dayVariance: true,
       },
     });
 
@@ -234,10 +239,14 @@ importsRouter.get('/hot-cost/:productionId/mapping-summary', async (req, res, ne
         label: bucketLabels[bucketKey] || bucketKey,
         rowCount: 0,
         totalActualDayCost: 0,
+        totalBudgetDayCost: 0,
+        totalDayVariance: 0,
       };
 
       existing.rowCount += 1;
       existing.totalActualDayCost += Number(lineItem.actualDayCost || 0);
+      existing.totalBudgetDayCost += Number(lineItem.budgetDayCost || 0);
+      existing.totalDayVariance += Number(lineItem.dayVariance || 0);
       buckets.set(bucketKey, existing);
     }
 
@@ -250,6 +259,8 @@ importsRouter.get('/hot-cost/:productionId/mapping-summary', async (req, res, ne
       totals: {
         rowCount: rows.reduce((sum, row) => sum + row.rowCount, 0),
         totalActualDayCost: rows.reduce((sum, row) => sum + row.totalActualDayCost, 0),
+        totalBudgetDayCost: rows.reduce((sum, row) => sum + row.totalBudgetDayCost, 0),
+        totalDayVariance: rows.reduce((sum, row) => sum + row.totalDayVariance, 0),
       },
     });
   } catch (error) {
@@ -292,10 +303,13 @@ importsRouter.get('/hot-cost/:productionId/section-comparison', async (req, res,
         mapBucketToCashflowSectionNames(bucketKey).includes(normalizedName),
       );
 
-      const importedSectionTotal = section.lineItems.reduce(
-        (sum, lineItem) => sum + Number(lineItem.importedTotal || 0),
-        0,
-      );
+      // Detail and fringe rows only. A section also contains a subtotal row
+      // that already sums them, so counting every line type returned exactly
+      // twice the department's real cost — $12,124,003 against a budget of
+      // $6,062,000.
+      const importedSectionTotal = section.lineItems
+        .filter((lineItem) => lineItem.lineType === 'detail' || lineItem.lineType === 'fringe')
+        .reduce((sum, lineItem) => sum + Number(lineItem.importedTotal || 0), 0);
 
       return {
         sectionId: section.id,
@@ -325,11 +339,12 @@ importsRouter.get('/hot-cost/:productionId/weekly-rollup', async (req, res, next
       where: { id: req.params.productionId },
       include: {
         hotCostDays: {
-          orderBy: { createdAt: 'asc' },
+          orderBy: { workDate: 'asc' },
           include: {
             lineItems: true,
           },
         },
+        periods: { orderBy: { sequence: 'asc' } },
       },
     });
 
@@ -339,31 +354,46 @@ importsRouter.get('/hot-cost/:productionId/weekly-rollup', async (req, res, next
 
     const buckets = new Map();
     for (const day of production.hotCostDays) {
-      const weekLabel = inferWeekBucketLabelFromSheetName(day.sheetName);
-      const totalActual = day.lineItems.reduce((sum, lineItem) => sum + Number(lineItem.actualDayCost || 0), 0);
+      const period = weekEndingFor(day, production.periods);
+      const weekLabel = period ? period.label : 'Unmatched';
+      const sequence = period ? period.sequence : 9999;
+      const totals = day.lineItems.reduce((acc, lineItem) => ({
+        actual: acc.actual + Number(lineItem.actualDayCost || 0),
+        budget: acc.budget + Number(lineItem.budgetDayCost || 0),
+        variance: acc.variance + Number(lineItem.dayVariance || 0),
+      }), { actual: 0, budget: 0, variance: 0 });
+
       const existing = buckets.get(weekLabel) || {
         weekLabel,
+        sequence,
+        weekEndingDate: period ? period.weekEndingDate : null,
         dayCount: 0,
         rowCount: 0,
         totalActualDayCost: 0,
+        totalBudgetDayCost: 0,
+        totalDayVariance: 0,
         days: [],
       };
 
       existing.dayCount += 1;
       existing.rowCount += day.lineItems.length;
-      existing.totalActualDayCost += totalActual;
+      existing.totalActualDayCost += totals.actual;
+      existing.totalBudgetDayCost += totals.budget;
+      existing.totalDayVariance += totals.variance;
       existing.days.push({
         hotCostDayId: day.id,
         sheetName: day.sheetName,
+        workDate: day.workDate,
         dayLabel: day.dayLabel,
-        workDateLabel: day.workDateLabel,
-        totalActualDayCost: totalActual,
+        totalActualDayCost: totals.actual,
+        totalBudgetDayCost: totals.budget,
+        totalDayVariance: totals.variance,
       });
 
       buckets.set(weekLabel, existing);
     }
 
-    const rows = Array.from(buckets.values()).sort((a, b) => a.weekLabel.localeCompare(b.weekLabel, undefined, { numeric: true }));
+    const rows = Array.from(buckets.values()).sort((a, b) => a.sequence - b.sequence);
 
     return res.json({
       productionId: production.id,
@@ -375,66 +405,18 @@ importsRouter.get('/hot-cost/:productionId/weekly-rollup', async (req, res, next
   }
 });
 
-importsRouter.get('/hot-cost/:productionId/weekly-comparison', async (req, res, next) => {
-  try {
-    const production = await prisma.production.findUnique({
-      where: { id: req.params.productionId },
-      include: {
-        hotCostDays: {
-          orderBy: { createdAt: 'asc' },
-          include: {
-            lineItems: true,
-          },
-        },
-        snapshots: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
-      },
-    });
-
-    if (!production) {
-      return res.status(404).json({ error: 'Production not found.' });
-    }
-
-    const weeklyActuals = new Map();
-    for (const day of production.hotCostDays) {
-      const weekLabel = inferWeekBucketLabelFromSheetName(day.sheetName);
-      const totalActual = day.lineItems.reduce((sum, lineItem) => sum + Number(lineItem.actualDayCost || 0), 0);
-      weeklyActuals.set(weekLabel, (weeklyActuals.get(weekLabel) || 0) + totalActual);
-    }
-
-    const snapshot = production.snapshots[0] || null;
-    const plannedRows = snapshot?.weeklyTotalsJson || [];
-
-    const rows = plannedRows.map((period, index) => {
-      const planned = Number(period.amount || 0);
-      const actualLabel = index < 5
-        ? 'Pre-Shoot'
-        : index >= 7 && index <= 11
-          ? `Shoot Week ${index - 6}`
-          : null;
-      const actual = actualLabel ? Number(weeklyActuals.get(actualLabel) || 0) : 0;
-
-      return {
-        periodLabel: period.label,
-        periodSequence: period.periodSequence,
-        matchedActualBucket: actualLabel,
-        plannedAmount: planned,
-        actualAmount: actual,
-        delta: actual - planned,
-      };
-    });
-
-    return res.json({
-      productionId: production.id,
-      title: production.title,
-      rows,
-    });
-  } catch (error) {
-    return next(error);
-  }
-});
+// The weekly actual-vs-planned endpoint was removed rather than repaired.
+//
+// It compared a week of hot cost against a week of the cash flow, but a hot
+// cost covers variable labour only — measured against this production it is
+// 19% of the cash flow planned for the same weeks. Even reading the correct
+// column it would report a healthy show as catastrophically under-spending
+// every week. The comparison is not fixable at this level of aggregation; the
+// right home for hot cost actuals is pressure on a department's estimate to
+// complete, which needs a cost report the app does not have yet.
+//
+// It also depended on a hardcoded 2017-10-16 shoot start and fixed period
+// windows that assigned five pre-prep weeks the same actuals figure.
 
 importsRouter.get('/hot-cost/:productionId/days/:dayId/line-items', async (req, res, next) => {
   try {
@@ -456,6 +438,8 @@ importsRouter.get('/hot-cost/:productionId/days/:dayId/line-items', async (req, 
         unionCode: lineItem.unionCode,
         rate: lineItem.rate,
         actualDayCost: lineItem.actualDayCost,
+        budgetDayCost: lineItem.budgetDayCost,
+        dayVariance: lineItem.dayVariance,
         sourceRowNumber: lineItem.sourceRowNumber,
       })),
     );

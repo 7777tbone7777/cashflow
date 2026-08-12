@@ -27,6 +27,7 @@ type ProductionSummary = {
     name: string
     totalCtd: number
     totalCommitments: number
+    grandTotal: number | string | null
     weeklyTotals: Array<{ label: string; amount: number; periodSequence: number }>
     cumulativeTotals: Array<{ label: string; amount: number; periodSequence: number }>
     createdAt: string
@@ -102,6 +103,8 @@ type HotCostSummary = {
     totalDays: number
     totalRows: number
     totalActualDayCost: number | string | null
+    totalBudgetDayCost: number | string | null
+    totalDayVariance: number | string | null
   }
   daySummaries?: Array<{
     id: string
@@ -122,6 +125,8 @@ type HotCostLineItem = {
   unionCode: string | null
   rate: number | string | null
   actualDayCost: number | string | null
+  budgetDayCost: number | string | null
+  dayVariance: number | string | null
   sourceRowNumber: number | null
 }
 
@@ -173,19 +178,6 @@ type HotCostWeeklyRollup = {
   }>
 }
 
-type HotCostWeeklyComparison = {
-  productionId: string
-  title: string
-  rows: Array<{
-    periodLabel: string
-    periodSequence: number
-    matchedActualBucket: string | null
-    plannedAmount: number | string
-    actualAmount: number | string
-    delta: number | string
-  }>
-}
-
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 const loading = ref(true)
@@ -208,7 +200,6 @@ const loadingHotCostDay = ref(false)
 const hotCostMappingSummary = ref<HotCostMappingSummary | null>(null)
 const hotCostSectionComparison = ref<HotCostSectionComparison | null>(null)
 const hotCostWeeklyRollup = ref<HotCostWeeklyRollup | null>(null)
-const hotCostWeeklyComparison = ref<HotCostWeeklyComparison | null>(null)
 
 const selectedProduction = computed(() =>
   productions.value.find((production) => production.id === selectedProductionId.value) || null,
@@ -218,9 +209,21 @@ const selectedSection = computed(() =>
   sections.value.find((section) => section.id === selectedSectionId.value) || null,
 )
 
-const totalUpcomingCash = computed(() => {
+// The sum of the weekly columns is what remains to be spent — it deliberately
+// excludes cost to date and commitments. Presenting it as "total planned cash"
+// understated this production's budget by $153,982.
+const remainingToSpend = computed(() => {
   if (!summary.value?.snapshot) return 0
   return summary.value.snapshot.weeklyTotals.reduce((sum, entry) => sum + Number(entry.amount || 0), 0)
+})
+
+// The workbook's own bottom line: cost to date + commitments + every weekly
+// column. Now stored on import rather than discarded.
+const budgetTotal = computed(() => {
+  const snapshot = summary.value?.snapshot
+  if (!snapshot) return 0
+  if (snapshot.grandTotal != null) return Number(snapshot.grandTotal)
+  return Number(snapshot.totalCtd || 0) + Number(snapshot.totalCommitments || 0) + remainingToSpend.value
 })
 
 const selectedHotCostDay = computed(() =>
@@ -279,14 +282,6 @@ async function loadHotCostWeeklyRollup(productionId: string) {
   }
 }
 
-async function loadHotCostWeeklyComparison(productionId: string) {
-  try {
-    hotCostWeeklyComparison.value = await fetchJson<HotCostWeeklyComparison>(`/api/imports/hot-cost/${productionId}/weekly-comparison`)
-  } catch {
-    hotCostWeeklyComparison.value = null
-  }
-}
-
 async function loadSectionLineItems(sectionId: string) {
   if (!selectedProductionId.value) return
   loadingSection.value = true
@@ -323,7 +318,6 @@ async function loadProductionData(productionId: string) {
   await loadHotCostMappingSummary(productionId)
   await loadHotCostSectionComparison(productionId)
   await loadHotCostWeeklyRollup(productionId)
-  await loadHotCostWeeklyComparison(productionId)
 
   if (hotCostSummary.value?.persistedDays?.length) {
     selectedHotCostDayId.value = hotCostSummary.value.persistedDays[0].id
@@ -355,7 +349,6 @@ async function loadProductions(selectFirst = false) {
     hotCostMappingSummary.value = null
     hotCostSectionComparison.value = null
     hotCostWeeklyRollup.value = null
-    hotCostWeeklyComparison.value = null
     selectedHotCostDayId.value = ''
     hotCostLineItems.value = []
     return
@@ -562,17 +555,22 @@ onMounted(() => {
     <template v-else>
       <section class="stats-grid">
         <article class="stat-card">
-          <span class="stat-label">Total planned cash</span>
+          <span class="stat-label">Budget</span>
           <strong class="stat-value">
-            {{ formatMoney(totalUpcomingCash, summary?.production.currency || 'USD') }}
+            {{ formatMoney(budgetTotal, summary?.production.currency || 'USD') }}
           </strong>
-          <small v-if="hasCashflowSnapshot">Sum of weekly cash flow totals from the latest imported snapshot</small>
+          <small v-if="hasCashflowSnapshot">
+            Cost to date + committed + every weekly column — the workbook's own total.
+            {{ selectedProduction?.counts.sections || 0 }} departments,
+            {{ selectedProduction?.counts.lineItems || 0 }} lines,
+            {{ selectedProduction?.counts.periods || 0 }} periods.
+          </small>
           <small v-else-if="hasHotCostData">No cash flow snapshot yet for this production — this production currently only has hot cost import data.</small>
           <small v-else>No imported cash flow snapshot for this production yet.</small>
         </article>
 
         <article class="stat-card">
-          <span class="stat-label">CTD</span>
+          <span class="stat-label">Cost to date</span>
           <strong class="stat-value">
             {{ formatMoney(summary?.snapshot?.totalCtd, summary?.production.currency || 'USD') }}
           </strong>
@@ -581,7 +579,7 @@ onMounted(() => {
         </article>
 
         <article class="stat-card">
-          <span class="stat-label">Commitments</span>
+          <span class="stat-label">Committed</span>
           <strong class="stat-value">
             {{ formatMoney(summary?.snapshot?.totalCommitments, summary?.production.currency || 'USD') }}
           </strong>
@@ -590,11 +588,14 @@ onMounted(() => {
         </article>
 
         <article class="stat-card">
-          <span class="stat-label">Imported structure</span>
+          <span class="stat-label">Remaining to spend</span>
           <strong class="stat-value">
-            {{ selectedProduction?.counts.sections || 0 }} sections / {{ selectedProduction?.counts.lineItems || 0 }} lines
+            {{ formatMoney(remainingToSpend, summary?.production.currency || 'USD') }}
           </strong>
-          <small>{{ selectedProduction?.counts.periods || 0 }} periods in the current imported production</small>
+          <small v-if="hasCashflowSnapshot">
+            {{ summary?.snapshot?.weeklyTotals.length || 0 }} weekly periods still to be paid
+          </small>
+          <small v-else>Available once a cash flow workbook is imported.</small>
         </article>
       </section>
 
@@ -733,10 +734,12 @@ onMounted(() => {
             <table>
               <thead>
                 <tr>
-                  <th>Week bucket</th>
+                  <th>Period</th>
                   <th>Days</th>
                   <th>Rows</th>
-                  <th>Actual total</th>
+                  <th>Actual labour</th>
+                  <th>Budgeted</th>
+                  <th>(Over) / under</th>
                 </tr>
               </thead>
               <tbody>
@@ -745,44 +748,14 @@ onMounted(() => {
                   <td>{{ week.dayCount }}</td>
                   <td>{{ week.rowCount }}</td>
                   <td>{{ formatMoney(week.totalActualDayCost, summary?.production.currency || 'USD') }}</td>
+                  <td>{{ formatMoney((week as any).totalBudgetDayCost, summary?.production.currency || 'USD') }}</td>
+                  <td>{{ formatMoney((week as any).totalDayVariance, summary?.production.currency || 'USD') }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <section v-if="hotCostWeeklyComparison?.rows?.length" class="panel hot-cost-grid">
-          <div class="panel-header">
-            <div>
-              <h2>Weekly actual vs planned</h2>
-              <p>First-pass comparison between inferred hot cost actual buckets and imported cash flow periods.</p>
-            </div>
-            <span class="pill">{{ hotCostWeeklyComparison.rows.length }} periods</span>
-          </div>
-
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Period</th>
-                  <th>Matched actual bucket</th>
-                  <th>Planned</th>
-                  <th>Actual</th>
-                  <th>Delta</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in hotCostWeeklyComparison.rows" :key="row.periodSequence">
-                  <td>{{ row.periodLabel }}</td>
-                  <td>{{ row.matchedActualBucket || '—' }}</td>
-                  <td>{{ formatMoney(row.plannedAmount, summary?.production.currency || 'USD') }}</td>
-                  <td>{{ formatMoney(row.actualAmount, summary?.production.currency || 'USD') }}</td>
-                  <td>{{ formatMoney(row.delta, summary?.production.currency || 'USD') }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
 
         <section v-if="hotCostSectionComparison?.rows?.length" class="panel hot-cost-grid">
           <div class="panel-header">
@@ -837,8 +810,16 @@ onMounted(() => {
                 <strong>{{ hotCostSummary.summary.totalRows }}</strong>
               </div>
               <div class="mini-stat-card">
-                <span class="stat-label">Actual total</span>
+                <span class="stat-label">Actual labour</span>
                 <strong>{{ formatMoney(hotCostSummary.summary.totalActualDayCost, summary?.production.currency || 'USD') }}</strong>
+              </div>
+              <div class="mini-stat-card">
+                <span class="stat-label">Budgeted</span>
+                <strong>{{ formatMoney(hotCostSummary.summary.totalBudgetDayCost, summary?.production.currency || 'USD') }}</strong>
+              </div>
+              <div class="mini-stat-card">
+                <span class="stat-label">(Over) / under</span>
+                <strong>{{ formatMoney(hotCostSummary.summary.totalDayVariance, summary?.production.currency || 'USD') }}</strong>
               </div>
             </div>
 
@@ -852,7 +833,10 @@ onMounted(() => {
                 <div>
                   <strong>{{ day.dayLabel || day.sheetName }}</strong>
                   <p>{{ day.workDateLabel || day.sheetName }}</p>
-                  <p v-if="'totalActualDayCost' in day">Actual: {{ formatMoney((day as { totalActualDayCost?: number | string | null }).totalActualDayCost, summary?.production.currency || 'USD') }}</p>
+                  <p v-if="'totalActualDayCost' in day">
+                    Actual {{ formatMoney((day as { totalActualDayCost?: number | string | null }).totalActualDayCost, summary?.production.currency || 'USD') }}
+                    · budget {{ formatMoney((day as { totalBudgetDayCost?: number | string | null }).totalBudgetDayCost, summary?.production.currency || 'USD') }}
+                  </p>
                 </div>
                 <span>{{ day.lineItemCount }} rows</span>
               </li>
@@ -882,7 +866,9 @@ onMounted(() => {
                     <th>Position</th>
                     <th>Union</th>
                     <th>Rate</th>
-                    <th>Actual</th>
+                    <th>Actual / day</th>
+                    <th>Budget / day</th>
+                    <th>(Over) / under</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -894,6 +880,8 @@ onMounted(() => {
                     <td>{{ lineItem.unionCode || '—' }}</td>
                     <td>{{ formatMoney(lineItem.rate, summary?.production.currency || 'USD') }}</td>
                     <td>{{ formatMoney(lineItem.actualDayCost, summary?.production.currency || 'USD') }}</td>
+                    <td>{{ formatMoney(lineItem.budgetDayCost, summary?.production.currency || 'USD') }}</td>
+                    <td>{{ formatMoney(lineItem.dayVariance, summary?.production.currency || 'USD') }}</td>
                   </tr>
                 </tbody>
               </table>

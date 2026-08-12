@@ -51,6 +51,7 @@ export async function persistNormalizedCashflow(normalized, options = {}) {
         periodCount: normalized.periods.length,
         sectionCount: normalized.sections.length,
         lineItemCount: normalized.lineItems.length,
+        reconciliation: normalized.reconciliation || null,
       },
     },
   });
@@ -61,6 +62,7 @@ export async function persistNormalizedCashflow(normalized, options = {}) {
       sequence: period.sequence,
       label: period.label,
       periodType: period.periodType,
+      weekEndingDate: period.weekEndingDate ? new Date(period.weekEndingDate) : null,
       sourceColumnKey: String(period.columnIndexZeroBased),
     })),
   });
@@ -132,6 +134,7 @@ export async function persistNormalizedCashflow(normalized, options = {}) {
       snapshotType: 'imported',
       totalCtd: normalized.totals.ctd,
       totalCommitments: normalized.totals.commitments,
+      grandTotal: normalized.totals.grandTotal,
       weeklyTotalsJson: normalized.totals.weekly,
       cumulativeTotalsJson: normalized.cumulativeTotals,
       createdBy: 'upload-import',
@@ -147,5 +150,7 @@ export async function persistNormalizedCashflow(normalized, options = {}) {
     lineItems: normalized.lineItems.length,
     allocations: allocationRows.length,
     snapshots: 1,
+    grandTotal: normalized.totals.grandTotal,
+    reconciliation: normalized.reconciliation || null,
   };
 }
