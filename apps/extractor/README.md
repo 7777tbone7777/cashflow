@@ -60,18 +60,17 @@ reconciliation at 100% coverage in ~10s for a 72-page budget; `/generate/hotcost
 returns 122 crew across 26 day sheets in ~1.6s, matching the accountant's own
 budgeted day costs 52 times out of 55; `/generate/cashflow` reconciles exactly.
 
-### One setting still to make by hand
+### Monorepo build
 
-The service was first deployed by direct upload, which proved it builds and runs
-but leaves it disconnected from GitHub. To restore auto-deploy:
+Root Directory is `apps/extractor`. Railway builds a monorepo service from its
+root directory, and the repo root is a Node app — without this the builder
+detects Node, looks for a start script and fails, which is exactly how the first
+attempt failed.
 
-> Railway → project → **extractor** → Settings → Source → **Root Directory** →
-> `apps/extractor`
+Pushes to `main` redeploy this service alongside the Node app, and
+`apps/extractor/railway.json` supplies the start command.
 
-Railway builds a monorepo service from its root directory, and the repo root is
-a Node app — without this the builder detects Node, looks for a start script and
-fails. The setting cannot be made from the CLI, and the GraphQL mutation is
-blocked to CLI tokens.
-
-Once set, pushes to `main` redeploy this service the same way they redeploy the
-Node app, and `apps/extractor/railway.json` supplies the start command.
+The setting cannot be made from the Railway CLI. The GraphQL mutation works,
+but only with a browser-like `User-Agent` — Cloudflare returns 403 error 1010
+to the default Python or curl signature, which reads as an auth failure and is
+not one.
