@@ -84,6 +84,55 @@ def classify_phase(label: str) -> str:
     return "allowance"
 
 
+# Production vocabulary, longest first, for splitting all-caps runs where a
+# case-change heuristic has nothing to work with ("PRODUCTIONSTAFF").
+VOCAB = sorted([
+    "PRODUCTION", "TRANSPORTATION", "CONSTRUCTION", "ASSISTANT", "ASSISTANTS",
+    "SUPERVISOR", "COORDINATOR", "PHOTOGRAPHY", "EQUIPMENT", "OPERATIONS",
+    "DEPARTMENT", "ADDITIONAL", "PUBLICITY", "INSURANCE", "MATERIALS",
+    "PURCHASES", "EXPENSES", "EXPENSE", "PERSONNEL", "FACILITIES", "EDITORIAL",
+    "SPECIAL", "EFFECTS", "PICTURE", "VEHICLES", "ANIMALS", "GENERAL",
+    "STUDIO", "RENTALS", "RENTAL", "DRESSING", "PROPERTY", "WARDROBE",
+    "LIGHTING", "CAMERA", "SOUND", "STAFF", "TALENT", "EXTRA", "STUNTS",
+    "STUNT", "CASTING", "DIRECTORS", "DIRECTOR", "PRODUCERS", "PRODUCER",
+    "WRITING", "RIGHTS", "STORY", "CAST", "DESIGN", "STRIKE", "SET",
+    "MAKEUP", "MAKE-UP", "HAIR", "GRIP", "ELECTRIC", "LOCATIONS", "LOCATION",
+    "STAGE", "TESTS", "TEST", "SECOND", "UNIT", "TITLES", "MUSIC", "POST",
+    "VISUAL", "DIGITAL", "LABOR", "LABOUR", "FRINGE", "FRINGES", "TOTAL",
+    "SUBTOTAL", "DEPOSITS", "MISC", "OTHER", "FILM", "LAB", "AND", "THE",
+], key=len, reverse=True)
+
+
+def _split_caps(run: str) -> str:
+    """Greedy longest-match split of an all-caps run against the vocabulary."""
+    words, i = [], 0
+    while i < len(run):
+        for word in VOCAB:
+            if run.startswith(word, i) and len(word) > 2:
+                words.append(word)
+                i += len(word)
+                break
+        else:
+            if words and not words[-1].isupper() or not words:
+                words.append(run[i])
+            else:
+                words.append(run[i])
+            i += 1
+    # Re-glue single characters the vocabulary could not place.
+    out, buffer = [], ""
+    for token in words:
+        if len(token) == 1:
+            buffer += token
+        else:
+            if buffer:
+                out.append(buffer)
+                buffer = ""
+            out.append(token)
+    if buffer:
+        out.append(buffer)
+    return " ".join(out)
+
+
 def respace(text: str) -> str:
     """Movie Magic PDFs drop intra-word spaces. Restore a readable form.
 
@@ -94,6 +143,7 @@ def respace(text: str) -> str:
     out = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", text)
     out = re.sub(r"(?<=[A-Za-z])(?=\d)", " ", out)
     out = re.sub(r"(?<=[.,])(?=[A-Za-z])", " ", out)
+    out = re.sub(r"[A-Z]{6,}", lambda m: _split_caps(m.group(0)), out)
     return re.sub(r"\s+", " ", out).strip()
 
 

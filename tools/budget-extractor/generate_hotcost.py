@@ -134,7 +134,14 @@ def units_for(curve: dict[float, float], hours: float) -> float:
 
 
 def build_crew(budget: dict[str, Any]) -> list[dict[str, Any]]:
-    """Every person the budget names, with a day cost per phase."""
+    """Every person the budget names, with a day cost per phase.
+
+    Grouped by department, not by account. A hot cost reads CAST, CAMERA,
+    TRANSPORTATION — not LEAD #1, DAY PLAYERS, STUNT COORD — because the
+    question it answers is which department is running over.
+    """
+    department_names = {row["acct"]: row["name_display"]
+                        for row in budget.get("topsheet", [])}
     crew = []
     for account in budget["accounts"]:
         department = account["acct"][:2] + "00"
@@ -153,7 +160,9 @@ def build_crew(budget: dict[str, Any]) -> list[dict[str, Any]]:
             crew.append({
                 "acct": account["acct"],
                 "department": department,
-                "department_name": account["name_display"],
+                "department_name": department_names.get(
+                    department, account["name_display"]),
+                "account_name": account["name_display"],
                 "person": detail.get("person") or "",
                 "position": (detail.get("sub_display") or "").split("/")[-1],
                 "union": detail.get("union") or "",
@@ -253,9 +262,42 @@ def budgeted_day_for(member: dict[str, Any], phase: str,
     return stated
 
 
+def department_fringe_rates(budget: dict[str, Any]) -> dict[str, float]:
+    """Effective fringe rate per department, from the budget's own schedule.
+
+    Charged against the department's actual labour rather than an individual
+    fringe line's base, because different fringes sit on different bases — FICA
+    on one, union health and welfare on another. Rates outside a plausible band
+    usually mean a department with a token wage base, so they fall back to the
+    production-wide average rather than distorting a day sheet.
+    """
+    fringe: dict[str, float] = defaultdict(float)
+    labour: dict[str, float] = defaultdict(float)
+    for account in budget["accounts"]:
+        department = account["acct"][:2] + "00"
+        for line in account.get("fringes", []):
+            fringe[department] += line.get("amount") or 0.0
+        for detail in account["details"]:
+            if detail.get("is_labour"):
+                labour[department] += sum(p.get("amount") or 0.0
+                                          for p in detail["phases"])
+
+    total_fringe = sum(fringe.values())
+    total_labour = sum(labour.values()) or 1.0
+    average = total_fringe / total_labour
+
+    rates: dict[str, float] = {}
+    for department in set(fringe) | set(labour):
+        base = labour.get(department, 0.0)
+        rate = (fringe.get(department, 0.0) / base) if base > 1000 else average
+        rates[department] = round(rate if 0.10 <= rate <= 0.75 else average, 4)
+    return rates
+
+
 def write_day_sheet(ws, crew: list[dict[str, Any]], day_no: int, when: date,
                     phase: str, curves: dict[str, dict[float, float]],
-                    conventions: dict[str, Any]) -> None:
+                    conventions: dict[str, Any],
+                    fringe_rates: dict[str, float]) -> dict[str, Any]:
     header_font = Font(bold=True, size=9)
     label_font = Font(bold=True, size=9, color="1F5C4D")
     money = '#,##0.00'
@@ -327,11 +369,33 @@ def write_day_sheet(ws, crew: list[dict[str, Any]], day_no: int, when: date,
             row += 1
 
         last = row - 1
-        ws.cell(row, C_TOTAL, f"{department} LABOR").font = label_font
-        ws.cell(row, C_VAR, f"=SUM({gc(C_VAR)}{first}:{gc(C_VAR)}{last})"
-                ).number_format = money
-        dept_rows.append((department, first, last))
+        code = members[0]["department"]
+        fringe_rate = fringe_rates.get(code, 0.0)
+
+        # Department labour roll-up.
+        labour_row = row
+        ws.cell(row, C_POS, f"{department} LABOR").font = label_font
+        for col in (C_TOTAL, C_BUDGET, C_VAR):
+            ws.cell(row, col, f"=SUM({gc(col)}{first}:{gc(col)}{last})"
+                    ).number_format = money
+        row += 1
+
+        # Fringe, at this department's own effective rate from the budget.
+        # Kept as its own line because it remits on a different calendar and
+        # because a department can be on budget on wages and over on fringe.
+        fringe_row = row
+        ws.cell(row, C_POS, f"{department} FRINGE").font = label_font
+        ws.cell(row, C_RATE, fringe_rate).number_format = '0.0%'
+        for col in (C_TOTAL, C_BUDGET, C_VAR):
+            ws.cell(row, col, f"={gc(col)}{labour_row}*{fringe_rate:.4f}"
+                    ).number_format = money
         row += 2
+
+        dept_rows.append({
+            "name": department, "code": code,
+            "first": first, "last": last,
+            "labour_row": labour_row, "fringe_row": fringe_row,
+        })
 
     # Day summary — the figures the line producer actually reads.
     ws.cell(row, C_MP, "TOTAL").font = header_font
@@ -343,17 +407,152 @@ def write_day_sheet(ws, crew: list[dict[str, Any]], day_no: int, when: date,
     ws.cell(row, C_BUDGET, "DY COST").font = header_font
     ws.cell(row, C_VAR, "(OVER) / UNDER").font = header_font
     row += 1
-    for col, label in ((C_TOTAL, "actual"), (C_BUDGET, "budget"), (C_VAR, "var")):
-        parts = "+".join(f"SUM({gc(col)}{a}:{gc(col)}{b})" for _, a, b in dept_rows)
+    for col in (C_TOTAL, C_BUDGET, C_VAR):
+        parts = "+".join(f"{gc(col)}{d['labour_row']}+{gc(col)}{d['fringe_row']}"
+                         for d in dept_rows)
         cell = ws.cell(row, col, f"={parts}" if parts else 0)
         cell.number_format = money
         cell.font = Font(bold=True)
+    summary_row = row
 
     ws.freeze_panes = ws.cell(head + 1, 1)
+    return {"departments": dept_rows, "summary_row": summary_row}
 
 
 def gc(index: int) -> str:
     return get_column_letter(index)
+
+
+def quote(sheet_name: str) -> str:
+    return f"'{sheet_name}'"
+
+
+def write_summary_sheet(ws, sheets: list[dict[str, Any]]) -> None:
+    """Department by day, in variance — the sheet a line producer actually reads.
+
+    Every cell is a formula pointing at the day sheets, so the picture updates as
+    the accountant fills in times rather than needing a rebuild. Negative is over.
+    """
+    money = '#,##0'
+    header_font = Font(bold=True, size=9)
+    label_font = Font(bold=True, size=9, color="1F5C4D")
+    over_fill = PatternFill("solid", fgColor="F6E7E4")
+
+    ws.cell(1, 1, "HOT COST — DEPARTMENT SUMMARY").font = Font(bold=True, size=12)
+    ws.cell(2, 1, "(over) / under against the budgeted day. "
+                  "Negative is over. Updates as day sheets are filled in."
+            ).font = Font(italic=True, size=8, color="808080")
+
+    departments = [d["name"] for d in sheets[0]["departments"]] if sheets else []
+    by_name = [{d["name"]: d for d in s["departments"]} for s in sheets]
+
+    head = 4
+    ws.cell(head, 1, "DEPARTMENT").font = header_font
+    ws.column_dimensions["A"].width = 28
+    for i, sheet in enumerate(sheets):
+        col = 2 + i
+        cell = ws.cell(head, col, sheet["label"])
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal="center", textRotation=90)
+        ws.column_dimensions[gc(col)].width = 9
+    total_col = 2 + len(sheets)
+    ws.cell(head, total_col, "TOTAL").font = header_font
+    ws.column_dimensions[gc(total_col)].width = 13
+
+    row = head + 1
+    for department in departments:
+        ws.cell(row, 1, department).font = label_font
+        for i, sheet in enumerate(sheets):
+            entry = by_name[i].get(department)
+            if not entry:
+                continue
+            ref = (f"{quote(sheet['title'])}!{gc(C_VAR)}{entry['labour_row']}"
+                   f"+{quote(sheet['title'])}!{gc(C_VAR)}{entry['fringe_row']}")
+            cell = ws.cell(row, 2 + i, f"={ref}")
+            cell.number_format = money
+        ws.cell(row, total_col,
+                f"=SUM({gc(2)}{row}:{gc(total_col - 1)}{row})").number_format = money
+        ws.cell(row, total_col).font = Font(bold=True)
+        row += 1
+
+    ws.cell(row, 1, "TOTAL").font = header_font
+    for col in range(2, total_col + 1):
+        cell = ws.cell(row, col, f"=SUM({gc(col)}{head + 1}:{gc(col)}{row - 1})")
+        cell.number_format = money
+        cell.font = Font(bold=True)
+        cell.border = Border(top=Side(style="thin", color="141917"))
+
+    # Conditional shading so an over-budget department reads at a glance rather
+    # than requiring the reader to scan for a minus sign.
+    from openpyxl.formatting.rule import CellIsRule
+    ws.conditional_formatting.add(
+        f"B{head + 1}:{gc(total_col)}{row}",
+        CellIsRule(operator="lessThan", formula=["0"], fill=over_fill))
+
+    ws.freeze_panes = ws.cell(head + 1, 2)
+
+
+def write_weekly_sheet(ws, sheets: list[dict[str, Any]]) -> None:
+    """The same picture rolled to weeks, which is the cadence of a cost report."""
+    money = '#,##0'
+    header_font = Font(bold=True, size=9)
+    label_font = Font(bold=True, size=9, color="1F5C4D")
+
+    ws.cell(1, 1, "HOT COST — WEEKLY ROLL-UP").font = Font(bold=True, size=12)
+    ws.cell(2, 1, "actual, budget and variance by department by shoot week"
+            ).font = Font(italic=True, size=8, color="808080")
+
+    weeks: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    for sheet in sheets:
+        weeks[sheet["week"]].append(sheet)
+
+    departments = [d["name"] for d in sheets[0]["departments"]] if sheets else []
+    by_name = {s["title"]: {d["name"]: d for d in s["departments"]} for s in sheets}
+
+    head = 4
+    ws.cell(head, 1, "DEPARTMENT").font = header_font
+    ws.column_dimensions["A"].width = 28
+    col = 2
+    week_cols: list[tuple[int, int]] = []
+    for week in sorted(weeks):
+        label = "Preshoot" if week == 0 else f"Week {week}"
+        ws.cell(head - 1, col, label).font = header_font
+        for offset, metric in enumerate(("ACTUAL", "BUDGET", "(OVER)/UNDER")):
+            cell = ws.cell(head, col + offset, metric)
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center", wrap_text=True)
+            ws.column_dimensions[gc(col + offset)].width = 12
+        week_cols.append((week, col))
+        col += 3
+
+    row = head + 1
+    for department in departments:
+        ws.cell(row, 1, department).font = label_font
+        for week, base_col in week_cols:
+            for offset, source in enumerate((C_TOTAL, C_BUDGET, C_VAR)):
+                refs = []
+                for sheet in weeks[week]:
+                    entry = by_name[sheet["title"]].get(department)
+                    if entry:
+                        refs.append(
+                            f"{quote(sheet['title'])}!{gc(source)}{entry['labour_row']}"
+                            f"+{quote(sheet['title'])}!{gc(source)}{entry['fringe_row']}")
+                if refs:
+                    ws.cell(row, base_col + offset,
+                            "=" + "+".join(refs)).number_format = money
+        row += 1
+
+    ws.cell(row, 1, "TOTAL").font = header_font
+    for _, base_col in week_cols:
+        for offset in range(3):
+            cell = ws.cell(row, base_col + offset,
+                           f"=SUM({gc(base_col + offset)}{head + 1}:"
+                           f"{gc(base_col + offset)}{row - 1})")
+            cell.number_format = money
+            cell.font = Font(bold=True)
+            cell.border = Border(top=Side(style="thin", color="141917"))
+
+    ws.freeze_panes = ws.cell(head + 1, 2)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -377,13 +576,28 @@ def main(argv: list[str] | None = None) -> int:
               f"(above-the-line flat deals excluded)")
     days = shoot_days(cfg)
 
+    fringe_rates = department_fringe_rates(budget)
+
     wb = openpyxl.Workbook()
     wb.remove(wb.active)
+    summary = wb.create_sheet("SUMMARY")
+    weekly = wb.create_sheet("WEEKLY")
+
+    sheets: list[dict[str, Any]] = []
     for day_no, when, phase in days:
         title = (when.strftime("%m%d%y") if phase == "shoot"
-                 else when.strftime("%m%d%y") + " PRESHOOT")
-        write_day_sheet(wb.create_sheet(title[:31]), crew, day_no, when, phase,
-                        curves, conventions)
+                 else when.strftime("%m%d%y") + " PRESHOOT")[:31]
+        meta = write_day_sheet(wb.create_sheet(title), crew, day_no, when, phase,
+                               curves, conventions, fringe_rates)
+        meta.update({
+            "title": title,
+            "label": when.strftime("%d %b") if phase == "shoot" else "preshoot",
+            "week": 0 if phase != "shoot" else (day_no - 1) // 5 + 1,
+        })
+        sheets.append(meta)
+
+    write_summary_sheet(summary, sheets)
+    write_weekly_sheet(weekly, sheets)
     wb.save(args.out)
 
     prep_only = sum(1 for m in crew if "prep" in m["day_cost"])

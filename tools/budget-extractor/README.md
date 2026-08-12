@@ -288,3 +288,30 @@ Getting `preshoot_at_shoot_hours` wrong is instructive: including Set Lighting
 dropped prep accuracy from 96% to 89%. These are real, checkable claims about how
 a production runs, which is why they belong in config a human can argue with
 rather than buried in code.
+
+## Department roll-up and summary sheets
+
+The workbook opens on two sheets built from the day sheets by formula, so they
+update as times are entered rather than needing a rebuild.
+
+**`SUMMARY`** — department × day, in variance. Negative is over, and over-budget
+cells shade automatically so the picture reads without hunting for minus signs.
+14 departments across 26 days, plus a total column and row.
+
+**`WEEKLY`** — the same rolled to shoot weeks with actual, budget and variance per
+department. This is the cadence a cost report runs on, and it is the view that
+answers *which department is running over* in about four seconds.
+
+Each day sheet now carries per-department **LABOR** and **FRINGE** roll-up rows.
+Fringe is a separate line on purpose: it remits on a different calendar from
+wages, and a department can be on budget on wages while over on fringe.
+
+### Fringe rates come from the budget, not a flat assumption
+
+`department_fringe_rates` charges each department's own fringe schedule against
+its own labour. The reference budget yields rates from **28.5% (Locations) to
+52.0% (Set Lighting)** — a flat 40% would be wrong by a third at both ends.
+
+Where a department's labour base is too small to give a meaningful rate — Set
+Construction is mostly materials, not wages — it falls back to the
+production-wide average rather than emitting a 200% rate.
