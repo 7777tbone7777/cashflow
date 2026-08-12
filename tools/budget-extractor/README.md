@@ -137,9 +137,17 @@ The last two are empty when the budget parses cleanly, as the reference one does
 - **Phase labels vary by budget.** `classify_phase` handles the common vocabulary
   including `Prep (NonConsec)` and `Shoot Mandays`; unfamiliar labels fall through
   to `allowance` rather than being silently mis-assigned.
-- Column x-positions are tuned to this template. A materially different layout will
-  need `COL_*` retuned — the reconciliation assertion will fail loudly if so, which
-  is the intended behaviour.
+- **Column positions are now detected per template**, not hardcoded. Movie Magic
+  reprints `Acct# Description Amt Units X Rate SubT Total` on every detail page, so
+  the layout is self-describing. Values are assigned to the nearest header centre
+  because headers print left-aligned while figures print right-aligned — hard
+  boundaries misfile roughly 40% of rows. Tested against a feature (Amt at x=379)
+  and a television budget from the same software (Amt at x=321).
+- **Television budgets parse structurally but do not yet reconcile.** Top sheets are
+  read correctly — a WB one-hour pilot came out at $6,538,083 against a stated
+  $6,538,080 — but the detail pages nest Subtotal and Total differently and
+  currently double-count. TV is out of scope for now; these budgets are kept as
+  generalisation fixtures.
 
 ---
 

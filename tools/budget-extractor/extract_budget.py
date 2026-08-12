@@ -38,14 +38,20 @@ except ImportError:  # pragma: no cover
     sys.exit("pdfplumber is required:  pip install pdfplumber")
 
 
-# Column x-positions in the Movie Magic print layout. Tuned against the
-# reference budget; widened enough to tolerate normal drift between templates.
+# Fallback column boundaries, used only until a page states its own. Movie Magic
+# prints a header row — "Acct# Description Amt Units X Rate SubT Total" — on every
+# detail page, so the layout is self-describing and these are a last resort. The
+# reference film budget puts Amt at x=379; a television budget from the same
+# software puts it at x=321, which is exactly why these cannot be fixed.
 COL_ACCT_MAX = 55.0     # account codes sit hard left
 COL_QTY_MIN = 330.0     # "Amt" column and everything right of it is numeric
 COL_UNIT_MIN = 400.0
 COL_X_MIN = 432.0
 COL_RATE_MIN = 458.0
 COL_AMOUNT_MIN = 495.0
+
+# The header labels that mark each numeric column, in print order.
+COLUMN_HEADERS = ("Amt", "Units", "X", "Rate", "SubT", "Total")
 
 DAYS_PER_WEEK = 5.0
 
@@ -339,6 +345,7 @@ class BudgetParser:
         self.totals: dict[str, float | None] = {}
         self.department_totals: dict[str, float] = {}
         self.warnings: list[str] = []
+        self.columns: dict[str, Any] | None = None
         self.inputs_required: list[dict[str, Any]] = []
 
     # ---------- line assembly -------------------------------------------------
@@ -420,9 +427,50 @@ class BudgetParser:
 
     # ---------- detail pages --------------------------------------------------
 
-    @staticmethod
-    def _split_columns(words: list[dict[str, Any]]) -> tuple[str, list[str | None]]:
+    def _adopt_column_layout(self, words: list[dict[str, Any]]) -> bool:
+        """Learn this template's column boundaries from its own header row.
+
+        Movie Magic reprints "Acct# Description Amt Units X Rate SubT Total" on
+        every detail page. Reading the x-position of each label makes the parser
+        independent of the template, which matters because the same software
+        lays a television budget out 50 points to the left of a feature.
+        """
+        centres = {w["text"]: (w["x0"] + w["x1"]) / 2 for w in words}
+        if not all(label in centres for label in ("Amt", "Units", "Rate")):
+            return False
+        present = [label for label in COLUMN_HEADERS if label in centres]
+        if len(present) < 4:
+            return False
+        self.columns = {
+            "centres": [(label, centres[label]) for label in present],
+            "qty_min": centres[present[0]] - 34.0,
+        }
+        return True
+
+    def _split_columns(self, words: list[dict[str, Any]]) -> tuple[str, list[str | None]]:
         """Return (left-hand label, [qty, unit, x, rate, amount])."""
+        layout = getattr(self, "columns", None)
+        if layout:
+            # Headers print left-aligned while figures print right-aligned, so a
+            # value's x0 can sit either side of its own column label. Assigning
+            # each value to the nearest header centre survives that; hard
+            # boundaries do not.
+            centres, qty_min = layout["centres"], layout["qty_min"]
+            label_parts: list[str] = []
+            slots: dict[str, str] = {}
+            for w in words:
+                text = w["text"]
+                if w["x0"] < qty_min:
+                    label_parts.append(text)
+                    continue
+                middle = (w["x0"] + w["x1"]) / 2
+                nearest = min(centres, key=lambda c: abs(c[1] - middle))[0]
+                slots[nearest] = text
+            # SubT and Total are alternative homes for the same figure.
+            amount = slots.get("Total") or slots.get("SubT")
+            return "".join(label_parts), [slots.get("Amt"), slots.get("Units"),
+                                          slots.get("X"), slots.get("Rate"), amount]
+
         label_parts, qty, unit, mult, rate, amount = [], None, None, None, None, None
         for w in words:
             x, text = w["x0"], w["text"]
@@ -520,6 +568,10 @@ class BudgetParser:
 
         for pageno, words in self._rows():
             joined = "".join(w["text"] for w in words)
+            # The column header both marks page furniture and states the layout.
+            if joined.startswith(("Acct#Description", "Acct#")):
+                self._adopt_column_layout(words)
+                continue
             if not joined or NOISE.match(joined):
                 continue
 
