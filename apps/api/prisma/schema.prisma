@@ -93,6 +93,8 @@ model CashFlowPeriod {
   sequence        Int
   label           String
   periodType      PeriodType  @map("period_type")
+  // Populated from the date row above the period labels. Present in the schema
+  // from the start; never filled until the parser stopped keying off labels.
   weekEndingDate  DateTime?   @map("week_ending_date") @db.Date
   sourceColumnKey String      @map("source_column_key")
   createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -171,6 +173,9 @@ model ForecastSnapshot {
   snapshotType         SnapshotType @map("snapshot_type")
   totalCtd             Decimal?     @map("total_ctd") @db.Decimal(14, 2)
   totalCommitments     Decimal?     @map("total_commitments") @db.Decimal(14, 2)
+  // The workbook's own bottom line. Parsed since the first version and never
+  // stored, which left the dashboard showing remaining spend as the budget.
+  grandTotal           Decimal?     @map("grand_total") @db.Decimal(14, 2)
   weeklyTotalsJson     Json         @map("weekly_totals_json")
   cumulativeTotalsJson Json         @map("cumulative_totals_json")
   createdBy            String?      @map("created_by")
@@ -185,6 +190,8 @@ model HotCostDay {
   productionId  String            @map("production_id") @db.Uuid
   importBatchId String?           @map("import_batch_id") @db.Uuid
   workDateLabel String?           @map("work_date_label")
+  // Read from cell D2 of the day sheet, which states it outright.
+  workDate      DateTime?         @map("work_date") @db.Date
   dayLabel      String?           @map("day_label")
   sheetName     String            @map("sheet_name")
   createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -206,7 +213,12 @@ model HotCostLineItem {
   position        String?
   unionCode       String?     @map("union_code")
   rate            Decimal?    @db.Decimal(14, 2)
+  // The day sheet states all three separately: TOTAL/DAY, BUDGET/DAY and
+  // (OVER)/UNDER. The original import read the variance column and stored it as
+  // the actual, understating labour by a factor of twenty-two.
   actualDayCost   Decimal?    @map("actual_day_cost") @db.Decimal(14, 2)
+  budgetDayCost   Decimal?    @map("budget_day_cost") @db.Decimal(14, 2)
+  dayVariance     Decimal?    @map("day_variance") @db.Decimal(14, 2)
   sourceRowNumber Int?        @map("source_row_number")
   createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
