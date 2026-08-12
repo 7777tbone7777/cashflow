@@ -1,0 +1,6 @@
+# Generated artefacts — regenerate with the tools rather than committing them.
+budget.json
+cashflow.json
+archetypes.json
+venv/
+__pycache__/
