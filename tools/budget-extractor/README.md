@@ -228,3 +228,63 @@ them. Every past production is a labelled training pair of budget and cash flow.
 
 Nothing is placed silently. `assumptions` in the output names every archetype
 placement, its dollar value, and its share of the department.
+
+---
+
+# Hot cost generator
+
+```bash
+python generate_hotcost.py budget.json production.json -o HOTCOST.xlsx
+python verify_generated_hotcost.py HOTCOST.xlsx "HOT COST TEMPLATE-THE CHILDREN.xls"
+```
+
+One sheet per shoot day, pre-populated. On the day the accountant enters **call,
+lunch and wrap**; hours, overtime units, actual day cost and variance compute.
+
+## Accuracy against the accountant's own workbook
+
+| Day type | Budgeted day cost matched |
+|---|---|
+| Shoot day | 25 / 27 (**93%**) |
+| Prep day | 27 / 28 (**96%**) |
+| Overall | 52 / 55 (**95%**) |
+
+The three misses are two Local 399 transport guarantees and one first-aid prep
+day — exception-queue items, not systemic.
+
+## What it gets right that a naive template would not
+
+**Phase-specific budgeted day.** 73 of 122 crew have a day cost that changes
+between prep and shoot. Carrying one figure per person is wrong on every prep day
+while still totalling plausibly, which is exactly the kind of error that survives
+review.
+
+**Union overtime derived, not modelled.** The budget shows Local 705 paying 17.25
+units for a 14-hour day where Local 399 pays 20. A hard-coded 8 / 1.5x / 2x rule
+would be wrong for most of the crew, so `learn_unit_curves` builds the
+hours-to-units curve per union from the guarantees the budget already states —
+14 curves out of the reference budget.
+
+**Correct scope.** A hot cost tracks *variable* labour. Above-the-line flat deals
+do not vary daily and are not on the sheet — 122 of 133 budgeted people make it,
+matching the departments the reference production's own hot cost carries.
+
+**The RATE column convention.** Hourly crew show their hourly rate; flat-rate crew
+show their day cost. The reference workbook does this without exception — the
+UPM's RATE and BUDGET/DAY are both 1,063.60, Craig Bauer's are 45.00 and 630.00.
+
+## Conventions are declared, not inferred
+
+Three things the accountant applies that no budget states. They live in
+`production.json` under `hot_cost_conventions` so they are visible and arguable:
+
+| Convention | Default | Why |
+|---|---|---|
+| `flat_rate_bills_shoot_day` | `true` | Weekly flat crew bill their shoot rate on prep days; the budget's lower prep rate is a budgeting device, not a timecard rate |
+| `minimum_prep_units` | `11.0` | Hourly crew get a standard 10-hour prep day rather than a fractional budget guarantee |
+| `preshoot_at_shoot_hours` | `["2500","2700","2800"]` | Set ops, set dressing and property rig on the preshoot day and work shoot hours |
+
+Getting `preshoot_at_shoot_hours` wrong is instructive: including Set Lighting
+dropped prep accuracy from 96% to 89%. These are real, checkable claims about how
+a production runs, which is why they belong in config a human can argue with
+rather than buried in code.

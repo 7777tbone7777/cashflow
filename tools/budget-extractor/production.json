@@ -53,5 +53,19 @@
   "rental_deposit_share": 0.35,
   "_rental_deposit_note": "share of equipment/stage rentals paid as a deposit the week before the hire starts",
   "prefer_learned_profiles": true,
-  "_prefer_note": "use observed account spreads from past productions in place of duration inference where available"
+  "_prefer_note": "use observed account spreads from past productions in place of duration inference where available",
+  "shoot_days": 25,
+  "shoot_days_per_week": 5,
+  "preshoot_day_offsets": [
+    -3
+  ],
+  "hot_cost_conventions": {
+    "flat_rate_bills_shoot_day": true,
+    "minimum_prep_units": 11.0,
+    "preshoot_at_shoot_hours": [
+      "2500",
+      "2700",
+      "2800"
+    ]
+  }
 }
