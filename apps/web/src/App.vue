@@ -1,945 +1,225 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import {
+  DEFAULT_CONFIG, api,
+  type BudgetUploadResult, type CashflowResult, type Production,
+  type ProductionConfig, type ProductionSummary,
+} from './api'
+import BudgetUpload from './components/BudgetUpload.vue'
+import BudgetOverview from './components/BudgetOverview.vue'
+import ProductionSetup from './components/ProductionSetup.vue'
+import GeneratedDocuments from './components/GeneratedDocuments.vue'
+import CashFlowGrid from './components/CashFlowGrid.vue'
+import ImportExisting from './components/ImportExisting.vue'
 
-type Production = {
-  id: string
-  title: string
-  currency: string
-  status: string
-  counts: {
-    periods: number
-    sections: number
-    lineItems: number
-    snapshots: number
-    importBatches: number
-  }
-}
-
-type ProductionSummary = {
-  production: {
-    id: string
-    title: string
-    currency: string
-    status: string
-  }
-  snapshot: null | {
-    id: string
-    name: string
-    totalCtd: number
-    totalCommitments: number
-    grandTotal: number | string | null
-    weeklyTotals: Array<{ label: string; amount: number; periodSequence: number }>
-    cumulativeTotals: Array<{ label: string; amount: number; periodSequence: number }>
-    createdAt: string
-  }
-}
-
-type Section = {
-  id: string
-  code: string | null
-  name: string
-  displayOrder: number
-  sourceStartRow: number | null
-  sourceEndRow: number | null
-  lineItemCount: number
-}
-
-type SectionLineItem = {
-  id: string
-  accountCode: string | null
-  description: string
-  lineType: string
-  sourceRowNumber: number | null
-  ctdAmount: number | string | null
-  commitmentsAmount: number | string | null
-  importedTotal: number | string | null
-  allocations: Array<{
-    id: string
-    amount: number | string
-    periodSequence: number
-    periodLabel: string
-  }>
-}
-
-type ImportResult = {
-  ok: true
-  workbookType?: string
-  result: {
-    productionId: string
-    importBatchId: string
-    productionTitle: string
-    periods?: number
-    sections?: number
-    lineItems?: number
-    allocations?: number
-    snapshots?: number
-    daySheetCount?: number
-    summaryEntryCount?: number
-    persistedDayCount?: number
-    persistedLineItemSampleCount?: number
-  }
-}
-
-type HotCostSummary = {
-  productionId: string
-  title: string
-  hotCostImport: null | {
-    workbookType: string
-    summarySheetName: string
-    sheetNames: string[]
-    daySheetNames: string[]
-    dayColumns: Array<{ columnIndexZeroBased: number; dayLabel: string; dateLabel: string }>
-    summaryEntryCount: number
-    daySheetSummaries: Array<{ sheetName: string; rowCount: number; sampleRows: unknown[] }>
-  }
-  persistedDays: Array<{
-    id: string
-    sheetName: string
-    dayLabel: string | null
-    workDateLabel: string | null
-    lineItemCount: number
-  }>
-  summary?: {
-    totalDays: number
-    totalRows: number
-    totalActualDayCost: number | string | null
-    totalBudgetDayCost: number | string | null
-    totalDayVariance: number | string | null
-  }
-  daySummaries?: Array<{
-    id: string
-    sheetName: string
-    dayLabel: string | null
-    workDateLabel: string | null
-    lineItemCount: number
-    totalActualDayCost: number | string | null
-    nonEmptyRowCount: number
-  }>
-}
-
-type HotCostLineItem = {
-  id: string
-  accountCode: string | null
-  employeeName: string | null
-  position: string | null
-  unionCode: string | null
-  rate: number | string | null
-  actualDayCost: number | string | null
-  budgetDayCost: number | string | null
-  dayVariance: number | string | null
-  sourceRowNumber: number | null
-}
-
-type HotCostMappingSummary = {
-  productionId: string
-  title: string
-  buckets: Array<{
-    bucketKey: string
-    label: string
-    rowCount: number
-    totalActualDayCost: number | string
-  }>
-  totals: {
-    rowCount: number
-    totalActualDayCost: number | string
-  }
-}
-
-type HotCostSectionComparison = {
-  productionId: string
-  title: string
-  rows: Array<{
-    sectionId: string
-    sectionName: string
-    sectionCode: string | null
-    mappedBucketKey: string | null
-    mappedBucketLabel: string | null
-    hotCostActualTotal: number | string
-    importedCashflowTotal: number | string
-    delta: number | string
-  }>
-}
-
-type HotCostWeeklyRollup = {
-  productionId: string
-  title: string
-  weeks: Array<{
-    weekLabel: string
-    dayCount: number
-    rowCount: number
-    totalActualDayCost: number | string
-    days: Array<{
-      hotCostDayId: string
-      sheetName: string
-      dayLabel: string | null
-      workDateLabel: string | null
-      totalActualDayCost: number | string
-    }>
-  }>
-}
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
-
-const loading = ref(true)
-const importing = ref(false)
-const loadingSection = ref(false)
-const error = ref('')
-const importMessage = ref('')
 const productions = ref<Production[]>([])
-const selectedProductionId = ref('')
+const selectedId = ref('')
+const budget = ref<BudgetUploadResult | null>(null)
 const summary = ref<ProductionSummary | null>(null)
-const sections = ref<Section[]>([])
-const selectedSectionId = ref('')
-const sectionLineItems = ref<SectionLineItem[]>([])
-const uploadFile = ref<File | null>(null)
-const uploadTitle = ref('')
-const hotCostSummary = ref<HotCostSummary | null>(null)
-const selectedHotCostDayId = ref('')
-const hotCostLineItems = ref<HotCostLineItem[]>([])
-const loadingHotCostDay = ref(false)
-const hotCostMappingSummary = ref<HotCostMappingSummary | null>(null)
-const hotCostSectionComparison = ref<HotCostSectionComparison | null>(null)
-const hotCostWeeklyRollup = ref<HotCostWeeklyRollup | null>(null)
+const cashflow = ref<CashflowResult | null>(null)
+const config = ref<ProductionConfig>({ ...DEFAULT_CONFIG })
+const extractorUp = ref<boolean | null>(null)
+const loading = ref(true)
+const generating = ref(false)
+const error = ref('')
 
-const selectedProduction = computed(() =>
-  productions.value.find((production) => production.id === selectedProductionId.value) || null,
-)
+const currency = computed(() => summary.value?.production.currency || 'USD')
+const hasBudget = computed(() => Boolean(budget.value))
 
-const selectedSection = computed(() =>
-  sections.value.find((section) => section.id === selectedSectionId.value) || null,
-)
-
-// The sum of the weekly columns is what remains to be spent — it deliberately
-// excludes cost to date and commitments. Presenting it as "total planned cash"
-// understated this production's budget by $153,982.
-const remainingToSpend = computed(() => {
-  if (!summary.value?.snapshot) return 0
-  return summary.value.snapshot.weeklyTotals.reduce((sum, entry) => sum + Number(entry.amount || 0), 0)
-})
-
-// The workbook's own bottom line: cost to date + commitments + every weekly
-// column. Now stored on import rather than discarded.
-const budgetTotal = computed(() => {
-  const snapshot = summary.value?.snapshot
-  if (!snapshot) return 0
-  if (snapshot.grandTotal != null) return Number(snapshot.grandTotal)
-  return Number(snapshot.totalCtd || 0) + Number(snapshot.totalCommitments || 0) + remainingToSpend.value
-})
-
-const selectedHotCostDay = computed(() =>
-  hotCostSummary.value?.persistedDays.find((day) => day.id === selectedHotCostDayId.value) || null,
-)
-
-const hasCashflowSnapshot = computed(() => Boolean(summary.value?.snapshot))
-const hasHotCostData = computed(() => Boolean(hotCostSummary.value?.persistedDays?.length))
-
-function formatMoney(value: number | string | null | undefined, currency = 'USD') {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 0,
-  }).format(Number(value || 0))
+async function refreshProductions(selectId?: string) {
+  productions.value = await api.productions()
+  if (selectId) selectedId.value = selectId
+  else if (!selectedId.value && productions.value.length) selectedId.value = productions.value[0].id
 }
 
-async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`, options)
-  if (!response.ok) {
-    const text = await response.text()
-    throw new Error(text || `Request failed: ${response.status}`)
+/** Take what the budget already stated so nobody types it twice. */
+function applyPrefill(result: BudgetUploadResult) {
+  const calendar = result.inputsRequired.find((q) => q.key === 'calendar')?.prefill as
+    Record<string, unknown> | undefined
+  if (!calendar) return
+  const next = { ...config.value }
+  const start = String(calendar.shoot_start || '')
+  const parsed = start ? new Date(start.replace(/\./g, ' ')) : null
+  if (parsed && !Number.isNaN(parsed.getTime())) {
+    next.shoot_start = parsed.toISOString().slice(0, 10)
   }
-  return response.json()
+  if (calendar.shoot_days) {
+    next.shoot_days = Number(calendar.shoot_days)
+    next.shoot_weeks = Math.max(1, Math.ceil(Number(calendar.shoot_days) / 5))
+  }
+  if (calendar.post_weeks) next.post_weeks = Number(calendar.post_weeks)
+  config.value = next
 }
 
-async function loadHotCostSummary(productionId: string) {
+async function loadProduction(id: string) {
+  if (!id) return
+  summary.value = await api.productionSummary(id).catch(() => null)
   try {
-    hotCostSummary.value = await fetchJson<HotCostSummary>(`/api/imports/hot-cost/${productionId}`)
+    const stored = await api.budget(id)
+    // Reshape the stored extract into the same view a fresh upload gives, so a
+    // reloaded page looks identical to one that has just been uploaded.
+    const restored: BudgetUploadResult = {
+      ok: true,
+      productionId: id,
+      importBatchId: '',
+      productionType: (stored.production as any)?.production_type
+        || { type: 'unknown', confidence: 0, evidence: [], counter_evidence: [] },
+      grandTotal: Number(stored.totals?.grand_total || 0),
+      accounts: stored.accountCount,
+      departments: stored.topsheet?.length || 0,
+      inputsRequired: stored.inputsRequired || [],
+      warnings: stored.warnings || [],
+    }
+    budget.value = restored
+    applyPrefill(restored)
   } catch {
-    hotCostSummary.value = null
+    budget.value = null
   }
 }
 
-async function loadHotCostMappingSummary(productionId: string) {
-  try {
-    hotCostMappingSummary.value = await fetchJson<HotCostMappingSummary>(`/api/imports/hot-cost/${productionId}/mapping-summary`)
-  } catch {
-    hotCostMappingSummary.value = null
-  }
+async function onUploaded(result: BudgetUploadResult) {
+  budget.value = result
+  cashflow.value = null
+  applyPrefill(result)
+  await refreshProductions(result.productionId)
 }
 
-async function loadHotCostSectionComparison(productionId: string) {
-  try {
-    hotCostSectionComparison.value = await fetchJson<HotCostSectionComparison>(`/api/imports/hot-cost/${productionId}/section-comparison`)
-  } catch {
-    hotCostSectionComparison.value = null
-  }
-}
-
-async function loadHotCostWeeklyRollup(productionId: string) {
-  try {
-    hotCostWeeklyRollup.value = await fetchJson<HotCostWeeklyRollup>(`/api/imports/hot-cost/${productionId}/weekly-rollup`)
-  } catch {
-    hotCostWeeklyRollup.value = null
-  }
-}
-
-async function loadSectionLineItems(sectionId: string) {
-  if (!selectedProductionId.value) return
-  loadingSection.value = true
-  try {
-    sectionLineItems.value = await fetchJson<SectionLineItem[]>(
-      `/api/productions/${selectedProductionId.value}/sections/${sectionId}/line-items`,
-    )
-  } finally {
-    loadingSection.value = false
-  }
-}
-
-async function loadHotCostDayLineItems(dayId: string) {
-  if (!selectedProductionId.value) return
-  loadingHotCostDay.value = true
-  try {
-    hotCostLineItems.value = await fetchJson<HotCostLineItem[]>(
-      `/api/imports/hot-cost/${selectedProductionId.value}/days/${dayId}/line-items`,
-    )
-  } finally {
-    loadingHotCostDay.value = false
-  }
-}
-
-async function loadProductionData(productionId: string) {
-  const [summaryResponse, sectionsResponse] = await Promise.all([
-    fetchJson<ProductionSummary>(`/api/productions/${productionId}/summary`),
-    fetchJson<Section[]>(`/api/productions/${productionId}/sections`),
-  ])
-
-  summary.value = summaryResponse
-  sections.value = sectionsResponse
-  await loadHotCostSummary(productionId)
-  await loadHotCostMappingSummary(productionId)
-  await loadHotCostSectionComparison(productionId)
-  await loadHotCostWeeklyRollup(productionId)
-
-  if (hotCostSummary.value?.persistedDays?.length) {
-    selectedHotCostDayId.value = hotCostSummary.value.persistedDays[0].id
-    await loadHotCostDayLineItems(hotCostSummary.value.persistedDays[0].id)
-  } else {
-    selectedHotCostDayId.value = ''
-    hotCostLineItems.value = []
-  }
-
-  if (sectionsResponse.length > 0) {
-    selectedSectionId.value = sectionsResponse[0].id
-    await loadSectionLineItems(sectionsResponse[0].id)
-  } else {
-    selectedSectionId.value = ''
-    sectionLineItems.value = []
-  }
-}
-
-async function loadProductions(selectFirst = false) {
-  const productionList = await fetchJson<Production[]>('/api/productions')
-  productions.value = productionList
-
-  if (productionList.length === 0) {
-    selectedProductionId.value = ''
-    summary.value = null
-    sections.value = []
-    sectionLineItems.value = []
-    hotCostSummary.value = null
-    hotCostMappingSummary.value = null
-    hotCostSectionComparison.value = null
-    hotCostWeeklyRollup.value = null
-    selectedHotCostDayId.value = ''
-    hotCostLineItems.value = []
-    return
-  }
-
-  if (selectFirst || !selectedProductionId.value) {
-    selectedProductionId.value = productionList[0].id
-  }
-
-  await loadProductionData(selectedProductionId.value)
-}
-
-async function bootstrap() {
-  loading.value = true
+async function generate() {
+  if (!selectedId.value) return
+  generating.value = true
   error.value = ''
-
   try {
-    await loadProductions(true)
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to load dashboard data.'
+    cashflow.value = await api.generateCashflow(selectedId.value, config.value)
+    summary.value = await api.productionSummary(selectedId.value)
+    await refreshProductions(selectedId.value)
+  } catch (caught: any) {
+    error.value = caught.message || 'Could not generate the cash flow.'
+  } finally {
+    generating.value = false
+  }
+}
+
+watch(selectedId, async (id) => {
+  cashflow.value = null
+  await loadProduction(id)
+})
+
+onMounted(async () => {
+  try {
+    await refreshProductions()
+    if (selectedId.value) await loadProduction(selectedId.value)
+    extractorUp.value = (await api.extractorHealth()).extractor.ok
+  } catch (caught: any) {
+    error.value = caught.message || 'Could not reach the API.'
   } finally {
     loading.value = false
   }
-}
-
-async function handleProductionChange(event: Event) {
-  const target = event.target as HTMLSelectElement
-  selectedProductionId.value = target.value
-  if (!selectedProductionId.value) return
-
-  loading.value = true
-  error.value = ''
-  try {
-    await loadProductionData(selectedProductionId.value)
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to load production data.'
-  } finally {
-    loading.value = false
-  }
-}
-
-async function runSampleImport() {
-  importing.value = true
-  importMessage.value = ''
-  error.value = ''
-
-  try {
-    const response = await fetchJson<ImportResult>('/api/imports/sample', { method: 'POST' })
-    await loadProductions(true)
-    importMessage.value = `Sample import complete: ${response.result.sections} sections, ${response.result.lineItems} line items, ${response.result.allocations} allocations.`
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Sample import failed.'
-  } finally {
-    importing.value = false
-  }
-}
-
-function handleFileChange(event: Event) {
-  const target = event.target as HTMLInputElement
-  uploadFile.value = target.files?.[0] || null
-}
-
-async function uploadWorkbook() {
-  if (!uploadFile.value) {
-    error.value = 'Choose a workbook file first.'
-    return
-  }
-
-  const isLikelyHotCostUpload = /\.xls$/i.test(uploadFile.value.name) || /hot\s*cost/i.test(uploadFile.value.name)
-  if (isLikelyHotCostUpload && !selectedProductionId.value) {
-    error.value = 'Select the cash flow production you want to attach this hot cost workbook to before uploading.'
-    return
-  }
-
-  importing.value = true
-  importMessage.value = ''
-  error.value = ''
-
-  try {
-    const formData = new FormData()
-    formData.append('workbook', uploadFile.value)
-    if (selectedProductionId.value) {
-      formData.append('productionId', selectedProductionId.value)
-    }
-    if (uploadTitle.value.trim()) {
-      formData.append('productionTitle', uploadTitle.value.trim())
-    }
-
-    const response = await fetchJson<ImportResult>('/api/imports/upload', {
-      method: 'POST',
-      body: formData,
-    })
-
-    await loadProductions(false)
-    selectedProductionId.value = response.result.productionId
-    await loadProductionData(response.result.productionId)
-
-    if (response.workbookType === 'hot-cost') {
-      importMessage.value = `Hot cost workbook imported for ${response.result.productionTitle}: ${response.result.daySheetCount} day sheets, ${response.result.summaryEntryCount} summary rows, ${response.result.persistedDayCount || 0} persisted day records, ${response.result.persistedLineItemSampleCount || 0} persisted hot cost rows. Weekly rollups/comparisons are now attached to the selected production.`
-    } else {
-      importMessage.value = `Upload import complete for ${response.result.productionTitle}: ${response.result.sections} sections, ${response.result.lineItems} line items.`
-    }
-
-    uploadFile.value = null
-    uploadTitle.value = ''
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Workbook upload failed.'
-  } finally {
-    importing.value = false
-  }
-}
-
-function exportJson() {
-  if (!selectedProductionId.value) return
-  window.open(`${API_BASE}/api/exports/productions/${selectedProductionId.value}/report.json`, '_blank')
-}
-
-function exportCsv() {
-  if (!selectedProductionId.value) return
-  window.open(`${API_BASE}/api/exports/productions/${selectedProductionId.value}/report.csv`, '_blank')
-}
-
-watch(selectedSectionId, async (sectionId, previousSectionId) => {
-  if (!sectionId || sectionId === previousSectionId) return
-  try {
-    await loadSectionLineItems(sectionId)
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to load section line items.'
-  }
-})
-
-watch(selectedHotCostDayId, async (dayId, previousDayId) => {
-  if (!dayId || dayId === previousDayId) return
-  try {
-    await loadHotCostDayLineItems(dayId)
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to load hot cost line items.'
-  }
-})
-
-onMounted(() => {
-  bootstrap()
 })
 </script>
 
 <template>
-  <main class="app-shell">
-    <header class="page-header">
+  <main class="shell">
+    <header class="masthead">
       <div>
         <p class="eyebrow">Cashflow</p>
-        <h1>Cash Flow Dashboard</h1>
+        <h1>Budget in, documents out</h1>
       </div>
-
       <div class="header-actions">
-        <label class="production-picker">
+        <label v-if="productions.length" class="picker">
           <span>Production</span>
-          <select :value="selectedProductionId" @change="handleProductionChange">
+          <select v-model="selectedId">
             <option v-for="production in productions" :key="production.id" :value="production.id">
               {{ production.title }}
             </option>
           </select>
         </label>
-
-        <button class="import-button" type="button" :disabled="importing" @click="runSampleImport">
-          {{ importing ? 'Running import…' : 'Re-import sample workbook' }}
-        </button>
+        <span v-if="extractorUp === false" class="badge warn">Extractor unreachable</span>
       </div>
     </header>
 
-    <section class="panel upload-panel">
-      <div class="panel-header">
-        <div>
-          <h2>Upload hot cost workbook</h2>
-          <p>Upload the operational hot cost workbook. If a production is currently selected, the hot cost import will attach to that production.</p>
-        </div>
-        <div class="export-actions">
-          <button class="secondary-button" type="button" @click="exportJson">Export JSON</button>
-          <button class="secondary-button" type="button" @click="exportCsv">Export CSV</button>
-        </div>
-      </div>
+    <p v-if="error" class="banner error">{{ error }}</p>
 
-      <div class="upload-grid">
-        <input type="file" accept=".xlsx,.xls" @change="handleFileChange" />
-        <input v-model="uploadTitle" type="text" placeholder="Optional production title" />
-        <button class="import-button" type="button" :disabled="importing" @click="uploadWorkbook">
-          {{ importing ? 'Inspecting workbook…' : 'Upload workbook' }}
-        </button>
-      </div>
-    </section>
+    <template v-if="!loading">
+      <BudgetUpload @uploaded="onUploaded" />
 
-    <section v-if="hotCostSummary?.hotCostImport" class="panel success-panel">
-      Hot cost workbook detected for <strong>{{ hotCostSummary.title }}</strong> — {{ hotCostSummary.hotCostImport.daySheetNames.length }} day sheets, {{ hotCostSummary.hotCostImport.summaryEntryCount }} summary rows, summary sheet {{ hotCostSummary.hotCostImport.summarySheetName }}.
-    </section>
+      <template v-if="hasBudget && budget">
+        <BudgetOverview :budget="budget" :currency="currency" />
 
-    <section v-if="importMessage" class="panel success-panel">
-      {{ importMessage }}
-    </section>
+        <ProductionSetup
+          :config="config"
+          :inputs-required="budget.inputsRequired"
+          :busy="generating"
+          @update:config="config = $event"
+          @generate="generate" />
 
-    <section v-if="error" class="panel error-panel">
-      <strong>Couldn’t load dashboard data.</strong>
-      <p>{{ error }}</p>
-    </section>
+        <GeneratedDocuments
+          :production-id="selectedId"
+          :config="config"
+          :cashflow="cashflow"
+          :currency="currency" />
 
-    <template v-else>
-      <section class="stats-grid">
-        <article class="stat-card">
-          <span class="stat-label">Budget</span>
-          <strong class="stat-value">
-            {{ formatMoney(budgetTotal, summary?.production.currency || 'USD') }}
-          </strong>
-          <small v-if="hasCashflowSnapshot">
-            Cost to date + committed + every weekly column — the workbook's own total.
-            {{ selectedProduction?.counts.sections || 0 }} departments,
-            {{ selectedProduction?.counts.lineItems || 0 }} lines,
-            {{ selectedProduction?.counts.periods || 0 }} periods.
-          </small>
-          <small v-else-if="hasHotCostData">No cash flow snapshot yet for this production — this production currently only has hot cost import data.</small>
-          <small v-else>No imported cash flow snapshot for this production yet.</small>
-        </article>
-
-        <article class="stat-card">
-          <span class="stat-label">Cost to date</span>
-          <strong class="stat-value">
-            {{ formatMoney(summary?.snapshot?.totalCtd, summary?.production.currency || 'USD') }}
-          </strong>
-          <small v-if="hasCashflowSnapshot">Cost-to-date from imported workbook totals</small>
-          <small v-else>Cash flow CTD becomes available after a cash flow workbook import.</small>
-        </article>
-
-        <article class="stat-card">
-          <span class="stat-label">Committed</span>
-          <strong class="stat-value">
-            {{ formatMoney(summary?.snapshot?.totalCommitments, summary?.production.currency || 'USD') }}
-          </strong>
-          <small v-if="hasCashflowSnapshot">Outstanding committed spend from latest snapshot</small>
-          <small v-else>Commitments become available after a cash flow workbook import.</small>
-        </article>
-
-        <article class="stat-card">
-          <span class="stat-label">Remaining to spend</span>
-          <strong class="stat-value">
-            {{ formatMoney(remainingToSpend, summary?.production.currency || 'USD') }}
-          </strong>
-          <small v-if="hasCashflowSnapshot">
-            {{ summary?.snapshot?.weeklyTotals.length || 0 }} weekly periods still to be paid
-          </small>
-          <small v-else>Available once a cash flow workbook is imported.</small>
-        </article>
-      </section>
-
-      <section v-if="loading" class="panel loading-panel">Loading live production data…</section>
-
-      <template v-else>
-        <section class="content-grid">
-          <article class="panel wide-panel">
-            <div class="panel-header">
-              <div>
-                <h2>Weekly totals</h2>
-                <p>Imported from the latest forecast snapshot.</p>
-              </div>
-              <span class="pill">{{ summary?.snapshot?.weeklyTotals.length || 0 }} periods</span>
-            </div>
-
-            <div v-if="!hasCashflowSnapshot" class="empty-state">
-              <strong>No cash flow snapshot yet.</strong>
-              <p v-if="hasHotCostData">This production has hot cost import data, but it does not yet have a cash flow workbook snapshot. Upload a cash flow workbook to populate weekly period totals here.</p>
-              <p v-else>Upload a cash flow workbook to populate weekly period totals here.</p>
-            </div>
-
-            <div v-else class="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Period</th>
-                    <th>Weekly total</th>
-                    <th>Cumulative</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="period in summary?.snapshot?.weeklyTotals || []"
-                    :key="period.periodSequence"
-                  >
-                    <td>{{ period.label }}</td>
-                    <td>{{ formatMoney(period.amount, summary?.production.currency || 'USD') }}</td>
-                    <td>
-                      {{
-                        formatMoney(
-                          summary?.snapshot?.cumulativeTotals.find(
-                            (entry) => entry.periodSequence === period.periodSequence,
-                          )?.amount,
-                          summary?.production.currency || 'USD',
-                        )
-                      }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
-
-          <article class="panel side-panel">
-            <div class="panel-header">
-              <div>
-                <h2>Sections</h2>
-                <p>Pick a section to inspect imported line items and allocations.</p>
-              </div>
-              <span class="pill">{{ sections.length }}</span>
-            </div>
-
-            <div v-if="!sections.length" class="empty-state">
-              <strong>No cash flow sections yet.</strong>
-              <p>This production does not yet have an imported cash flow workbook.</p>
-            </div>
-
-            <ul v-else class="section-list">
-              <li
-                v-for="section in sections"
-                :key="section.id"
-                :class="['section-item', { active: section.id === selectedSectionId }]"
-                @click="selectedSectionId = section.id"
-              >
-                <div>
-                  <strong>{{ section.name }}</strong>
-                  <p>Acct {{ section.code || '—' }} · rows {{ section.sourceStartRow }}–{{ section.sourceEndRow }}</p>
-                </div>
-                <span>{{ section.lineItemCount }} lines</span>
-              </li>
-            </ul>
-          </article>
-        </section>
-
-        <section v-if="hotCostMappingSummary?.buckets?.length" class="panel hot-cost-grid">
-          <div class="panel-header">
-            <div>
-              <h2>Hot cost mapping summary</h2>
-              <p>First-pass heuristic mapping from hot cost account codes into cash flow-oriented buckets.</p>
-            </div>
-            <span class="pill">{{ hotCostMappingSummary.buckets.length }} buckets</span>
-          </div>
-
-          <div class="mini-stats-grid">
-            <div class="mini-stat-card">
-              <span class="stat-label">Mapped rows</span>
-              <strong>{{ hotCostMappingSummary.totals.rowCount }}</strong>
-            </div>
-            <div class="mini-stat-card">
-              <span class="stat-label">Mapped actual total</span>
-              <strong>{{ formatMoney(hotCostMappingSummary.totals.totalActualDayCost, summary?.production.currency || 'USD') }}</strong>
-            </div>
-          </div>
-
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Bucket</th>
-                  <th>Rows</th>
-                  <th>Actual total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="bucket in hotCostMappingSummary.buckets" :key="bucket.bucketKey">
-                  <td>{{ bucket.label }}</td>
-                  <td>{{ bucket.rowCount }}</td>
-                  <td>{{ formatMoney(bucket.totalActualDayCost, summary?.production.currency || 'USD') }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section v-if="hotCostWeeklyRollup?.weeks?.length" class="panel hot-cost-grid">
-          <div class="panel-header">
-            <div>
-              <h2>Weekly hot cost rollup</h2>
-              <p>Day-level hot cost imports grouped into inferred production week buckets.</p>
-            </div>
-            <span class="pill">{{ hotCostWeeklyRollup.weeks.length }} week buckets</span>
-          </div>
-
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Period</th>
-                  <th>Days</th>
-                  <th>Rows</th>
-                  <th>Actual labour</th>
-                  <th>Budgeted</th>
-                  <th>(Over) / under</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="week in hotCostWeeklyRollup.weeks" :key="week.weekLabel">
-                  <td>{{ week.weekLabel }}</td>
-                  <td>{{ week.dayCount }}</td>
-                  <td>{{ week.rowCount }}</td>
-                  <td>{{ formatMoney(week.totalActualDayCost, summary?.production.currency || 'USD') }}</td>
-                  <td>{{ formatMoney((week as any).totalBudgetDayCost, summary?.production.currency || 'USD') }}</td>
-                  <td>{{ formatMoney((week as any).totalDayVariance, summary?.production.currency || 'USD') }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-
-        <section v-if="hotCostSectionComparison?.rows?.length" class="panel hot-cost-grid">
-          <div class="panel-header">
-            <div>
-              <h2>Section comparison</h2>
-              <p>First-pass comparison between mapped hot cost actuals and imported cash flow section totals.</p>
-            </div>
-            <span class="pill">{{ hotCostSectionComparison.rows.length }} sections</span>
-          </div>
-
-          <div class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Section</th>
-                  <th>Mapped bucket</th>
-                  <th>Hot cost actual</th>
-                  <th>Imported cash flow total</th>
-                  <th>Delta</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in hotCostSectionComparison.rows" :key="row.sectionId">
-                  <td>{{ row.sectionName }}</td>
-                  <td>{{ row.mappedBucketLabel || '—' }}</td>
-                  <td>{{ formatMoney(row.hotCostActualTotal, summary?.production.currency || 'USD') }}</td>
-                  <td>{{ formatMoney(row.importedCashflowTotal, summary?.production.currency || 'USD') }}</td>
-                  <td>{{ formatMoney(row.delta, summary?.production.currency || 'USD') }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section v-if="hotCostSummary?.persistedDays?.length" class="content-grid hot-cost-grid">
-          <article class="panel side-panel">
-            <div class="panel-header">
-              <div>
-                <h2>Hot cost days</h2>
-                <p>Imported daily tabs from the uploaded hot cost workbook.</p>
-              </div>
-              <span class="pill">{{ hotCostSummary.persistedDays.length }} days</span>
-            </div>
-
-            <div v-if="hotCostSummary.summary" class="mini-stats-grid">
-              <div class="mini-stat-card">
-                <span class="stat-label">Imported days</span>
-                <strong>{{ hotCostSummary.summary.totalDays }}</strong>
-              </div>
-              <div class="mini-stat-card">
-                <span class="stat-label">Imported rows</span>
-                <strong>{{ hotCostSummary.summary.totalRows }}</strong>
-              </div>
-              <div class="mini-stat-card">
-                <span class="stat-label">Actual labour</span>
-                <strong>{{ formatMoney(hotCostSummary.summary.totalActualDayCost, summary?.production.currency || 'USD') }}</strong>
-              </div>
-              <div class="mini-stat-card">
-                <span class="stat-label">Budgeted</span>
-                <strong>{{ formatMoney(hotCostSummary.summary.totalBudgetDayCost, summary?.production.currency || 'USD') }}</strong>
-              </div>
-              <div class="mini-stat-card">
-                <span class="stat-label">(Over) / under</span>
-                <strong>{{ formatMoney(hotCostSummary.summary.totalDayVariance, summary?.production.currency || 'USD') }}</strong>
-              </div>
-            </div>
-
-            <ul class="section-list">
-              <li
-                v-for="day in hotCostSummary.daySummaries || hotCostSummary.persistedDays"
-                :key="day.id"
-                :class="['section-item', { active: day.id === selectedHotCostDayId }]"
-                @click="selectedHotCostDayId = day.id"
-              >
-                <div>
-                  <strong>{{ day.dayLabel || day.sheetName }}</strong>
-                  <p>{{ day.workDateLabel || day.sheetName }}</p>
-                  <p v-if="'totalActualDayCost' in day">
-                    Actual {{ formatMoney((day as { totalActualDayCost?: number | string | null }).totalActualDayCost, summary?.production.currency || 'USD') }}
-                    · budget {{ formatMoney((day as { totalBudgetDayCost?: number | string | null }).totalBudgetDayCost, summary?.production.currency || 'USD') }}
-                  </p>
-                </div>
-                <span>{{ day.lineItemCount }} rows</span>
-              </li>
-            </ul>
-          </article>
-
-          <article class="panel wide-panel">
-            <div class="panel-header">
-              <div>
-                <h2>{{ selectedHotCostDay?.dayLabel || selectedHotCostDay?.sheetName || 'Hot cost day detail' }}</h2>
-                <p>
-                  {{ selectedHotCostDay ? `Imported line items for ${selectedHotCostDay.workDateLabel || selectedHotCostDay.sheetName}.` : 'Select a hot cost day to inspect imported rows.' }}
-                </p>
-              </div>
-              <span v-if="selectedHotCostDay" class="pill">{{ hotCostLineItems.length }} rows</span>
-            </div>
-
-            <div v-if="loadingHotCostDay" class="loading-panel-inline">Loading hot cost line items…</div>
-
-            <div v-else class="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Row</th>
-                    <th>Acct</th>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Union</th>
-                    <th>Rate</th>
-                    <th>Actual / day</th>
-                    <th>Budget / day</th>
-                    <th>(Over) / under</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="lineItem in hotCostLineItems" :key="lineItem.id">
-                    <td>{{ lineItem.sourceRowNumber }}</td>
-                    <td>{{ lineItem.accountCode || '—' }}</td>
-                    <td>{{ lineItem.employeeName || '—' }}</td>
-                    <td>{{ lineItem.position || '—' }}</td>
-                    <td>{{ lineItem.unionCode || '—' }}</td>
-                    <td>{{ formatMoney(lineItem.rate, summary?.production.currency || 'USD') }}</td>
-                    <td>{{ formatMoney(lineItem.actualDayCost, summary?.production.currency || 'USD') }}</td>
-                    <td>{{ formatMoney(lineItem.budgetDayCost, summary?.production.currency || 'USD') }}</td>
-                    <td>{{ formatMoney(lineItem.dayVariance, summary?.production.currency || 'USD') }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
-        </section>
-
-        <section class="panel drilldown-panel">
-          <div class="panel-header">
-            <div>
-              <h2>{{ selectedSection?.name || 'Section drilldown' }}</h2>
-              <p>
-                {{ selectedSection ? `Imported rows for ${selectedSection.name}.` : 'Select a section to inspect imported line items.' }}
-              </p>
-            </div>
-            <span v-if="selectedSection" class="pill">{{ sectionLineItems.length }} rows</span>
-          </div>
-
-          <div v-if="loadingSection" class="loading-panel-inline">Loading section line items…</div>
-
-          <div v-else-if="!sections.length" class="empty-state">
-            <strong>No cash flow section drilldown yet.</strong>
-            <p>Import a cash flow workbook for this production to inspect section allocations.</p>
-          </div>
-
-          <div v-else class="table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Row</th>
-                  <th>Acct</th>
-                  <th>Description</th>
-                  <th>Type</th>
-                  <th>Imported total</th>
-                  <th>Allocations</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="lineItem in sectionLineItems" :key="lineItem.id">
-                  <td>{{ lineItem.sourceRowNumber }}</td>
-                  <td>{{ lineItem.accountCode || '—' }}</td>
-                  <td>{{ lineItem.description }}</td>
-                  <td>{{ lineItem.lineType }}</td>
-                  <td>{{ formatMoney(lineItem.importedTotal, summary?.production.currency || 'USD') }}</td>
-                  <td>
-                    <div v-if="lineItem.allocations.length" class="allocation-list">
-                      <span v-for="allocation in lineItem.allocations" :key="allocation.id">
-                        {{ allocation.periodLabel }}: {{ formatMoney(allocation.amount, summary?.production.currency || 'USD') }}
-                      </span>
-                    </div>
-                    <span v-else class="muted">—</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+        <CashFlowGrid :summary="summary" :currency="currency" />
       </template>
+
+      <ImportExisting :production-id="selectedId || null" @imported="refreshProductions(selectedId)" />
     </template>
+
+    <p v-else class="banner">Loading…</p>
   </main>
 </template>
+
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-2: #1c2430;
+  --rule: #2a3441;
+  --accent: #4b9fea;
+  --accent-border: #2f6ea8;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --ok-fg: #52c07a;
+  --warn-bg: #2b2313;
+  --warn-border: #5a4718;
+  --error-bg: #2b1616;
+  --error-fg: #f08a7f;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.55;
+}
+.shell { max-width: 1080px; margin: 0 auto; padding: 40px 24px 96px; display: flex; flex-direction: column; gap: 24px; }
+.masthead { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+.eyebrow { color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; font-size: 0.7rem; margin: 0 0 6px; }
+.masthead h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -0.02em; }
+.header-actions { display: flex; gap: 12px; align-items: center; }
+.picker { display: flex; flex-direction: column; gap: 4px; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 24px; }
+.panel-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
+.panel-header h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.panel-header p { margin: 0; color: var(--muted); font-size: 0.89rem; max-width: 72ch; }
+.pill { background: var(--surface-2); color: var(--muted); border-radius: 999px; padding: 4px 12px; font-size: 0.74rem; white-space: nowrap; }
+input, select, button { font: inherit; }
+input, select {
+  background: var(--surface-2); border: 1px solid var(--rule); color: var(--text);
+  border-radius: 8px; padding: 9px 11px;
+}
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.primary-button, .secondary-button {
+  border-radius: 8px; padding: 10px 18px; cursor: pointer; border: 1px solid transparent;
+}
+.primary-button { background: var(--accent); color: #06121e; font-weight: 600; }
+.primary-button:disabled { opacity: 0.45; cursor: not-allowed; }
+.secondary-button { background: transparent; border-color: var(--rule); color: var(--text); }
+.secondary-button:disabled { opacity: 0.45; cursor: not-allowed; }
+.banner { padding: 14px 16px; border-radius: 10px; background: var(--surface); color: var(--muted); margin: 0; }
+.banner.error { background: var(--error-bg); color: var(--error-fg); }
+.badge { padding: 5px 10px; border-radius: 999px; font-size: 0.75rem; }
+.badge.warn { background: var(--warn-bg); color: #d9b45c; }
+</style>
