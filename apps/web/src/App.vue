@@ -12,6 +12,7 @@ import ProductionSetup from './components/ProductionSetup.vue'
 import AccountantInputs from './components/AccountantInputs.vue'
 import GeneratedDocuments from './components/GeneratedDocuments.vue'
 import Adjustments from './components/Adjustments.vue'
+import HotCostConventions from './components/HotCostConventions.vue'
 import CashFlowGrid from './components/CashFlowGrid.vue'
 import ImportExisting from './components/ImportExisting.vue'
 import SignIn from './components/SignIn.vue'
@@ -271,6 +272,12 @@ onMounted(async () => {
           :currency="currency"
           :can-edit="canEdit"
           :cashflow="cashflow" />
+
+        <HotCostConventions
+          v-if="canEdit"
+          :production-id="selectedId"
+          :config="config"
+          @update:config="config = $event" />
 
         <GeneratedDocuments
           :production-id="selectedId"

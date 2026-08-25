@@ -149,6 +149,17 @@ export type ProductionSummary = {
   }
 }
 
+/**
+ * House conventions for the hot cost — three things an accountant applies that
+ * no budget states. Defaults mirror the engine's own, and each is a checkable
+ * claim about how a production runs rather than a preference.
+ */
+export type HotCostConventions = {
+  flat_rate_bills_shoot_day: boolean
+  minimum_prep_units: number
+  preshoot_at_shoot_hours: string[]
+}
+
 /** The config a human supplies. Defaults are deliberate — a draft appears before anything is asked. */
 export type ProductionConfig = {
   shoot_start: string
@@ -168,6 +179,7 @@ export type ProductionConfig = {
   unbacked_line_schedule?: Record<string, Array<{ pay_on: string; share: number }>>
   /** Payments the budget prices but ties to an event rather than a week. */
   milestones?: Array<{ acct: string; description?: string; pay_on: string }>
+  hot_cost_conventions?: HotCostConventions
 }
 
 export const DEFAULT_CONFIG: ProductionConfig = {
@@ -190,6 +202,13 @@ export const DEFAULT_CONFIG: ProductionConfig = {
   department_lags: {},
   unbacked_line_schedule: {},
   milestones: [],
+  // Mirrors DEFAULT_CONVENTIONS in the generator. Changing them here changes
+  // the day sheets; they are stated rather than buried so they can be argued with.
+  hot_cost_conventions: {
+    flat_rate_bills_shoot_day: true,
+    minimum_prep_units: 11,
+    preshoot_at_shoot_hours: ['2500', '2700', '2800'],
+  },
 }
 
 /** What the extractor receives — the form's shape, flattened the way it reads it. */
