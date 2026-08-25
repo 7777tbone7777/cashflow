@@ -16,6 +16,9 @@ const emit = defineEmits<{ (e: 'signed-out'): void }>()
 const owned = ref<Array<{ id: string; title: string; archivedAt: string | null; sharedWith: number }>>([])
 const canDelete = ref(false)
 const password = ref('')
+const currentPassword = ref('')
+const newPassword = ref('')
+const passwordNote = ref('')
 const busy = ref('')
 const error = ref('')
 
@@ -30,6 +33,22 @@ async function refresh() {
 }
 
 onMounted(refresh)
+
+async function changePassword() {
+  busy.value = 'password'
+  error.value = ''
+  passwordNote.value = ''
+  try {
+    await auth.changePassword(currentPassword.value, newPassword.value)
+    currentPassword.value = ''
+    newPassword.value = ''
+    passwordNote.value = 'Password changed. Every other session has been signed out.'
+  } catch (caught: unknown) {
+    error.value = (caught as Error).message || 'Could not change the password.'
+  } finally {
+    busy.value = ''
+  }
+}
 
 async function signOutEverywhere() {
   busy.value = 'sessions'
@@ -63,6 +82,31 @@ async function close() {
     <p class="explain">
       Signed in as <strong>{{ user.name || user.email }}</strong> ({{ user.email }}).
     </p>
+
+    <div class="block">
+      <h3>Change your password</h3>
+      <p class="explain">
+        Changing it signs out every other session. A password is usually changed because somebody
+        thinks it is known, and leaving those sessions alive would make the change cosmetic. You
+        stay signed in here.
+      </p>
+      <form class="row" @submit.prevent="changePassword">
+        <label>
+          <span>Current password</span>
+          <input v-model="currentPassword" type="password" autocomplete="current-password" required />
+        </label>
+        <label>
+          <span>New password</span>
+          <input v-model="newPassword" type="password" autocomplete="new-password"
+                 minlength="10" required />
+        </label>
+        <button class="secondary-button" type="submit"
+                :disabled="busy === 'password' || !currentPassword || newPassword.length < 10">
+          {{ busy === 'password' ? 'Changing…' : 'Change password' }}
+        </button>
+      </form>
+      <p v-if="passwordNote" class="banner ok">{{ passwordNote }}</p>
+    </div>
 
     <div class="block">
       <h3>Sign out everywhere</h3>
@@ -138,4 +182,5 @@ label { display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; col
   background: transparent; border: 1px solid var(--error-fg); color: var(--error-fg); font: inherit;
 }
 .danger-button:disabled { opacity: 0.4; cursor: not-allowed; }
+.banner.ok { background: var(--surface-2); color: var(--ok-fg); margin-top: 12px; }
 </style>

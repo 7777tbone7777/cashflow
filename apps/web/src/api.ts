@@ -229,6 +229,12 @@ export const auth = {
       body: JSON.stringify(body),
     }),
   logout: () => request<{ ok: true }>('/api/auth/logout', { method: 'POST' }),
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<{ ok: true; otherSessionsEnded: true }>('/api/auth/password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    }),
   logoutEverywhere: () => request<{ ok: true }>('/api/auth/logout-all', { method: 'POST' }),
   blockers: () => request<{
     canDelete: boolean

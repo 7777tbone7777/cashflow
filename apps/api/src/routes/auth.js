@@ -196,6 +196,46 @@ authRouter.post('/register', async (req, res, next) => {
 });
 
 /**
+ * Change the password.
+ *
+ * Every other session is ended by doing so. A password is usually changed
+ * because somebody thinks it is known, and leaving the sessions it created
+ * alive would make the change cosmetic — this is the one thing sessions being
+ * rows rather than signed tokens actually buys. The session making the request
+ * is replaced rather than kept, so the browser doing the changing stays signed
+ * in on a credential the old password never saw.
+ */
+authRouter.post('/password', requireAuth, async (req, res, next) => {
+  try {
+    const current = String(req.body?.currentPassword || '');
+    const next_ = String(req.body?.newPassword || '');
+
+    if (!await verifyPassword(current, req.user.passwordHash)) {
+      return res.status(401).json({ error: 'That is not your current password.' });
+    }
+    if (next_.length < MIN_PASSWORD) {
+      return res.status(400).json({
+        error: `Use at least ${MIN_PASSWORD} characters for the new password.`,
+      });
+    }
+    if (next_ === current) {
+      return res.status(400).json({ error: 'That is the password you already have.' });
+    }
+
+    const passwordHash = await hashPassword(next_);
+    await prisma.$transaction([
+      prisma.user.update({ where: { id: req.user.id }, data: { passwordHash } }),
+      prisma.session.deleteMany({ where: { userId: req.user.id } }),
+    ]);
+    await startSession(res, req.user, req);
+
+    return res.json({ ok: true, otherSessionsEnded: true });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+/**
  * What stands between this account and deletion.
  *
  * Owned productions do, and that is the whole point: a show that has been shared
