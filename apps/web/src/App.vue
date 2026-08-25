@@ -5,9 +5,11 @@ import {
   type BudgetUploadResult, type CashflowResult, type Production,
   type ProductionConfig, type ProductionSummary,
 } from './api'
+import HowItWorks from './components/HowItWorks.vue'
 import BudgetUpload from './components/BudgetUpload.vue'
 import BudgetOverview from './components/BudgetOverview.vue'
 import ProductionSetup from './components/ProductionSetup.vue'
+import AccountantInputs from './components/AccountantInputs.vue'
 import GeneratedDocuments from './components/GeneratedDocuments.vue'
 import CashFlowGrid from './components/CashFlowGrid.vue'
 import ImportExisting from './components/ImportExisting.vue'
@@ -140,10 +142,22 @@ onMounted(async () => {
     <p v-if="error" class="banner error">{{ error }}</p>
 
     <template v-if="!loading">
+      <HowItWorks
+        :has-budget="hasBudget"
+        :has-cashflow="Boolean(cashflow)"
+        :inputs-required="budget?.inputsRequired ?? []"
+        :currency="currency" />
+
       <BudgetUpload @uploaded="onUploaded" />
 
       <template v-if="hasBudget && budget">
         <BudgetOverview :budget="budget" :currency="currency" />
+
+        <AccountantInputs
+          :config="config"
+          :inputs-required="budget.inputsRequired"
+          :currency="currency"
+          @update:config="config = $event" />
 
         <ProductionSetup
           :config="config"

@@ -7,6 +7,21 @@ export type ProductionType = {
   counter_evidence: string[]
 }
 
+export type UnbackedLine = {
+  acct: string
+  name_display: string
+  amount: number
+  states_percentage: boolean
+}
+
+export type MilestoneCandidate = {
+  acct: string
+  account_name: string
+  person: string | null
+  description: string
+  amount: number
+}
+
 export type InputRequired = {
   key: string
   question: string
@@ -16,6 +31,12 @@ export type InputRequired = {
   missing?: string[]
   examples?: unknown[]
   detail?: string[]
+  /** What the answer is worth, in dollars. Present on the asks that move the number. */
+  amount_at_stake?: number
+  /** Top sheet lines with no detail behind them — `unbacked_lines`. */
+  lines?: UnbackedLine[]
+  answer_format?: Record<string, unknown>
+  departments_available?: Array<{ acct: string; name: string }>
 }
 
 export type BudgetUploadResult = {
@@ -89,6 +110,12 @@ export type ProductionConfig = {
   rental_deposit_share?: number
   prefer_learned_profiles?: boolean
   payment_timing?: Record<string, { lag_days: number; note?: string }>
+  /** Per-department settlement cycles, keyed by department account. */
+  department_lags?: Record<string, number>
+  /** Instalment dates for top sheet lines the detail pages never carried. */
+  unbacked_line_schedule?: Record<string, Array<{ pay_on: string; share: number }>>
+  /** Payments the budget prices but ties to an event rather than a week. */
+  milestones?: Array<{ acct: string; description?: string; pay_on: string }>
 }
 
 export const DEFAULT_CONFIG: ProductionConfig = {
@@ -108,6 +135,29 @@ export const DEFAULT_CONFIG: ProductionConfig = {
     vendor: { lag_days: 14, note: 'most spend settles inside two weeks' },
     prepaid: { lag_days: -14, note: 'premiums and deposits paid ahead' },
   },
+  department_lags: {},
+  unbacked_line_schedule: {},
+  milestones: [],
+}
+
+/** What the extractor receives — the form's shape, flattened the way it reads it. */
+export type GeneratorConfig = Omit<ProductionConfig, 'payment_timing' | 'department_lags'> & {
+  payment_timing?: Record<string, unknown>
+}
+
+/**
+ * The generator reads per-department lags from inside `payment_timing`. The form
+ * keeps them in their own field because that is how a person thinks about them.
+ */
+export function forGenerator(config: ProductionConfig): GeneratorConfig {
+  const { department_lags, payment_timing, ...rest } = config
+  const hasLags = department_lags && Object.keys(department_lags).length > 0
+  return {
+    ...rest,
+    payment_timing: hasLags
+      ? { ...payment_timing, departments: department_lags }
+      : payment_timing,
+  }
 }
 
 export class ApiError extends Error {
@@ -152,7 +202,7 @@ export const api = {
     request<CashflowResult>(`/api/budgets/${id}/generate/cashflow`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ config }),
+      body: JSON.stringify({ config: forGenerator(config) }),
     }),
 
   /** Returns the workbook itself — the browser saves it. */
