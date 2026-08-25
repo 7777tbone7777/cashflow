@@ -97,6 +97,7 @@ export type Production = {
   currency: string
   status: string
   role: ProductionRole
+  archivedAt: string | null
   counts: { periods: number; sections: number; lineItems: number; snapshots: number; importBatches: number }
 }
 
@@ -230,6 +231,29 @@ export const auth = {
   logout: () => request<{ ok: true }>('/api/auth/logout', { method: 'POST' }),
 }
 
+export const shows = {
+  archive: (id: string) =>
+    request<{ id: string; archivedAt: string }>(`/api/productions/${id}/archive`,
+      { method: 'POST' }),
+  unarchive: (id: string) =>
+    request<{ id: string; archivedAt: null }>(`/api/productions/${id}/unarchive`,
+      { method: 'POST' }),
+  /** Irreversible. The title is required as proof this is the intended show. */
+  remove: (id: string, confirmTitle: string) =>
+    request<{ ok: true; deleted: string }>(`/api/productions/${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ confirmTitle }),
+    }),
+  transfer: (id: string, email: string) =>
+    request<{ ok: true; owner: { email: string; name: string | null }; yourRoleNow: string }>(
+      `/api/productions/${id}/transfer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      }),
+}
+
 export const members = {
   list: (productionId: string) =>
     request<MemberList>(`/api/productions/${productionId}/members`),
@@ -266,7 +290,8 @@ export const invites = {
 }
 
 export const api = {
-  productions: () => request<Production[]>('/api/productions'),
+  productions: (includeArchived = false) =>
+    request<Production[]>(`/api/productions${includeArchived ? '?archived=true' : ''}`),
 
   productionSummary: (id: string) => request<ProductionSummary>(`/api/productions/${id}/summary`),
 

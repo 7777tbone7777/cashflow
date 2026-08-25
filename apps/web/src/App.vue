@@ -16,6 +16,7 @@ import ImportExisting from './components/ImportExisting.vue'
 import SignIn from './components/SignIn.vue'
 import TeamPanel from './components/TeamPanel.vue'
 import ShowAccess from './components/ShowAccess.vue'
+import ShowSettings from './components/ShowSettings.vue'
 
 const me = ref<User | null>(null)
 const booting = ref(true)
@@ -33,15 +34,27 @@ const error = ref('')
 const currency = computed(() => summary.value?.production.currency || 'USD')
 // What this account may do with the selected show. A viewer gets the documents
 // and the assumptions; the buttons that write are not theirs.
-const role = computed(() =>
-  productions.value.find((p) => p.id === selectedId.value)?.role ?? 'owner')
+const selected = computed(() => productions.value.find((p) => p.id === selectedId.value) ?? null)
+const role = computed(() => selected.value?.role ?? 'owner')
+const showArchived = ref(false)
 const canEdit = computed(() => role.value !== 'viewer')
 const hasBudget = computed(() => Boolean(budget.value))
 
 async function refreshProductions(selectId?: string) {
-  productions.value = await api.productions()
-  if (selectId) selectedId.value = selectId
-  else if (!selectedId.value && productions.value.length) selectedId.value = productions.value[0].id
+  productions.value = await api.productions(showArchived.value)
+  if (selectId !== undefined) selectedId.value = selectId
+  // A show that has just been deleted or archived is no longer in the list, so
+  // fall back rather than leaving the page pointing at nothing.
+  if (!productions.value.some((p) => p.id === selectedId.value)) {
+    selectedId.value = productions.value[0]?.id ?? ''
+  }
+}
+
+/** Archive, delete and transfer all change the list and possibly the selection. */
+async function onShowChanged(selectId?: string) {
+  await refreshProductions(selectId)
+  if (selectedId.value) await loadProduction(selectedId.value)
+  else { budget.value = null; summary.value = null; cashflow.value = null }
 }
 
 /** Take what the budget already stated so nobody types it twice. */
@@ -176,9 +189,13 @@ onMounted(async () => {
           <span>Production</span>
           <select v-model="selectedId">
             <option v-for="production in productions" :key="production.id" :value="production.id">
-              {{ production.title }}
+              {{ production.title }}{{ production.archivedAt ? ' (archived)' : '' }}
             </option>
           </select>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" v-model="showArchived" @change="refreshProductions(selectedId)" />
+          <span>Show archived</span>
         </label>
         <span v-if="extractorUp === false" class="badge warn">Extractor unreachable</span>
         <span class="who">
@@ -232,6 +249,9 @@ onMounted(async () => {
       </template>
 
       <ShowAccess v-if="selectedId" :production-id="selectedId" :role="role" />
+
+      <ShowSettings v-if="selected && role === 'owner'" :production="selected"
+                    @changed="onShowChanged" />
 
       <ImportExisting v-if="canEdit" :production-id="selectedId || null"
                       @imported="refreshProductions(selectedId)" />
@@ -297,6 +317,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-v
 .banner.error { background: var(--error-bg); color: var(--error-fg); }
 .badge { padding: 5px 10px; border-radius: 999px; font-size: 0.75rem; }
 .badge.warn { background: var(--warn-bg); color: #d9b45c; }
+.toggle { display: flex; gap: 6px; align-items: center; color: var(--muted); font-size: 0.75rem; }
 .who { color: var(--muted); font-size: 0.8rem; display: flex; gap: 10px; align-items: center; }
 .link { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; font: inherit; font-size: 0.8rem; }
 .boot { max-width: 1080px; margin: 40px auto; }

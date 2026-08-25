@@ -121,6 +121,10 @@ model Production {
   // public — see scripts/claim-orphan-productions.js to adopt them.
   ownerId          String?            @map("owner_id") @db.Uuid
   owner            User?              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  // Archiving hides a show from the picker without destroying it. A slate
+  // accumulates finished pictures, and "delete" is the wrong answer for a film
+  // that wrapped — the cash flow is the record of what it cost.
+  archivedAt       DateTime?          @map("archived_at") @db.Timestamptz(6)
   title            String
   currency         String
   region           String?
@@ -141,6 +145,7 @@ model Production {
   pendingInvites   Invite[]
 
   @@index([ownerId])
+  @@index([archivedAt])
   @@map("productions")
 }
 
