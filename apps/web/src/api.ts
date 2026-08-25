@@ -229,6 +229,17 @@ export const auth = {
       body: JSON.stringify(body),
     }),
   logout: () => request<{ ok: true }>('/api/auth/logout', { method: 'POST' }),
+  logoutEverywhere: () => request<{ ok: true }>('/api/auth/logout-all', { method: 'POST' }),
+  blockers: () => request<{
+    canDelete: boolean
+    owned: Array<{ id: string; title: string; archivedAt: string | null; sharedWith: number }>
+  }>('/api/auth/account/blockers'),
+  deleteAccount: (password: string) =>
+    request<{ ok: true }>('/api/auth/account', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    }),
 }
 
 export const shows = {

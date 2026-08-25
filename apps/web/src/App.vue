@@ -15,6 +15,7 @@ import CashFlowGrid from './components/CashFlowGrid.vue'
 import ImportExisting from './components/ImportExisting.vue'
 import SignIn from './components/SignIn.vue'
 import TeamPanel from './components/TeamPanel.vue'
+import AccountPanel from './components/AccountPanel.vue'
 import ShowAccess from './components/ShowAccess.vue'
 import ShowSettings from './components/ShowSettings.vue'
 
@@ -151,6 +152,15 @@ async function onSignedIn(user: User) {
   await loadWorkspace()
 }
 
+async function onSignedOut() {
+  me.value = null
+  productions.value = []
+  selectedId.value = ''
+  budget.value = null
+  summary.value = null
+  cashflow.value = null
+}
+
 async function signOut() {
   await auth.logout().catch(() => {})
   me.value = null
@@ -257,6 +267,8 @@ onMounted(async () => {
                       @imported="refreshProductions(selectedId)" />
 
       <TeamPanel />
+
+      <AccountPanel :user="me" @signed-out="onSignedOut" />
     </template>
 
     <p v-else class="banner">Loading…</p>

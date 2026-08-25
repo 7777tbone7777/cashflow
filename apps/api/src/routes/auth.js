@@ -194,3 +194,77 @@ authRouter.post('/register', async (req, res, next) => {
     return next(error);
   }
 });
+
+/**
+ * What stands between this account and deletion.
+ *
+ * Owned productions do, and that is the whole point: a show that has been shared
+ * with a producer and an accountant should not vanish because the person who
+ * first uploaded the budget closed their account.
+ */
+authRouter.get('/account/blockers', requireAuth, async (req, res, next) => {
+  try {
+    const owned = await prisma.production.findMany({
+      where: { ownerId: req.user.id },
+      orderBy: { createdAt: 'asc' },
+      include: { _count: { select: { members: true } } },
+    });
+    res.json({
+      canDelete: owned.length === 0,
+      owned: owned.map((production) => ({
+        id: production.id,
+        title: production.title,
+        archivedAt: production.archivedAt,
+        sharedWith: production._count.members,
+      })),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * Close this account.
+ *
+ * Refused while it still owns a production. Transfer each one to whoever is
+ * carrying it on, or delete it outright, and then this will go through. The
+ * database enforces the same rule independently, so a route added later that
+ * forgets to check cannot destroy somebody else's show either.
+ *
+ * Shows shared *with* this account are not affected — the membership goes, the
+ * production stays with its owner.
+ */
+authRouter.delete('/account', requireAuth, async (req, res, next) => {
+  try {
+    const password = String(req.body?.password || '');
+    if (!await verifyPassword(password, req.user.passwordHash)) {
+      return res.status(401).json({ error: 'That password is not right.' });
+    }
+
+    const owned = await prisma.production.findMany({
+      where: { ownerId: req.user.id },
+      orderBy: { createdAt: 'asc' },
+    });
+    if (owned.length) {
+      return res.status(409).json({
+        error: `This account still owns ${owned.length} `
+          + `production${owned.length === 1 ? '' : 's'}. Transfer `
+          + `${owned.length === 1 ? 'it' : 'each of them'} to somebody else, or delete `
+          + `${owned.length === 1 ? 'it' : 'them'}, before closing the account.`,
+        owned: owned.map((p) => ({ id: p.id, title: p.title })),
+      });
+    }
+
+    await prisma.user.delete({ where: { id: req.user.id } });
+    res.setHeader('Set-Cookie', sessionCookie('', { clear: true }));
+    return res.json({ ok: true });
+  } catch (error) {
+    // The database says no as well, and its answer is the authoritative one.
+    if (error?.code === 'P2003' || error?.code === 'P2014') {
+      return res.status(409).json({
+        error: 'This account still owns productions. Transfer or delete them first.',
+      });
+    }
+    return next(error);
+  }
+});

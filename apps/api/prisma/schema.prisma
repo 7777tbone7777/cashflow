@@ -120,7 +120,11 @@ model Production {
   // rows. The API treats an unowned production as invisible rather than as
   // public — see scripts/claim-orphan-productions.js to adopt them.
   ownerId          String?            @map("owner_id") @db.Uuid
-  owner            User?              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  // Restrict, not Cascade. Deleting an account used to take every production it
+  // owned with it — including ones shared with other people, who would simply
+  // find the show gone. The database now refuses, so the shows have to be handed
+  // on or deleted deliberately first.
+  owner            User?              @relation(fields: [ownerId], references: [id], onDelete: Restrict)
   // Archiving hides a show from the picker without destroying it. A slate
   // accumulates finished pictures, and "delete" is the wrong answer for a film
   // that wrapped — the cash flow is the record of what it cost.
