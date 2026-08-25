@@ -7,3 +7,9 @@ dist/
 .DS_Store
 coverage/
 .tmp/
+
+# Python bytecode — the extractor service compiles on import.
+__pycache__/
+*.pyc
+venv/
+.venv/
