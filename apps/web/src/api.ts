@@ -171,7 +171,9 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${BASE}${path}`, init)
+  // The session lives in an httpOnly cookie, which fetch will not send to
+  // another origin unless asked — and in development the SPA is on another one.
+  const response = await fetch(`${BASE}${path}`, { credentials: 'include', ...init })
   if (!response.ok) {
     let payload: any = null
     try { payload = await response.json() } catch { payload = await response.text().catch(() => null) }
@@ -179,6 +181,47 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new ApiError(typeof message === 'string' ? message : JSON.stringify(message), response.status, payload?.detail)
   }
   return response.json() as Promise<T>
+}
+
+export type User = { id: string; email: string; name: string | null; createdAt: string }
+
+export type Invite = {
+  id: string
+  email: string
+  createdAt: string
+  expiresAt: string
+  acceptedAt: string | null
+  revokedAt: string | null
+  status: 'pending' | 'accepted' | 'expired' | 'revoked'
+}
+
+export const auth = {
+  state: () => request<{ needsFirstUser: boolean }>('/api/auth/state'),
+  me: () => request<{ user: User | null }>('/api/auth/me'),
+  login: (email: string, password: string) =>
+    request<{ user: User }>('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    }),
+  register: (body: { email: string; password: string; name?: string; inviteToken?: string }) =>
+    request<{ user: User }>('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+  logout: () => request<{ ok: true }>('/api/auth/logout', { method: 'POST' }),
+}
+
+export const invites = {
+  list: () => request<Invite[]>('/api/invites'),
+  create: (email: string) =>
+    request<{ invite: Invite; link: string }>('/api/invites', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    }),
+  revoke: (id: string) => request<Invite>(`/api/invites/${id}/revoke`, { method: 'POST' }),
 }
 
 export const api = {

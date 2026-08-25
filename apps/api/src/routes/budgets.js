@@ -13,6 +13,7 @@ import path from 'node:path';
 import multer from 'multer';
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { scopeToOwner } from '../auth/middleware.js';
 import {
   ExtractorError,
   extractBudget,
@@ -29,6 +30,8 @@ const upload = multer({
 });
 
 export const budgetsRouter = Router();
+
+scopeToOwner(budgetsRouter, 'productionId');
 
 function fail(res, error) {
   if (error instanceof ExtractorError) {
@@ -84,6 +87,16 @@ budgetsRouter.post('/upload', upload.single('budget'), async (req, res, next) =>
       || extract.production?.production_number
       || req.file.originalname.replace(/\.[^.]+$/, '');
 
+    // Adding a budget to an existing production is only allowed on your own.
+    if (req.body.productionId) {
+      const existing = await prisma.production.findUnique({
+        where: { id: req.body.productionId },
+      });
+      if (!existing || existing.ownerId !== req.user.id) {
+        return res.status(404).json({ error: 'Production not found.' });
+      }
+    }
+
     const production = req.body.productionId
       ? await prisma.production.update({
         where: { id: req.body.productionId },
@@ -91,6 +104,7 @@ budgetsRouter.post('/upload', upload.single('budget'), async (req, res, next) =>
       })
       : await prisma.production.create({
         data: {
+          ownerId: req.user.id,
           title,
           currency: 'USD',
           status: 'draft',

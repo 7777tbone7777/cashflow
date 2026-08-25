@@ -4,6 +4,9 @@ import { prisma } from '../../db.js';
 export async function persistNormalizedCashflow(normalized, options = {}) {
   const productionTitle = options.productionTitle || path.basename(normalized.sourceFile).replace(/\.[^.]+$/, '');
   const productionId = options.productionId;
+  // Every production belongs to somebody. An import that cannot say whose it is
+  // would create a row no query returns.
+  const ownerId = options.ownerId ?? null;
 
   const production = productionId
     ? await prisma.production.upsert({
@@ -16,6 +19,7 @@ export async function persistNormalizedCashflow(normalized, options = {}) {
         },
         create: {
           id: productionId,
+          ownerId,
           title: productionTitle,
           currency: 'USD',
           status: 'draft',
@@ -24,6 +28,7 @@ export async function persistNormalizedCashflow(normalized, options = {}) {
       })
     : await prisma.production.create({
         data: {
+          ownerId,
           title: productionTitle,
           currency: 'USD',
           status: 'draft',

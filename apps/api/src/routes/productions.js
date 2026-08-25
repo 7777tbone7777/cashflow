@@ -1,11 +1,17 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { scopeToOwner } from '../auth/middleware.js';
 
 export const productionsRouter = Router();
 
-productionsRouter.get('/', async (_req, res, next) => {
+// Every route below that names a production is checked for ownership here, so
+// adding one later cannot forget to do it.
+scopeToOwner(productionsRouter, 'id');
+
+productionsRouter.get('/', async (req, res, next) => {
   try {
     const productions = await prisma.production.findMany({
+      where: { ownerId: req.user.id },
       orderBy: { createdAt: 'asc' },
       include: {
         _count: {

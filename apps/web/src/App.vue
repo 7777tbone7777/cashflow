@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import {
-  DEFAULT_CONFIG, api,
+  DEFAULT_CONFIG, api, auth, type User,
   type BudgetUploadResult, type CashflowResult, type Production,
   type ProductionConfig, type ProductionSummary,
 } from './api'
@@ -13,7 +13,11 @@ import AccountantInputs from './components/AccountantInputs.vue'
 import GeneratedDocuments from './components/GeneratedDocuments.vue'
 import CashFlowGrid from './components/CashFlowGrid.vue'
 import ImportExisting from './components/ImportExisting.vue'
+import SignIn from './components/SignIn.vue'
+import TeamPanel from './components/TeamPanel.vue'
 
+const me = ref<User | null>(null)
+const booting = ref(true)
 const productions = ref<Production[]>([])
 const selectedId = ref('')
 const budget = ref<BudgetUploadResult | null>(null)
@@ -106,7 +110,9 @@ watch(selectedId, async (id) => {
   await loadProduction(id)
 })
 
-onMounted(async () => {
+/** Everything on this page belongs to one account, so nothing loads until we know which. */
+async function loadWorkspace() {
+  loading.value = true
   try {
     await refreshProductions()
     if (selectedId.value) await loadProduction(selectedId.value)
@@ -116,11 +122,44 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+async function onSignedIn(user: User) {
+  me.value = user
+  // Drop the invite token from the address bar — it is spent, and it is a
+  // credential that should not sit in history or get pasted along with the URL.
+  window.history.replaceState({}, '', window.location.pathname)
+  await loadWorkspace()
+}
+
+async function signOut() {
+  await auth.logout().catch(() => {})
+  me.value = null
+  productions.value = []
+  selectedId.value = ''
+  budget.value = null
+  summary.value = null
+  cashflow.value = null
+}
+
+onMounted(async () => {
+  try {
+    me.value = (await auth.me()).user
+  } catch {
+    me.value = null
+  } finally {
+    booting.value = false
+  }
+  if (me.value) await loadWorkspace()
 })
 </script>
 
 <template>
-  <main class="shell">
+  <p v-if="booting" class="banner boot">Loading…</p>
+
+  <SignIn v-else-if="!me" @signed-in="onSignedIn" />
+
+  <main v-else class="shell">
     <header class="masthead">
       <div>
         <p class="eyebrow">Cashflow</p>
@@ -136,6 +175,10 @@ onMounted(async () => {
           </select>
         </label>
         <span v-if="extractorUp === false" class="badge warn">Extractor unreachable</span>
+        <span class="who">
+          {{ me.name || me.email }}
+          <button class="link" type="button" @click="signOut">Sign out</button>
+        </span>
       </div>
     </header>
 
@@ -176,6 +219,8 @@ onMounted(async () => {
       </template>
 
       <ImportExisting :production-id="selectedId || null" @imported="refreshProductions(selectedId)" />
+
+      <TeamPanel />
     </template>
 
     <p v-else class="banner">Loading…</p>
@@ -236,4 +281,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-v
 .banner.error { background: var(--error-bg); color: var(--error-fg); }
 .badge { padding: 5px 10px; border-radius: 999px; font-size: 0.75rem; }
 .badge.warn { background: var(--warn-bg); color: #d9b45c; }
+.who { color: var(--muted); font-size: 0.8rem; display: flex; gap: 10px; align-items: center; }
+.link { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; font: inherit; font-size: 0.8rem; }
+.boot { max-width: 1080px; margin: 40px auto; }
 </style>

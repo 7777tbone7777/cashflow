@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { scopeToOwner } from '../auth/middleware.js';
 
 export const exportsRouter = Router();
+
+scopeToOwner(exportsRouter, 'id');
 
 exportsRouter.get('/productions/:id/report.json', async (req, res, next) => {
   try {

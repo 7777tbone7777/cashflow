@@ -48,42 +48,98 @@ enum SnapshotType {
   scenario
 }
 
+/// A person with a login. Productions belong to exactly one of these, and the
+/// API never returns a production to anyone else — invitation grants access to
+/// the application, not to another user's shows.
+model User {
+  id           String       @id @default(uuid()) @db.Uuid
+  email        String       @unique
+  name         String?
+  passwordHash String       @map("password_hash")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  lastLoginAt  DateTime?    @map("last_login_at") @db.Timestamptz(6)
+  productions  Production[]
+  sessions     Session[]
+  invitesSent  Invite[]     @relation("InvitedBy")
+
+  @@map("users")
+}
+
+/// Opaque server-side sessions rather than a signed token, so that signing out
+/// and revoking access actually take effect. The cookie carries the token; only
+/// its hash is stored, so a leaked database row cannot be replayed as a login.
+model Session {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  tokenHash String   @unique @map("token_hash")
+  userAgent String?  @map("user_agent")
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+/// A one-time invitation to create an account. Stored as a hash for the same
+/// reason as a session: the link is a credential until it is used.
+model Invite {
+  id          String    @id @default(uuid()) @db.Uuid
+  email       String
+  tokenHash   String    @unique @map("token_hash")
+  invitedById String    @map("invited_by_id") @db.Uuid
+  expiresAt   DateTime  @map("expires_at") @db.Timestamptz(6)
+  acceptedAt  DateTime? @map("accepted_at") @db.Timestamptz(6)
+  revokedAt   DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  invitedBy   User      @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@index([email])
+  @@map("invites")
+}
+
 model Production {
-  id            String             @id @default(uuid()) @db.Uuid
-  title         String
-  currency      String
-  region        String?
-  status        String
-  startDate     DateTime?          @db.Date
-  endDate       DateTime?          @db.Date
-  notes         String?
-  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
-  importBatches ImportBatch[]
-  periods       CashFlowPeriod[]
-  sections      CashFlowSection[]
-  lineItems     CashFlowLineItem[]
-  snapshots     ForecastSnapshot[]
-  hotCostDays   HotCostDay[]
+  id               String             @id @default(uuid()) @db.Uuid
+  // Nullable only so the column can be added to a database that already holds
+  // rows. The API treats an unowned production as invisible rather than as
+  // public — see scripts/claim-orphan-productions.js to adopt them.
+  ownerId          String?            @map("owner_id") @db.Uuid
+  owner            User?              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title            String
+  currency         String
+  region           String?
+  status           String
+  startDate        DateTime?          @db.Date
+  endDate          DateTime?          @db.Date
+  notes            String?
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  importBatches    ImportBatch[]
+  periods          CashFlowPeriod[]
+  sections         CashFlowSection[]
+  lineItems        CashFlowLineItem[]
+  snapshots        ForecastSnapshot[]
+  hotCostDays      HotCostDay[]
   hotCostLineItems HotCostLineItem[]
 
+  @@index([ownerId])
   @@map("productions")
 }
 
 model ImportBatch {
-  id               String           @id @default(uuid()) @db.Uuid
-  productionId     String           @map("production_id") @db.Uuid
-  sourceType       ImportSourceType @map("source_type")
-  originalFilename String           @map("original_filename")
-  fileStorageKey   String           @map("file_storage_key")
-  importStatus     ImportStatus     @map("import_status")
-  parserVersion    String           @map("parser_version")
-  startedAt        DateTime?        @map("started_at") @db.Timestamptz(6)
-  completedAt      DateTime?        @map("completed_at") @db.Timestamptz(6)
-  errorSummary     String?          @map("error_summary")
-  metadataJson     Json?            @map("metadata_json")
-  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  production       Production       @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  id               String             @id @default(uuid()) @db.Uuid
+  productionId     String             @map("production_id") @db.Uuid
+  sourceType       ImportSourceType   @map("source_type")
+  originalFilename String             @map("original_filename")
+  fileStorageKey   String             @map("file_storage_key")
+  importStatus     ImportStatus       @map("import_status")
+  parserVersion    String             @map("parser_version")
+  startedAt        DateTime?          @map("started_at") @db.Timestamptz(6)
+  completedAt      DateTime?          @map("completed_at") @db.Timestamptz(6)
+  errorSummary     String?            @map("error_summary")
+  metadataJson     Json?              @map("metadata_json")
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  production       Production         @relation(fields: [productionId], references: [id], onDelete: Cascade)
   lineItems        CashFlowLineItem[]
   hotCostDays      HotCostDay[]
 
@@ -91,17 +147,17 @@ model ImportBatch {
 }
 
 model CashFlowPeriod {
-  id              String      @id @default(uuid()) @db.Uuid
-  productionId    String      @map("production_id") @db.Uuid
+  id              String               @id @default(uuid()) @db.Uuid
+  productionId    String               @map("production_id") @db.Uuid
   sequence        Int
   label           String
-  periodType      PeriodType  @map("period_type")
+  periodType      PeriodType           @map("period_type")
   // Populated from the date row above the period labels. Present in the schema
   // from the start; never filled until the parser stopped keying off labels.
-  weekEndingDate  DateTime?   @map("week_ending_date") @db.Date
-  sourceColumnKey String      @map("source_column_key")
-  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  production      Production  @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  weekEndingDate  DateTime?            @map("week_ending_date") @db.Date
+  sourceColumnKey String               @map("source_column_key")
+  createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  production      Production           @relation(fields: [productionId], references: [id], onDelete: Cascade)
   allocations     CashFlowAllocation[]
 
   @@unique([productionId, sequence])
@@ -153,17 +209,17 @@ model CashFlowLineItem {
 }
 
 model CashFlowAllocation {
-  id               String            @id @default(uuid()) @db.Uuid
-  lineItemId       String            @map("line_item_id") @db.Uuid
-  periodId         String            @map("period_id") @db.Uuid
-  amount           Decimal           @db.Decimal(14, 2)
-  importedValue    Decimal?          @map("imported_value") @db.Decimal(14, 2)
-  sourceFormula    String?           @map("source_formula")
-  isManualOverride Boolean           @default(false) @map("is_manual_override")
-  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
-  lineItem         CashFlowLineItem  @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
-  period           CashFlowPeriod    @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  id               String           @id @default(uuid()) @db.Uuid
+  lineItemId       String           @map("line_item_id") @db.Uuid
+  periodId         String           @map("period_id") @db.Uuid
+  amount           Decimal          @db.Decimal(14, 2)
+  importedValue    Decimal?         @map("imported_value") @db.Decimal(14, 2)
+  sourceFormula    String?          @map("source_formula")
+  isManualOverride Boolean          @default(false) @map("is_manual_override")
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lineItem         CashFlowLineItem @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
+  period           CashFlowPeriod   @relation(fields: [periodId], references: [id], onDelete: Cascade)
 
   @@unique([lineItemId, periodId])
   @@map("cash_flow_allocations")
@@ -208,25 +264,25 @@ model HotCostDay {
 }
 
 model HotCostLineItem {
-  id              String      @id @default(uuid()) @db.Uuid
-  productionId    String      @map("production_id") @db.Uuid
-  hotCostDayId    String      @map("hot_cost_day_id") @db.Uuid
-  accountCode     String?     @map("account_code")
-  employeeName    String?     @map("employee_name")
+  id              String     @id @default(uuid()) @db.Uuid
+  productionId    String     @map("production_id") @db.Uuid
+  hotCostDayId    String     @map("hot_cost_day_id") @db.Uuid
+  accountCode     String?    @map("account_code")
+  employeeName    String?    @map("employee_name")
   position        String?
-  unionCode       String?     @map("union_code")
-  rate            Decimal?    @db.Decimal(14, 2)
+  unionCode       String?    @map("union_code")
+  rate            Decimal?   @db.Decimal(14, 2)
   // The day sheet states all three separately: TOTAL/DAY, BUDGET/DAY and
   // (OVER)/UNDER. The original import read the variance column and stored it as
   // the actual, understating labour by a factor of twenty-two.
-  actualDayCost   Decimal?    @map("actual_day_cost") @db.Decimal(14, 2)
-  budgetDayCost   Decimal?    @map("budget_day_cost") @db.Decimal(14, 2)
-  dayVariance     Decimal?    @map("day_variance") @db.Decimal(14, 2)
-  sourceRowNumber Int?        @map("source_row_number")
-  createdAt       DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-  production      Production  @relation(fields: [productionId], references: [id], onDelete: Cascade)
-  hotCostDay      HotCostDay  @relation(fields: [hotCostDayId], references: [id], onDelete: Cascade)
+  actualDayCost   Decimal?   @map("actual_day_cost") @db.Decimal(14, 2)
+  budgetDayCost   Decimal?   @map("budget_day_cost") @db.Decimal(14, 2)
+  dayVariance     Decimal?   @map("day_variance") @db.Decimal(14, 2)
+  sourceRowNumber Int?       @map("source_row_number")
+  createdAt       DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  production      Production @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  hotCostDay      HotCostDay @relation(fields: [hotCostDayId], references: [id], onDelete: Cascade)
 
   @@index([productionId])
   @@index([hotCostDayId])

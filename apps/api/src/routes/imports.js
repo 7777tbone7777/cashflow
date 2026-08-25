@@ -4,6 +4,7 @@ import multer from 'multer';
 import xlsx from 'xlsx';
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { scopeToOwner } from '../auth/middleware.js';
 import { importSampleCashflowWorkbook } from '../services/importers/importSampleCashflowWorkbook.js';
 import { normalizeCashflowWorkbook } from '../services/importers/normalizeCashflowWorkbook.js';
 import { persistNormalizedCashflow } from '../services/importers/persistNormalizedCashflow.js';
@@ -25,6 +26,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 export const importsRouter = Router();
+
+scopeToOwner(importsRouter, 'productionId');
 
 function mapAccountCodeToCashflowBucket(accountCode) {
   if (!accountCode) return 'unmapped';
@@ -201,9 +204,9 @@ importsRouter.get('/hot-cost/:productionId', async (req, res, next) => {
   }
 });
 
-importsRouter.post('/sample', async (_req, res, next) => {
+importsRouter.post('/sample', async (req, res, next) => {
   try {
-    const result = await importSampleCashflowWorkbook();
+    const result = await importSampleCashflowWorkbook({ ownerId: req.user.id });
     res.json({ ok: true, result });
   } catch (error) {
     next(error);
@@ -454,11 +457,22 @@ importsRouter.post('/upload', upload.single('workbook'), async (req, res, next) 
       return res.status(400).json({ error: 'Workbook file is required.' });
     }
 
+    // productionId arrives in the body here, so router.param never sees it.
+    if (req.body.productionId) {
+      const existing = await prisma.production.findUnique({
+        where: { id: req.body.productionId },
+      });
+      if (!existing || existing.ownerId !== req.user.id) {
+        return res.status(404).json({ error: 'Production not found.' });
+      }
+    }
+
     const workbook = xlsx.readFile(req.file.path, { cellFormula: true, cellDates: false });
 
     if (isHotCostWorkbook(workbook)) {
       const normalizedHotCost = normalizeHotCostWorkbook(req.file.path);
       const result = await persistNormalizedHotCostWorkbook(normalizedHotCost, {
+        ownerId: req.user.id,
         productionId: req.body.productionId || undefined,
         productionTitle: req.body.productionTitle || req.file.originalname.replace(/\.[^.]+$/, ''),
       });
@@ -472,6 +486,7 @@ importsRouter.post('/upload', upload.single('workbook'), async (req, res, next) 
 
     const normalized = normalizeCashflowWorkbook(req.file.path);
     const result = await persistNormalizedCashflow(normalized, {
+      ownerId: req.user.id,
       productionTitle: req.body.productionTitle || req.file.originalname.replace(/\.[^.]+$/, ''),
     });
 

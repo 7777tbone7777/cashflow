@@ -26,6 +26,7 @@ export async function persistNormalizedHotCostWorkbook(normalizedHotCost, option
       })
     : await prisma.production.create({
         data: {
+          ownerId: options.ownerId ?? null,
           title: productionTitle,
           currency: 'USD',
           status: 'draft',
