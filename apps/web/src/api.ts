@@ -75,16 +75,33 @@ export type CashflowResult = {
   assumptions: string[]
 }
 
+export type ProductionRole = 'owner' | 'editor' | 'viewer'
+
+export type Member = {
+  id: string
+  role: ProductionRole
+  createdAt: string
+  user: { id: string; email: string; name: string | null } | null
+}
+
+export type MemberList = {
+  yourRole: ProductionRole
+  owner: { id: string; email: string; name: string | null } | null
+  members: Member[]
+  pending: Array<{ id: string; email: string; role: ProductionRole; expiresAt: string }>
+}
+
 export type Production = {
   id: string
   title: string
   currency: string
   status: string
+  role: ProductionRole
   counts: { periods: number; sections: number; lineItems: number; snapshots: number; importBatches: number }
 }
 
 export type ProductionSummary = {
-  production: { id: string; title: string; currency: string; status: string }
+  production: { id: string; title: string; currency: string; status: string; role: ProductionRole }
   snapshot: null | {
     id: string
     name: string
@@ -211,6 +228,30 @@ export const auth = {
       body: JSON.stringify(body),
     }),
   logout: () => request<{ ok: true }>('/api/auth/logout', { method: 'POST' }),
+}
+
+export const members = {
+  list: (productionId: string) =>
+    request<MemberList>(`/api/productions/${productionId}/members`),
+  add: (productionId: string, email: string, role: 'editor' | 'viewer') =>
+    request<{ member?: Member; invited: boolean; link?: string }>(
+      `/api/productions/${productionId}/members`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, role }),
+      }),
+  setRole: (productionId: string, memberId: string, role: 'editor' | 'viewer') =>
+    request<Member>(`/api/productions/${productionId}/members/${memberId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role }),
+    }),
+  remove: (productionId: string, memberId: string) =>
+    request<{ ok: true }>(`/api/productions/${productionId}/members/${memberId}`,
+      { method: 'DELETE' }),
+  cancelPending: (productionId: string, inviteId: string) =>
+    request<{ ok: true }>(`/api/productions/${productionId}/members/pending/${inviteId}`,
+      { method: 'DELETE' }),
 }
 
 export const invites = {

@@ -4,7 +4,7 @@ import multer from 'multer';
 import xlsx from 'xlsx';
 import { Router } from 'express';
 import { prisma } from '../db.js';
-import { scopeToOwner } from '../auth/middleware.js';
+import { canWriteToProduction, scopeToOwner } from '../auth/middleware.js';
 import { importSampleCashflowWorkbook } from '../services/importers/importSampleCashflowWorkbook.js';
 import { normalizeCashflowWorkbook } from '../services/importers/normalizeCashflowWorkbook.js';
 import { persistNormalizedCashflow } from '../services/importers/persistNormalizedCashflow.js';
@@ -459,10 +459,7 @@ importsRouter.post('/upload', upload.single('workbook'), async (req, res, next) 
 
     // productionId arrives in the body here, so router.param never sees it.
     if (req.body.productionId) {
-      const existing = await prisma.production.findUnique({
-        where: { id: req.body.productionId },
-      });
-      if (!existing || existing.ownerId !== req.user.id) {
+      if (!await canWriteToProduction(req.user.id, req.body.productionId)) {
         return res.status(404).json({ error: 'Production not found.' });
       }
     }

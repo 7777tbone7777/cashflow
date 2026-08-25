@@ -131,14 +131,58 @@ authRouter.post('/register', async (req, res, next) => {
       return res.status(409).json({ error: 'An account already exists for that address.' });
     }
 
+    const passwordHash = await hashPassword(password);
     const user = await prisma.$transaction(async (tx) => {
-      const created = await tx.user.create({
-        data: { email, name, passwordHash: await hashPassword(password) },
-      });
+      const created = await tx.user.create({ data: { email, name, passwordHash } });
       if (invite) {
         await tx.invite.update({
           where: { id: invite.id },
           data: { acceptedAt: new Date() },
+        });
+        // An invitation can carry a share, so somebody put on a show before they
+        // had an account arrives already able to see it.
+        if (invite.productionId) {
+          await tx.productionMember.upsert({
+            where: {
+              productionId_userId: {
+                productionId: invite.productionId, userId: created.id,
+              },
+            },
+            update: { role: invite.role ?? 'viewer' },
+            create: {
+              productionId: invite.productionId,
+              userId: created.id,
+              role: invite.role ?? 'viewer',
+              addedById: invite.invitedById,
+            },
+          });
+        }
+      }
+      // Any other outstanding share sent to this address before they signed up.
+      const carried = await tx.invite.findMany({
+        where: {
+          email, acceptedAt: null, revokedAt: null,
+          productionId: { not: null }, expiresAt: { gt: new Date() },
+          ...(invite ? { id: { not: invite.id } } : {}),
+        },
+      });
+      for (const pending of carried) {
+        await tx.productionMember.upsert({
+          where: {
+            productionId_userId: {
+              productionId: pending.productionId, userId: created.id,
+            },
+          },
+          update: { role: pending.role ?? 'viewer' },
+          create: {
+            productionId: pending.productionId,
+            userId: created.id,
+            role: pending.role ?? 'viewer',
+            addedById: pending.invitedById,
+          },
+        });
+        await tx.invite.update({
+          where: { id: pending.id }, data: { acceptedAt: new Date() },
         });
       }
       return created;

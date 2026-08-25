@@ -18,10 +18,18 @@ const webDistPath = path.resolve(__dirname, '../../web/dist');
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Credentials are carried in a cookie, so a browser on a different origin (the
-// Vite dev server) has to be allowed to send it, and `*` is not permitted with
-// credentials. In production the API serves the SPA itself and this is moot.
-app.use(cors({ origin: process.env.WEB_ORIGIN || true, credentials: true }));
+// The session is a cookie, so CORS here is not a formality: reflecting whatever
+// Origin asked, with credentials allowed, would let any website on the internet
+// read a signed-in user's budgets. In production the API serves the SPA from its
+// own origin and needs no CORS at all. Cross-origin access is opt-in, by naming
+// the origin, and the Vite dev server is the only default.
+const webOrigin = process.env.WEB_ORIGIN
+  || (process.env.RAILWAY_ENVIRONMENT ? null : 'http://localhost:5173');
+app.use(webOrigin ? cors({ origin: webOrigin, credentials: true }) : cors({ origin: false }));
+
+// Railway terminates TLS in front of the app; without this req.protocol is
+// http and invite links come out pointing at a scheme that will not work.
+app.set('trust proxy', 1);
 app.use(express.json());
 
 // Who is asking. Runs before everything, rejects nothing.

@@ -13,7 +13,7 @@ import path from 'node:path';
 import multer from 'multer';
 import { Router } from 'express';
 import { prisma } from '../db.js';
-import { scopeToOwner } from '../auth/middleware.js';
+import { canWriteToProduction, requireRole, scopeToOwner } from '../auth/middleware.js';
 import {
   ExtractorError,
   extractBudget,
@@ -89,10 +89,7 @@ budgetsRouter.post('/upload', upload.single('budget'), async (req, res, next) =>
 
     // Adding a budget to an existing production is only allowed on your own.
     if (req.body.productionId) {
-      const existing = await prisma.production.findUnique({
-        where: { id: req.body.productionId },
-      });
-      if (!existing || existing.ownerId !== req.user.id) {
+      if (!await canWriteToProduction(req.user.id, req.body.productionId)) {
         return res.status(404).json({ error: 'Production not found.' });
       }
     }
@@ -169,7 +166,7 @@ budgetsRouter.get('/:productionId', async (req, res, next) => {
 });
 
 /** Generate hot cost day sheets and stream them back as a workbook. */
-budgetsRouter.post('/:productionId/generate/hotcost', async (req, res, next) => {
+budgetsRouter.post('/:productionId/generate/hotcost', requireRole('editor'), async (req, res, next) => {
   try {
     const budget = await loadBudget(req.params.productionId);
     if (!budget) {
@@ -204,7 +201,7 @@ budgetsRouter.post('/:productionId/generate/hotcost', async (req, res, next) => 
  * The extractor refuses to emit a grid that does not reconcile to the budget,
  * so anything that arrives here has already tied.
  */
-budgetsRouter.post('/:productionId/generate/cashflow', async (req, res, next) => {
+budgetsRouter.post('/:productionId/generate/cashflow', requireRole('editor'), async (req, res, next) => {
   try {
     const budget = await loadBudget(req.params.productionId);
     if (!budget) {

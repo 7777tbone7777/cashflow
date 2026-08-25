@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
-import { scopeToOwner } from '../auth/middleware.js';
+import { requireRole, scopeToOwner, visibleToUser } from '../auth/middleware.js';
+import { membersRouter } from './members.js';
 
 export const productionsRouter = Router();
 
@@ -11,9 +12,10 @@ scopeToOwner(productionsRouter, 'id');
 productionsRouter.get('/', async (req, res, next) => {
   try {
     const productions = await prisma.production.findMany({
-      where: { ownerId: req.user.id },
+      where: visibleToUser(req.user.id),
       orderBy: { createdAt: 'asc' },
       include: {
+        members: { where: { userId: req.user.id } },
         _count: {
           select: {
             periods: true,
@@ -32,6 +34,10 @@ productionsRouter.get('/', async (req, res, next) => {
         title: production.title,
         currency: production.currency,
         status: production.status,
+        // The interface has to know whether to offer the buttons that write.
+        role: production.ownerId === req.user.id
+          ? 'owner'
+          : production.members[0]?.role ?? 'viewer',
         counts: production._count,
         createdAt: production.createdAt,
         updatedAt: production.updatedAt,
@@ -73,6 +79,7 @@ productionsRouter.get('/:id', async (req, res, next) => {
       currency: production.currency,
       status: production.status,
       notes: production.notes,
+      role: req.productionRole,
       counts: production._count,
       latestImport: production.importBatches[0] || null,
       latestSnapshot: production.snapshots[0] || null,
@@ -194,6 +201,7 @@ productionsRouter.get('/:id/summary', async (req, res, next) => {
         title: production.title,
         currency: production.currency,
         status: production.status,
+        role: req.productionRole,
       },
       snapshot: snapshot
         ? {
@@ -211,3 +219,6 @@ productionsRouter.get('/:id/summary', async (req, res, next) => {
     return next(error);
   }
 });
+
+// Who else can see this show.
+productionsRouter.use('/:id/members', membersRouter);

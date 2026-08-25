@@ -15,6 +15,7 @@ import CashFlowGrid from './components/CashFlowGrid.vue'
 import ImportExisting from './components/ImportExisting.vue'
 import SignIn from './components/SignIn.vue'
 import TeamPanel from './components/TeamPanel.vue'
+import ShowAccess from './components/ShowAccess.vue'
 
 const me = ref<User | null>(null)
 const booting = ref(true)
@@ -30,6 +31,11 @@ const generating = ref(false)
 const error = ref('')
 
 const currency = computed(() => summary.value?.production.currency || 'USD')
+// What this account may do with the selected show. A viewer gets the documents
+// and the assumptions; the buttons that write are not theirs.
+const role = computed(() =>
+  productions.value.find((p) => p.id === selectedId.value)?.role ?? 'owner')
+const canEdit = computed(() => role.value !== 'viewer')
 const hasBudget = computed(() => Boolean(budget.value))
 
 async function refreshProductions(selectId?: string) {
@@ -191,23 +197,30 @@ onMounted(async () => {
         :inputs-required="budget?.inputsRequired ?? []"
         :currency="currency" />
 
-      <BudgetUpload @uploaded="onUploaded" />
+      <BudgetUpload v-if="canEdit" @uploaded="onUploaded" />
 
       <template v-if="hasBudget && budget">
         <BudgetOverview :budget="budget" :currency="currency" />
 
         <AccountantInputs
+          v-if="canEdit"
           :config="config"
           :inputs-required="budget.inputsRequired"
           :currency="currency"
           @update:config="config = $event" />
 
         <ProductionSetup
+          v-if="canEdit"
           :config="config"
           :inputs-required="budget.inputsRequired"
           :busy="generating"
           @update:config="config = $event"
           @generate="generate" />
+
+        <p v-else class="banner">
+          You have read-only access to this show. You can see everything that has been generated;
+          only an editor can upload a budget or regenerate the documents.
+        </p>
 
         <GeneratedDocuments
           :production-id="selectedId"
@@ -218,7 +231,10 @@ onMounted(async () => {
         <CashFlowGrid :summary="summary" :currency="currency" />
       </template>
 
-      <ImportExisting :production-id="selectedId || null" @imported="refreshProductions(selectedId)" />
+      <ShowAccess v-if="selectedId" :production-id="selectedId" :role="role" />
+
+      <ImportExisting v-if="canEdit" :production-id="selectedId || null"
+                      @imported="refreshProductions(selectedId)" />
 
       <TeamPanel />
     </template>

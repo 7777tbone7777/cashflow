@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// What someone who is not the owner may do with a production. A producer and a
+/// production accountant both need to work on the same show; a financier or a
+/// department head may only need to read it.
+enum ProductionRole {
+  editor
+  viewer
+}
+
 enum ImportSourceType {
   // The primary input. Everything else is either a document from a production
   // already under way, or a past show to learn spread shapes from.
@@ -52,15 +60,17 @@ enum SnapshotType {
 /// API never returns a production to anyone else — invitation grants access to
 /// the application, not to another user's shows.
 model User {
-  id           String       @id @default(uuid()) @db.Uuid
-  email        String       @unique
+  id           String             @id @default(uuid()) @db.Uuid
+  email        String             @unique
   name         String?
-  passwordHash String       @map("password_hash")
-  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  lastLoginAt  DateTime?    @map("last_login_at") @db.Timestamptz(6)
+  passwordHash String             @map("password_hash")
+  createdAt    DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  lastLoginAt  DateTime?          @map("last_login_at") @db.Timestamptz(6)
   productions  Production[]
   sessions     Session[]
-  invitesSent  Invite[]     @relation("InvitedBy")
+  invitesSent  Invite[]           @relation("InvitedBy")
+  memberships  ProductionMember[]
+  membersAdded ProductionMember[] @relation("MemberAddedBy")
 
   @@map("users")
 }
@@ -94,6 +104,12 @@ model Invite {
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   invitedBy   User      @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
 
+  // An invitation can carry a share, so "put my accountant on this show" is one
+  // action rather than an invite now and a second visit once they have signed up.
+  productionId String?         @map("production_id") @db.Uuid
+  role         ProductionRole?
+  production   Production?     @relation(fields: [productionId], references: [id], onDelete: Cascade)
+
   @@index([email])
   @@map("invites")
 }
@@ -121,9 +137,31 @@ model Production {
   snapshots        ForecastSnapshot[]
   hotCostDays      HotCostDay[]
   hotCostLineItems HotCostLineItem[]
+  members          ProductionMember[]
+  pendingInvites   Invite[]
 
   @@index([ownerId])
   @@map("productions")
+}
+
+/// Somebody other than the owner who can see this production. The owner is not a
+/// row here — ownership lives on the production itself, so there is exactly one
+/// and it cannot be revoked by accident.
+model ProductionMember {
+  id           String         @id @default(uuid()) @db.Uuid
+  productionId String         @map("production_id") @db.Uuid
+  userId       String         @map("user_id") @db.Uuid
+  role         ProductionRole @default(viewer)
+  addedById    String?        @map("added_by_id") @db.Uuid
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  production   Production     @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  addedBy      User?          @relation("MemberAddedBy", fields: [addedById], references: [id], onDelete: SetNull)
+
+  @@unique([productionId, userId])
+  @@index([userId])
+  @@map("production_members")
 }
 
 model ImportBatch {
