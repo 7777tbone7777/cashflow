@@ -9,13 +9,16 @@
  *
  * Sharing with someone who has no account yet issues an invitation carrying the
  * share, so "put my accountant on this show" is one action rather than an
- * invite now and a second visit after they sign up.
+ * invite now and a second visit after they sign up. That invitation is emailed
+ * when mail is configured, and the link is returned either way — a delivery
+ * that silently failed is worse than one you were handed and can send yourself.
  */
 
 import { Router } from 'express';
 import { prisma } from '../db.js';
 import { newToken } from '../auth/credentials.js';
 import { requireRole } from '../auth/middleware.js';
+import { sendEmail, shareEmail } from '../email.js';
 
 // mergeParams so :id from the parent router is still visible here.
 export const membersRouter = Router({ mergeParams: true });
@@ -121,12 +124,26 @@ membersRouter.post('/', requireRole('owner'), async (req, res, next) => {
     });
     const base = (process.env.APP_URL || `${req.protocol}://${req.get('host')}`)
       .replace(/\/$/, '');
+    const link = `${base}/?invite=${encodeURIComponent(token)}`;
+    const delivery = await sendEmail({
+      to: email,
+      ...shareEmail({
+        link,
+        invitedBy: req.user,
+        production: req.production.title,
+        role,
+        expiresAt: invite.expiresAt,
+      }),
+    });
+
     return res.status(201).json({
       invited: true,
       invite: { id: invite.id, email: invite.email, role: invite.role,
         expiresAt: invite.expiresAt },
       // Shown once — only the hash is stored.
-      link: `${base}/?invite=${encodeURIComponent(token)}`,
+      link,
+      emailed: delivery.sent,
+      emailError: delivery.sent ? null : delivery.reason,
     });
   } catch (error) {
     return next(error);

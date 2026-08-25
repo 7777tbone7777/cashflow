@@ -9,9 +9,10 @@ import { invites, type Invite } from '../api'
  * natural reading of "invite someone" is "share this with someone", and that is
  * not what happens. An invitation creates a separate private workspace.
  *
- * No email is sent — this deployment has no mail credentials — so the link is
- * shown once for you to pass on. It is a credential until it is used, which is
- * why it cannot be shown again.
+ * The link is emailed when mail is configured, and shown here either way — a
+ * delivery you were told about but that quietly failed is worse than one you
+ * were handed. It is a credential until it is used, which is why it is shown
+ * once and never again.
  */
 const list = ref<Invite[]>([])
 const email = ref('')
@@ -19,6 +20,8 @@ const busy = ref(false)
 const error = ref('')
 const freshLink = ref('')
 const copied = ref(false)
+const emailed = ref<boolean | null>(null)
+const emailError = ref('')
 
 async function refresh() {
   try {
@@ -39,6 +42,8 @@ async function send() {
   try {
     const result = await invites.create(email.value)
     freshLink.value = result.link
+    emailed.value = result.emailed
+    emailError.value = result.emailError || ''
     email.value = ''
     await refresh()
   } catch (caught: unknown) {
@@ -70,8 +75,9 @@ const formatDate = (value: string) => new Date(value).toLocaleDateString()
 
     <p class="explain">
       An invitation gives someone an account on this instance and their own private workspace.
-      It does <strong>not</strong> share your productions — budgets, cash flows and hot costs are
-      visible only to the account that created them, and there is no way to hand one over yet.
+      It does <strong>not</strong> share your productions. To put somebody on a particular show,
+      use <em>Who can see this show</em> instead — that works whether or not they have an account
+      yet, and it is also how a show is handed over for good.
     </p>
 
     <form class="invite-form" @submit.prevent="send">
@@ -87,8 +93,16 @@ const formatDate = (value: string) => new Date(value).toLocaleDateString()
     <p v-if="error" class="banner error">{{ error }}</p>
 
     <div v-if="freshLink" class="fresh">
-      <p><strong>Send them this link.</strong> It is shown once — only its hash is stored, so it
-        cannot be displayed again. Create a new invite if it goes astray.</p>
+      <p v-if="emailed">
+        <strong>Emailed to them.</strong> The link is here too, in case it does not arrive — it is
+        shown once, because only its hash is stored.
+      </p>
+      <p v-else>
+        <strong>Send them this link.</strong>
+        {{ emailError ? `Email could not be sent: ${emailError}.` : '' }}
+        It is shown once — only its hash is stored, so it cannot be displayed again. Create a new
+        invite if it goes astray.
+      </p>
       <div class="link-row">
         <code>{{ freshLink }}</code>
         <button class="secondary-button" type="button" @click="copy">

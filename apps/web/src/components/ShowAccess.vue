@@ -20,6 +20,8 @@ const busy = ref(false)
 const error = ref('')
 const freshLink = ref('')
 const copied = ref(false)
+const emailed = ref<boolean | null>(null)
+const emailError = ref('')
 
 async function refresh() {
   if (!props.productionId) return
@@ -42,7 +44,11 @@ async function add() {
     const result = await members.add(props.productionId, email.value, newRole.value)
     // Somebody without an account yet gets a link that carries the share, so
     // they arrive already able to see the show.
-    if (result.invited && result.link) freshLink.value = result.link
+    if (result.invited && result.link) {
+      freshLink.value = result.link
+      emailed.value = result.emailed ?? false
+      emailError.value = result.emailError || ''
+    }
     email.value = ''
     await refresh()
   } catch (caught: unknown) {
@@ -113,9 +119,16 @@ const label = (person: { name: string | null; email: string } | null) =>
     <p v-if="error" class="banner error">{{ error }}</p>
 
     <div v-if="freshLink" class="fresh">
-      <p>
-        <strong>They do not have an account yet.</strong> Send them this link — it creates their
-        account and puts them on this show in one step. Shown once; only its hash is stored.
+      <p v-if="emailed">
+        <strong>They do not have an account yet, so we emailed them an invitation.</strong>
+        It creates their account and puts them on this show in one step. The link is here too, in
+        case it does not arrive — shown once, because only its hash is stored.
+      </p>
+      <p v-else>
+        <strong>They do not have an account yet.</strong>
+        {{ emailError ? `Email could not be sent: ${emailError}.` : '' }}
+        Send them this link — it creates their account and puts them on this show in one step.
+        Shown once; only its hash is stored.
       </p>
       <div class="link-row">
         <code>{{ freshLink }}</code>

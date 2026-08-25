@@ -215,6 +215,19 @@ export type Invite = {
 
 export const auth = {
   state: () => request<{ needsFirstUser: boolean }>('/api/auth/state'),
+  emailStatus: () => request<{ configured: boolean }>('/api/auth/email-status'),
+  forgot: (email: string) =>
+    request<{ ok: true; message: string }>('/api/auth/forgot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    }),
+  reset: (token: string, password: string) =>
+    request<{ user: User }>('/api/auth/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, password }),
+    }),
   me: () => request<{ user: User | null }>('/api/auth/me'),
   login: (email: string, password: string) =>
     request<{ user: User }>('/api/auth/login', {
@@ -275,7 +288,8 @@ export const members = {
   list: (productionId: string) =>
     request<MemberList>(`/api/productions/${productionId}/members`),
   add: (productionId: string, email: string, role: 'editor' | 'viewer') =>
-    request<{ member?: Member; invited: boolean; link?: string }>(
+    request<{ member?: Member; invited: boolean; link?: string;
+      emailed?: boolean; emailError?: string | null }>(
       `/api/productions/${productionId}/members`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -298,7 +312,8 @@ export const members = {
 export const invites = {
   list: () => request<Invite[]>('/api/invites'),
   create: (email: string) =>
-    request<{ invite: Invite; link: string }>('/api/invites', {
+    request<{ invite: Invite; link: string; emailed: boolean; emailError: string | null }>(
+      '/api/invites', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),

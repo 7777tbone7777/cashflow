@@ -10,10 +10,12 @@ import { Router } from 'express';
 import { prisma } from '../db.js';
 import { hashPassword, hashToken, newToken, verifyPassword } from '../auth/credentials.js';
 import { SESSION_DAYS, requireAuth, sessionCookie } from '../auth/middleware.js';
+import { emailStatus, passwordResetEmail, sendEmail } from '../email.js';
 
 export const authRouter = Router();
 
 const MIN_PASSWORD = 10;
+const RESET_MINUTES = 60;
 
 function publicUser(user) {
   return { id: user.id, email: user.email, name: user.name, createdAt: user.createdAt };
@@ -34,6 +36,8 @@ async function startSession(res, user, req) {
   res.setHeader('Set-Cookie', sessionCookie(token));
 }
 
+const emailConfiguredOrNull = () => emailStatus().configured;
+
 const normaliseEmail = (value) => String(value || '').trim().toLowerCase();
 
 /** Whether this instance has anybody yet — the UI shows a different first screen. */
@@ -43,6 +47,90 @@ authRouter.get('/state', async (_req, res, next) => {
     res.json({ needsFirstUser: users === 0 });
   } catch (error) {
     next(error);
+  }
+});
+
+/** Whether this deployment can send mail — the sign-in screen adapts if it cannot. */
+authRouter.get('/email-status', (_req, res) => {
+  const status = emailStatus();
+  res.json({ configured: status.configured });
+});
+
+/**
+ * Ask for a reset link.
+ *
+ * Always answers the same way. Telling an unknown address apart from a known one
+ * turns this into a way of asking who has an account here.
+ */
+authRouter.post('/forgot', async (req, res, next) => {
+  try {
+    const email = normaliseEmail(req.body?.email);
+    const answer = {
+      ok: true,
+      message: 'If that address has an account, a reset link is on its way.',
+    };
+    if (!emailConfiguredOrNull()) {
+      return res.status(503).json({
+        error: 'This deployment cannot send email yet, so a password cannot be reset '
+          + 'by link. Ask whoever runs it to set RESEND_API_KEY and EMAIL_FROM.',
+      });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.json(answer);
+
+    // Asking again invalidates the previous link rather than leaving two live.
+    await prisma.passwordReset.updateMany({
+      where: { userId: user.id, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+    const { token, tokenHash } = newToken();
+    const expiresAt = new Date(Date.now() + RESET_MINUTES * 60 * 1000);
+    await prisma.passwordReset.create({ data: { userId: user.id, tokenHash, expiresAt } });
+
+    const base = (process.env.APP_URL || `${req.protocol}://${req.get('host')}`)
+      .replace(/\/$/, '');
+    const link = `${base}/?reset=${encodeURIComponent(token)}`;
+    await sendEmail({ to: user.email, ...passwordResetEmail({ link, expiresAt }) });
+    return res.json(answer);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+/** Redeem a reset link. Signs out everything — including whoever had the old password. */
+authRouter.post('/reset', async (req, res, next) => {
+  try {
+    const token = String(req.body?.token || '').trim();
+    const password = String(req.body?.password || '');
+    if (password.length < MIN_PASSWORD) {
+      return res.status(400).json({
+        error: `Use at least ${MIN_PASSWORD} characters for the password.`,
+      });
+    }
+    const reset = token
+      ? await prisma.passwordReset.findUnique({
+        where: { tokenHash: hashToken(token) }, include: { user: true },
+      })
+      : null;
+    if (!reset || reset.usedAt || reset.expiresAt < new Date()) {
+      return res.status(403).json({
+        error: 'That reset link is not valid any more. Ask for a new one.',
+      });
+    }
+
+    const passwordHash = await hashPassword(password);
+    await prisma.$transaction([
+      prisma.user.update({ where: { id: reset.userId }, data: { passwordHash } }),
+      prisma.passwordReset.update({
+        where: { id: reset.id }, data: { usedAt: new Date() },
+      }),
+      prisma.session.deleteMany({ where: { userId: reset.userId } }),
+    ]);
+    await startSession(res, reset.user, req);
+    return res.json({ user: publicUser(reset.user) });
+  } catch (error) {
+    return next(error);
   }
 });
 

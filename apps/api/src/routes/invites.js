@@ -6,15 +6,16 @@
  * there is no sharing model here yet, and pretending otherwise would be worse
  * than saying so.
  *
- * No email is sent. This deployment has no mail credentials, and inventing a
- * dependency on one would break the invite flow the first time it was missing.
- * The link is returned once, for the inviter to pass on however they like.
+ * The link is emailed when mail is configured, and returned either way — a
+ * delivery that silently failed is worse than one you were handed and can send
+ * yourself. The response says which happened.
  */
 
 import { Router } from 'express';
 import { prisma } from '../db.js';
 import { newToken } from '../auth/credentials.js';
 import { requireAuth } from '../auth/middleware.js';
+import { inviteEmail, sendEmail } from '../email.js';
 
 export const invitesRouter = Router();
 
@@ -81,10 +82,18 @@ invitesRouter.post('/', async (req, res, next) => {
       },
     });
 
+    const link = inviteLink(req, token);
+    const delivery = await sendEmail({
+      to: email,
+      ...inviteEmail({ link, invitedBy: req.user, expiresAt: invite.expiresAt }),
+    });
+
     return res.status(201).json({
       invite: publicInvite(invite),
       // Shown once and never recoverable — only the hash is kept.
-      link: inviteLink(req, token),
+      link,
+      emailed: delivery.sent,
+      emailError: delivery.sent ? null : delivery.reason,
     });
   } catch (error) {
     return next(error);
