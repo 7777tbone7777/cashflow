@@ -43,10 +43,13 @@ const hasBudget = computed(() => Boolean(budget.value))
 
 async function refreshProductions(selectId?: string) {
   productions.value = await api.productions(showArchived.value)
-  if (selectId !== undefined) selectedId.value = selectId
-  // A show that has just been deleted or archived is no longer in the list, so
-  // fall back rather than leaving the page pointing at nothing.
-  if (!productions.value.some((p) => p.id === selectedId.value)) {
+  if (selectId !== undefined) {
+    selectedId.value = selectId
+    return
+  }
+  // An empty selection is deliberate — it means "I am starting a new show" —
+  // so only rescue a selection that pointed at something now gone.
+  if (selectedId.value && !productions.value.some((p) => p.id === selectedId.value)) {
     selectedId.value = productions.value[0]?.id ?? ''
   }
 }
@@ -127,6 +130,13 @@ async function generate() {
 
 watch(selectedId, async (id) => {
   cashflow.value = null
+  if (!id) {
+    // Nothing should be on screen from the last show while a new one is set up.
+    budget.value = null
+    summary.value = null
+    config.value = { ...DEFAULT_CONFIG }
+    return
+  }
   await loadProduction(id)
 })
 
@@ -135,6 +145,10 @@ async function loadWorkspace() {
   loading.value = true
   try {
     await refreshProductions()
+    // Open on a show if there is one; a new account opens ready to upload.
+    if (!selectedId.value && productions.value.length) {
+      selectedId.value = productions.value[0].id
+    }
     if (selectedId.value) await loadProduction(selectedId.value)
     extractorUp.value = (await api.extractorHealth()).extractor.ok
   } catch (caught: any) {
@@ -201,6 +215,7 @@ onMounted(async () => {
             <option v-for="production in productions" :key="production.id" :value="production.id">
               {{ production.title }}{{ production.archivedAt ? ' (archived)' : '' }}
             </option>
+            <option value="">＋ New production…</option>
           </select>
         </label>
         <label class="toggle">
@@ -224,7 +239,8 @@ onMounted(async () => {
         :inputs-required="budget?.inputsRequired ?? []"
         :currency="currency" />
 
-      <BudgetUpload v-if="canEdit" @uploaded="onUploaded" />
+      <BudgetUpload v-if="canEdit" :selected-id="selectedId"
+                    :selected-title="selected?.title ?? ''" @uploaded="onUploaded" />
 
       <template v-if="hasBudget && budget">
         <BudgetOverview :budget="budget" :currency="currency" />
