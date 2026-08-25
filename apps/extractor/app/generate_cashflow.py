@@ -778,6 +778,12 @@ class Generator:
             "overrides": {
                 "loaded": len(self.overrides.overrides),
                 "applied": dict(self.overrides.applied),
+                # Named, so a caller can tell which of them did anything.
+                "applied_targets": sorted(self.overrides.applied_targets),
+                "inert": sorted(
+                    f"{o.field}|{o.scope}|{o.key}" for o in self.overrides.overrides
+                    if f"{o.field}|{o.scope}|{o.key}" not in self.overrides.applied_targets
+                    and o.key in {k for k in self.live_keys}),
                 "orphaned": [o.key for o in self.overrides.unused],
                 "amendments_not_applied": [o.key for o in self.overrides.amendments],
             },

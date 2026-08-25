@@ -11,6 +11,7 @@ import BudgetOverview from './components/BudgetOverview.vue'
 import ProductionSetup from './components/ProductionSetup.vue'
 import AccountantInputs from './components/AccountantInputs.vue'
 import GeneratedDocuments from './components/GeneratedDocuments.vue'
+import Adjustments from './components/Adjustments.vue'
 import CashFlowGrid from './components/CashFlowGrid.vue'
 import ImportExisting from './components/ImportExisting.vue'
 import SignIn from './components/SignIn.vue'
@@ -264,6 +265,12 @@ onMounted(async () => {
           You have read-only access to this show. You can see everything that has been generated;
           only an editor can upload a budget or regenerate the documents.
         </p>
+
+        <Adjustments
+          :production-id="selectedId"
+          :currency="currency"
+          :can-edit="canEdit"
+          :cashflow="cashflow" />
 
         <GeneratedDocuments
           :production-id="selectedId"

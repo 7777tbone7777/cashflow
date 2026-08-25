@@ -15,6 +15,20 @@ enum ProductionRole {
   viewer
 }
 
+/// A redistribution moves when money lands and the total is asserted afterwards.
+/// An amendment changes how much, and is reported rather than applied.
+enum OverrideKind {
+  redistribute
+  amend
+}
+
+/// Corrections should trend to zero as the parser improves; judgements should
+/// not. Keeping them apart is the clearest health metric the product has.
+enum OverrideOrigin {
+  correction
+  judgement
+}
+
 enum ImportSourceType {
   // The primary input. Everything else is either a document from a production
   // already under way, or a past show to learn spread shapes from.
@@ -60,18 +74,19 @@ enum SnapshotType {
 /// API never returns a production to anyone else — invitation grants access to
 /// the application, not to another user's shows.
 model User {
-  id             String             @id @default(uuid()) @db.Uuid
-  email          String             @unique
+  id             String               @id @default(uuid()) @db.Uuid
+  email          String               @unique
   name           String?
-  passwordHash   String             @map("password_hash")
-  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  lastLoginAt    DateTime?          @map("last_login_at") @db.Timestamptz(6)
+  passwordHash   String               @map("password_hash")
+  createdAt      DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  lastLoginAt    DateTime?            @map("last_login_at") @db.Timestamptz(6)
   productions    Production[]
   sessions       Session[]
-  invitesSent    Invite[]           @relation("InvitedBy")
+  invitesSent    Invite[]             @relation("InvitedBy")
   memberships    ProductionMember[]
-  membersAdded   ProductionMember[] @relation("MemberAddedBy")
+  membersAdded   ProductionMember[]   @relation("MemberAddedBy")
   passwordResets PasswordReset[]
+  overridesMade  ProductionOverride[]
 
   @@map("users")
 }
@@ -131,29 +146,29 @@ model Invite {
 }
 
 model Production {
-  id               String             @id @default(uuid()) @db.Uuid
+  id               String               @id @default(uuid()) @db.Uuid
   // Nullable only so the column can be added to a database that already holds
   // rows. The API treats an unowned production as invisible rather than as
   // public — see scripts/claim-orphan-productions.js to adopt them.
-  ownerId          String?            @map("owner_id") @db.Uuid
+  ownerId          String?              @map("owner_id") @db.Uuid
   // Restrict, not Cascade. Deleting an account used to take every production it
   // owned with it — including ones shared with other people, who would simply
   // find the show gone. The database now refuses, so the shows have to be handed
   // on or deleted deliberately first.
-  owner            User?              @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  owner            User?                @relation(fields: [ownerId], references: [id], onDelete: Restrict)
   // Archiving hides a show from the picker without destroying it. A slate
   // accumulates finished pictures, and "delete" is the wrong answer for a film
   // that wrapped — the cash flow is the record of what it cost.
-  archivedAt       DateTime?          @map("archived_at") @db.Timestamptz(6)
+  archivedAt       DateTime?            @map("archived_at") @db.Timestamptz(6)
   title            String
   currency         String
   region           String?
   status           String
-  startDate        DateTime?          @db.Date
-  endDate          DateTime?          @db.Date
+  startDate        DateTime?            @db.Date
+  endDate          DateTime?            @db.Date
   notes            String?
-  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdAt        DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
   importBatches    ImportBatch[]
   periods          CashFlowPeriod[]
   sections         CashFlowSection[]
@@ -163,6 +178,7 @@ model Production {
   hotCostLineItems HotCostLineItem[]
   members          ProductionMember[]
   pendingInvites   Invite[]
+  overrides        ProductionOverride[]
 
   @@index([ownerId])
   @@index([archivedAt])
@@ -187,6 +203,35 @@ model ProductionMember {
   @@unique([productionId, userId])
   @@index([userId])
   @@map("production_members")
+}
+
+/// What a person corrected after the generator decided.
+///
+/// Keyed on identity — department, account, or a line's account|sub|person —
+/// never on row position, because budgets re-version underneath you and the
+/// product is the weekly reforecast. An override pointing at something the
+/// budget no longer has is reported as orphaned rather than dropped.
+model ProductionOverride {
+  id           String         @id @default(uuid()) @db.Uuid
+  productionId String         @map("production_id") @db.Uuid
+  field        String
+  value        Json
+  scope        String
+  key          String
+  kind         OverrideKind   @default(redistribute)
+  origin       OverrideOrigin @default(judgement)
+  reason       String
+  authorId     String?        @map("author_id") @db.Uuid
+  authorName   String?        @map("author_name")
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  production   Production     @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  author       User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  // One statement per field per target. Saying it twice is editing it once.
+  @@unique([productionId, field, scope, key])
+  @@index([productionId])
+  @@map("production_overrides")
 }
 
 model ImportBatch {

@@ -14,6 +14,7 @@ import multer from 'multer';
 import { Router } from 'express';
 import { prisma } from '../db.js';
 import { canWriteToProduction, requireRole, scopeToOwner } from '../auth/middleware.js';
+import { overridePayloadFor, overridesRouter } from './overrides.js';
 import {
   ExtractorError,
   extractBudget,
@@ -168,6 +169,36 @@ budgetsRouter.get('/:productionId', async (req, res, next) => {
   }
 });
 
+budgetsRouter.use('/:productionId/overrides', overridesRouter);
+
+/**
+ * What an adjustment can be attached to: this budget's own departments and
+ * accounts. Offering a free-text code would let somebody adjust something the
+ * budget does not contain and never find out.
+ */
+budgetsRouter.get('/:productionId/targets', async (req, res, next) => {
+  try {
+    const budget = await loadBudget(req.params.productionId);
+    if (!budget) {
+      return res.status(404).json({ error: 'Import a budget for this production first.' });
+    }
+    const departments = (budget.topsheet || []).map((row) => ({
+      key: row.acct, name: row.name_display, total: row.total,
+    }));
+    const accounts = (budget.accounts || [])
+      .filter((a) => (a.total ?? 0) > 0)
+      .map((a) => ({
+        key: a.acct,
+        name: a.name_display,
+        total: a.total,
+        department: a.acct.slice(0, 2) + '00',
+      }));
+    return res.json({ departments, accounts });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 /** Generate hot cost day sheets and stream them back as a workbook. */
 budgetsRouter.post('/:productionId/generate/hotcost', requireRole('editor'), async (req, res, next) => {
   try {
@@ -217,7 +248,9 @@ budgetsRouter.post('/:productionId/generate/cashflow', requireRole('editor'), as
         budget,
         config: req.body?.config || req.body || {},
         archetypes: req.body?.archetypes || null,
-        overrides: req.body?.overrides || null,
+        // Adjustments are stored against the production, not posted with the
+        // request: a judgement made in prep still holds in week six.
+        overrides: req.body?.overrides ?? await overridePayloadFor(req.params.productionId),
         force: Boolean(req.body?.force),
       });
     } catch (error) {
@@ -256,6 +289,8 @@ budgetsRouter.post('/:productionId/generate/cashflow', requireRole('editor'), as
       placementBasis: result.placement_basis,
       // Every assumption the generator made, so none of them are silent.
       assumptions: result.assumptions || [],
+      // Which adjustments were used, and which now point at nothing.
+      overrides: result.overrides || null,
     });
   } catch (error) {
     return next(error);

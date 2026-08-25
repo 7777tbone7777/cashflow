@@ -60,6 +60,30 @@ export type BudgetSummary = {
   accountCount: number
 }
 
+export type OverrideFieldSpec = {
+  label: string
+  help: string
+  type: 'number' | 'choice'
+  unit?: string
+  choices?: string[]
+  scopes: Array<'department' | 'account'>
+}
+
+export type Adjustment = {
+  id: string
+  field: string
+  value: number | string
+  scope: 'department' | 'account'
+  key: string
+  kind: 'redistribute' | 'amend'
+  origin: 'judgement' | 'correction'
+  reason: string
+  author: string | null
+  createdAt: string
+}
+
+export type Target = { key: string; name: string; total: number; department?: string }
+
 export type CashflowResult = {
   ok: true
   snapshotId: string
@@ -73,6 +97,16 @@ export type CashflowResult = {
   }
   placementBasis: Record<string, number>
   assumptions: string[]
+  overrides: null | {
+    loaded: number
+    applied: Record<string, number>
+    /** "field|scope|key" for each adjustment that actually changed something. */
+    applied_targets: string[]
+    /** Target exists, but nothing ever read this field for it — it did nothing. */
+    inert: string[]
+    orphaned: string[]
+    amendments_not_applied: string[]
+  }
 }
 
 export type ProductionRole = 'owner' | 'editor' | 'viewer'
@@ -259,6 +293,29 @@ export const auth = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password }),
     }),
+}
+
+export const adjustments = {
+  fields: (productionId: string) =>
+    request<{ fields: Record<string, OverrideFieldSpec> }>(
+      `/api/budgets/${productionId}/overrides/fields`),
+  targets: (productionId: string) =>
+    request<{ departments: Target[]; accounts: Target[] }>(
+      `/api/budgets/${productionId}/targets`),
+  list: (productionId: string) =>
+    request<Adjustment[]>(`/api/budgets/${productionId}/overrides`),
+  add: (productionId: string, body: {
+    field: string; value: number | string; scope: string; key: string;
+    reason: string; origin?: 'judgement' | 'correction'
+  }) =>
+    request<Adjustment>(`/api/budgets/${productionId}/overrides`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+  remove: (productionId: string, id: string) =>
+    request<{ ok: true }>(`/api/budgets/${productionId}/overrides/${id}`,
+      { method: 'DELETE' }),
 }
 
 export const shows = {

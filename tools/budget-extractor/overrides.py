@@ -93,6 +93,10 @@ def target_keys(*, department: str | None = None, account: str | None = None,
 class OverrideSet:
     overrides: list[Override] = field(default_factory=list)
     applied: dict[str, int] = field(default_factory=lambda: defaultdict(int))
+    # Which specific overrides were actually consulted. An override whose target
+    # exists but whose field is never read is neither applied nor orphaned — it
+    # is inert, and silence about it is indistinguishable from success.
+    applied_targets: set = field(default_factory=set)
     unused: list[Override] = field(default_factory=list)
     amendments: list[Override] = field(default_factory=list)
 
@@ -134,6 +138,7 @@ class OverrideSet:
                     self.amendments.append(override)
                     continue
                 self.applied[f"{field_name}@{scope}"] += 1
+                self.applied_targets.add(f"{field_name}|{scope}|{override.key}")
                 return override.value
         return default
 
