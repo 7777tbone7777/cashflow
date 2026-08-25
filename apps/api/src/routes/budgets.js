@@ -83,7 +83,10 @@ budgetsRouter.post('/upload', upload.single('budget'), async (req, res, next) =>
       });
     }
 
+    // The budget states the show's name on its first page. Prefer it: a picker
+    // full of production numbers is a picker nobody can read.
     const title = req.body.productionTitle?.trim()
+      || extract.production?.title
       || extract.production?.production_number
       || req.file.originalname.replace(/\.[^.]+$/, '');
 

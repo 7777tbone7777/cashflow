@@ -446,6 +446,24 @@ class BudgetParser:
         """The header is two columns; join each side separately or the fields merge."""
         left = "".join(w["text"] for w in words if w["x0"] < 400)
         right = "".join(w["text"] for w in words if w["x0"] >= 400)
+
+        # The show's own name, printed in quotes above everything else, with the
+        # company beneath it. Both reference budgets do this. Worth reading:
+        # without it a production is filed under its production number, and
+        # "M 10.10246" is not what anybody calls the film.
+        if "title" not in self.production:
+            m = re.match(r'^"(.+?)"$', (left or right).strip())
+            if m:
+                self.production["title"] = respace(m.group(1))
+                return
+        elif "company" not in self.production:
+            candidate = (left or "").strip()
+            # A company line carries no field label and no figures; anything
+            # with a colon or a digit is a header field or a top sheet row.
+            if candidate and not re.search(r"[:\d]", candidate):
+                self.production["company"] = respace(candidate)
+                return
+
         for side in (left, right):
             if side:
                 self._match_header_fields(side)
