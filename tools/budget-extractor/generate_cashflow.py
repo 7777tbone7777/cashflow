@@ -389,6 +389,7 @@ class Generator:
     # ---------- the three tiers ---------------------------------------------
 
     def place_phase_lines(self) -> None:
+        self.resolve_milestones()
         prefer_observed = self.cfg.get("prefer_learned_profiles", False)
         for account in self.budget["accounts"]:
             department = account["acct"][:2] + "00"
@@ -409,8 +410,12 @@ class Generator:
                 learned = self._profile_for(account["acct"], department)
                 if learned:
                     profile, provenance = learned
+                    # A dated milestone is knowledge the profile does not have.
+                    # Carve it out first and shape only what is left.
+                    carved = self._place_account_milestones(account, department)
+                    profile, provenance = learned
                     self._place_by_profile(
-                        account["total"], profile, department, account["acct"],
+                        account["total"] - carved, profile, department, account["acct"],
                         account["name_display"],
                         any(d.get("is_labour") for d in account["details"]))
                     self.archetype_hits[provenance.split(":")[0]] += 1
@@ -428,6 +433,17 @@ class Generator:
                 for line in detail["phases"]:
                     amount = line.get("amount") or 0.0
                     if not amount:
+                        continue
+                    milestone_at = self.milestone_index.get(id(line))
+                    if milestone_at is not None:
+                        self._spread(
+                            amount, [milestone_at], acct=account["acct"],
+                            department=department,
+                            description=line.get("label_display")
+                            or account["name_display"],
+                            basis="milestone", phase="milestone",
+                            cash_class=self._cash_class(
+                                department, account["name_display"], is_labour))
                         continue
                     # A human can move a line to a different phase entirely —
                     # the crane wanted a week early sits here.
@@ -516,14 +532,26 @@ class Generator:
         for p in self.placements:
             placed[p.department] += p.amount
 
-        authoritative = self.budget.get("department_totals") or {}
-        if not authoritative:
-            authoritative = {r["acct"]: r["total"] for r in self.budget["topsheet"]}
+        # The top sheet is the authority on what a department holds, because it
+        # is the statement that sums to the grand total. AccountTotalfor lines
+        # only cover money that reached a detail page, and a percentage-derived
+        # line ("6700 INSURANCE :1.3% $572,026") never does — it is printed on
+        # the top sheet and nowhere else. Closing against AccountTotalfor alone
+        # silently drops it.
+        authoritative: dict[str, float] = {}
+        for row in self.budget.get("topsheet") or []:
+            # A department can appear on more than one top sheet row. Both rows
+            # are real money in that department, so add rather than overwrite.
+            authoritative[row["acct"]] = authoritative.get(row["acct"], 0.0) + row["total"]
+        for acct, stated in (self.budget.get("department_totals") or {}).items():
+            authoritative.setdefault(acct, stated)
         names = {r["acct"]: r["name_display"] for r in self.budget["topsheet"]}
 
         for department, stated in sorted(authoritative.items()):
             gap = stated - placed.get(department, 0.0)
             if abs(gap) < 1.0:
+                continue
+            if self._place_by_instalments(gap, department, names.get(department, department)):
                 continue
             provenance = self._place_by_archetype(
                 gap, department, department, names.get(department, department), False)
@@ -533,16 +561,163 @@ class Generator:
                 f"({share_of_dept * 100:.0f}% of the department) shaped by "
                 f"{provenance} — the budget itemises no phase detail for it")
 
+        self._close_to_grand_total()
+
+    def _place_by_instalments(self, amount: float, department: str,
+                              description: str) -> bool:
+        """Place a top sheet line the detail pages never carried.
+
+        An insurance premium or a bond fee is stated as a percentage of the
+        budget and nowhere else. It has no phase, no duration and no date, so an
+        archetype spreads it across the shoot — which for a premium billed as a
+        deposit plus instalments is simply wrong. When someone who knows the
+        policy states the instalments, use them.
+        """
+        schedule = (self.cfg.get("unbacked_line_schedule") or {}).get(department)
+        if not schedule:
+            return False
+        total_share = sum(i.get("share", 0) for i in schedule) or 1.0
+        placed_any = False
+        for instalment in schedule:
+            when = parse_iso(instalment.get("pay_on"))
+            index = self.calendar.index_for(when) if when else None
+            if index is None:
+                continue
+            self._spread(amount * instalment.get("share", 0) / total_share, [index],
+                         acct=department, department=department,
+                         description=description, basis="instalment",
+                         phase="", cash_class="prepaid")
+            placed_any = True
+        if placed_any:
+            self.notes.append(
+                f"{department} {description}: {amount:,.0f} placed on the "
+                f"{len(schedule)} instalment date(s) you supplied, not by archetype")
+        return placed_any
+
+    def _place_account_milestones(self, account: dict[str, Any],
+                                  department: str) -> float:
+        """Place this account's dated lines and report what they came to."""
+        carved = 0.0
+        for detail in account["details"]:
+            for line in detail["phases"]:
+                index = self.milestone_index.get(id(line))
+                if index is None:
+                    continue
+                amount = line.get("amount") or 0.0
+                self._spread(amount, [index], acct=account["acct"],
+                             department=department,
+                             description=line.get("label_display")
+                             or account["name_display"],
+                             basis="milestone", phase="milestone",
+                             cash_class=self._cash_class(
+                                 department, account["name_display"],
+                                 any(d.get("is_labour") for d in account["details"])))
+                carved += amount
+        return carved
+
+    def resolve_milestones(self) -> None:
+        """Match each milestone rule to the budget lines it names.
+
+        A bonus payable on delivery is priced by the budget and scheduled by
+        nobody: every duration rule in this file spreads it across the shoot,
+        where it lands months early. Only a person can say which week it pays.
+        Resolving up front means the named lines are placed on their date and
+        the rest of the account still flows through the normal path, so the
+        total is untouched by construction.
+        """
+        self.milestone_index: dict[int, int] = {}       # id(phase line) -> period
+        self.milestone_carved: dict[str, float] = defaultdict(float)
+        for rule in self.cfg.get("milestones") or []:
+            when = parse_iso(rule.get("pay_on"))
+            index = self.calendar.index_for(when) if when else None
+            label = f"{rule.get('acct') or ''} {rule.get('description') or ''}".strip()
+            if index is None:
+                self.notes.append(
+                    f"milestone {label}: pay_on {rule.get('pay_on')!r} is not a week "
+                    "in this calendar — left where the budget put it")
+                continue
+            acct = str(rule.get("acct") or "")
+            needle = str(rule.get("description") or "").lower()
+            if not acct and not needle:
+                continue
+            matched = 0.0
+            for account in self.budget["accounts"]:
+                if acct and account["acct"] != acct:
+                    continue
+                for detail in account["details"]:
+                    for line in detail["phases"]:
+                        if needle and needle not in str(
+                                line.get("label_display") or "").lower():
+                            continue
+                        amount = line.get("amount") or 0.0
+                        if not amount:
+                            continue
+                        self.milestone_index[id(line)] = index
+                        self.milestone_carved[account["acct"]] += amount
+                        matched += amount
+            if matched:
+                self.notes.append(
+                    f"milestone {label}: {matched:,.0f} placed in the week ending "
+                    f"{self.calendar.periods[index].week_ending} because you said so, "
+                    "not by duration")
+            else:
+                self.notes.append(
+                    f"milestone {label}: matched no line in this budget — check the "
+                    "account number and the wording")
+
+    def _close_to_grand_total(self) -> None:
+        """Place whatever the departments still leave short of the stated total.
+
+        Departments close against the top sheet, and the top sheet can still
+        miss the grand total — rounding on a percentage line, or a row the
+        print-out never carried. Emitting a grid that is short by a real amount
+        is exactly the failure this generator exists to refuse, so the residual
+        is placed and named rather than left to show up as a reconciliation
+        error the reader cannot act on.
+        """
+        grand = self.budget.get("totals", {}).get("grand_total") or 0.0
+        if not grand:
+            return
+        residual = grand - sum(p.amount for p in self.placements)
+        if abs(residual) < 1.0:
+            return
+
+        # No department claims it, so the least-assumption shape is the one the
+        # rest of the budget already has.
+        weights = [0.0] * len(self.calendar.periods)
+        for p in self.placements:
+            weights[p.period_index] += p.amount
+        indices = [i for i, w in enumerate(weights) if w > 0]
+        if not indices:
+            return
+        self._spread(residual, indices, acct="", department="",
+                     description="unattributed residual", basis="unattributed",
+                     phase="", cash_class="vendor",
+                     weights=[weights[i] for i in indices])
+
+        if abs(residual) > grand * 0.0005:
+            self.notes.append(
+                f"unattributed: {residual:,.0f} ({residual / grand * 100:.2f}% of the "
+                "budget) is stated in the grand total but claimed by no top sheet "
+                "row — spread in proportion to everything else, and worth chasing")
+
     # ---------- cost -> cash --------------------------------------------------
 
     def to_cash(self) -> tuple[list[float], list[float]]:
         timing = {**DEFAULT_TIMING, **self.cfg.get("payment_timing", {})}
+        # A department can settle on its own cycle — a payroll company on one
+        # calendar, a location or transport vendor on another. Measured against
+        # a real cash flow this is the highest-leverage answer in the config,
+        # and the right value differs between productions, so it is asked and
+        # never inferred.
+        dept_lags = {str(k): float(v) for k, v in (timing.get("departments") or {}).items()}
         n = len(self.calendar.periods)
         cost = [0.0] * n
         cash = [0.0] * n
         for p in self.placements:
             cost[p.period_index] += p.amount
-            lag_days = timing.get(p.cash_class, {}).get("lag_days", 0)
+            lag_days = dept_lags.get(p.department,
+                                     timing.get(p.cash_class, {}).get("lag_days", 0))
             shift = int(round(lag_days / 7.0))
             target = min(max(p.period_index + shift, 0), n - 1)
             cash[target] += p.amount

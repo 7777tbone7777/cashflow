@@ -27,7 +27,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from .extract_budget import BudgetParser
@@ -42,6 +42,22 @@ from .overrides import OverrideSet
 app = FastAPI(title="cashflow extractor", version="1.0")
 
 MAX_UPLOAD_BYTES = 64 * 1024 * 1024
+
+# Starlette caps one form field at 1MB. An extracted budget is JSON for every
+# account in the document: 938KB for a $6M feature, 2.2MB for a $44M one. The
+# cap is not a safety margin here — it is a ceiling the second real production
+# walked straight through, with a 400 that says nothing about budgets.
+MAX_FIELD_BYTES = 64 * 1024 * 1024
+
+
+async def _fields(request: Request, *required: str) -> dict[str, str]:
+    """Read the text fields of a multipart body of any realistic size."""
+    form = await request.form(max_part_size=MAX_FIELD_BYTES)
+    fields = {key: value for key, value in form.items() if isinstance(value, str)}
+    missing = [name for name in required if name not in fields]
+    if missing:
+        raise HTTPException(422, f"missing form field(s): {', '.join(missing)}")
+    return fields
 
 
 async def _spool(upload: UploadFile, suffix: str) -> Path:
@@ -91,12 +107,12 @@ async def extract(budget: UploadFile = File(...)) -> JSONResponse:
 
 
 @app.post("/generate/hotcost")
-async def generate_hotcost(budget_json: str = Form(...),
-                           production_json: str = Form(...)) -> StreamingResponse:
+async def generate_hotcost(request: Request) -> StreamingResponse:
     """Pre-populated day sheets. The accountant enters call, lunch and wrap."""
+    fields = await _fields(request, "budget_json", "production_json")
     try:
-        budget = json.loads(budget_json)
-        cfg = json.loads(production_json)
+        budget = json.loads(fields["budget_json"])
+        cfg = json.loads(fields["production_json"])
     except json.JSONDecodeError as exc:
         raise HTTPException(400, f"invalid JSON: {exc}") from exc
 
@@ -146,17 +162,15 @@ async def generate_hotcost(budget_json: str = Form(...),
 
 
 @app.post("/generate/cashflow")
-async def generate_cashflow(budget_json: str = Form(...),
-                            production_json: str = Form(...),
-                            archetypes_json: str = Form("null"),
-                            overrides_json: str = Form("null"),
-                            force: bool = Form(False)) -> JSONResponse:
+async def generate_cashflow(request: Request) -> JSONResponse:
     """Weekly grid, reconciled to the budget or not emitted at all."""
+    fields = await _fields(request, "budget_json", "production_json")
+    force = str(fields.get("force", "")).lower() in ("1", "true", "yes", "on")
     try:
-        budget = json.loads(budget_json)
-        cfg = json.loads(production_json)
-        archetypes = json.loads(archetypes_json)
-        override_payload = json.loads(overrides_json)
+        budget = json.loads(fields["budget_json"])
+        cfg = json.loads(fields["production_json"])
+        archetypes = json.loads(fields.get("archetypes_json") or "null")
+        override_payload = json.loads(fields.get("overrides_json") or "null")
     except json.JSONDecodeError as exc:
         raise HTTPException(400, f"invalid JSON: {exc}") from exc
 

@@ -556,12 +556,27 @@ class BudgetParser:
         """e.g.  1FICA1 | 6.2% | 110,731.54 | 6,865   ->  FICA at 6.2% on the base."""
         if not words:
             return None
-        code = words[0]["text"]
+        # The code runs up to the rate. Templates differ on whether the fringe's
+        # sequence number is glued to its name ("1FICA1") or printed as its own
+        # word ("1 FICA 1"), so split on the rate rather than on the first word.
+        pct_at = next((i for i, w in enumerate(words)
+                       if w["text"].endswith("%")), None)
+        if pct_at is not None:
+            code_words, rest = words[:pct_at], words[pct_at:]
+        else:
+            # A flat fringe states units instead of a rate ("ASA NON-MARYLAND
+            # 114 Days 58,482"). Fall back to the first number.
+            num_at = next((i for i, w in enumerate(words)
+                           if i and to_float(w["text"]) is not None), None)
+            if num_at is None:
+                return None
+            code_words, rest = words[:num_at], words[num_at:]
+        code = "".join(w["text"] for w in code_words)
         if not re.match(r"^\d*[A-Z]", code):
             return None
         rate = None
         numbers: list[float] = []
-        for w in words[1:]:
+        for w in rest:
             text = w["text"]
             if text.endswith("%"):
                 rate = to_float(text[:-1])
@@ -634,18 +649,20 @@ class BudgetParser:
             joined = "".join(w["text"] for w in words)
             # The column header both marks page furniture and states the layout.
             if joined.startswith(("Acct#Description", "Acct#")):
-                self._adopt_column_layout(words)
+                # The detail header states the money columns; the top sheet's
+                # does not. Adopting a layout is therefore the moment the top
+                # sheet ends — not the end of page 1, which only held because
+                # the first budget seen had a top sheet that fitted on one page.
+                if self._adopt_column_layout(words):
+                    in_topsheet = False
                 continue
             if not joined or NOISE.match(joined):
                 continue
 
             if in_topsheet:
-                if pageno > 1:
-                    in_topsheet = False
-                else:
-                    self._parse_production_header(words)
-                    self._parse_topsheet_row(words)
-                    continue
+                self._parse_production_header(words)
+                self._parse_topsheet_row(words)
+                continue
 
             # "AccountTotalfor1100 $239,411" — the department roll-up, authoritative.
             m = re.match(r"^AccountTotalfor(\d{3,4})\$?([\d,]+)$", joined)
@@ -850,13 +867,38 @@ class BudgetParser:
 
     def _validate(self) -> None:
         rollup = self.department_rollup()
+        # Rows the detail pages do not account for. Movie Magic prints a
+        # percentage-derived line ("INSURANCE :1.3%") on the top sheet and
+        # nowhere else, so this money is real, has no detail to spread from,
+        # and needs a payment schedule from someone who knows the policy.
+        self.unbacked_rows: list[dict[str, Any]] = []
+        # A department can occupy more than one top sheet row, so compare the
+        # rollup against their sum rather than against whichever row came first.
+        stated_by_acct: dict[str, float] = {}
+        rows_by_acct: dict[str, list[TopSheetRow]] = {}
         for row in self.topsheet:
-            computed = rollup.get(row.acct, 0.0)
-            tolerance = max(2.0, row.total * 0.005)
-            if abs(computed - row.total) > tolerance:
+            stated_by_acct[row.acct] = stated_by_acct.get(row.acct, 0.0) + row.total
+            rows_by_acct.setdefault(row.acct, []).append(row)
+        for acct, stated in stated_by_acct.items():
+            computed = rollup.get(acct, 0.0)
+            if stated - computed <= max(2.0, stated * 0.005):
+                continue
+            rows = rows_by_acct[acct]
+            pct = [r for r in rows if re.search(r"\d+(\.\d+)?\s*%", r.name)]
+            self.unbacked_rows.append({
+                "acct": acct,
+                "name_display": (pct[0] if pct else rows[0]).name_display,
+                "amount": round(stated - computed, 2),
+                "states_percentage": bool(pct),
+            })
+        for acct, stated in stated_by_acct.items():
+            computed = rollup.get(acct, 0.0)
+            row = rows_by_acct[acct][0]
+            tolerance = max(2.0, stated * 0.005)
+            if abs(computed - stated) > tolerance:
                 self.warnings.append(
                     f"department {row.acct} ({row.name_display}): extracted detail "
-                    f"sums to {computed:,.0f} against a top sheet {row.total:,.0f} "
+                    f"sums to {computed:,.0f} against a top sheet {stated:,.0f} "
                     f"(off by {computed - row.total:,.0f})")
 
         top_total = sum(r.total for r in self.topsheet)
@@ -901,7 +943,81 @@ class BudgetParser:
             "The budget states when cost is incurred. Cash leaves on different "
             "dates, and only you know the terms.",
             prefill={"payroll_lag_days": None, "vendor_terms": "net30",
-                     "prepaid": ["insurance premium", "bond fee", "deposits"]})
+                     "prepaid": ["insurance premium", "bond fee", "deposits"],
+                     # Measured: moving payroll lag alone from 7 to 21 days took
+                     # correlation with a real cash flow from 0.901 to 0.957 on
+                     # one production and left another unchanged. It is the
+                     # single highest-leverage answer here, and it is per-show.
+                     "departments": {}},
+            departments_available=[{"acct": r.acct, "name": r.name_display}
+                                   for r in self.topsheet])
+
+        # 2b. Money the top sheet states but no detail page carries. Nothing in
+        # the document says when it is paid, and on a real budget it is not small.
+        unbacked = getattr(self, "unbacked_rows", [])
+        if unbacked:
+            total = sum(r["amount"] for r in unbacked)
+            ask("unbacked_lines",
+                f"Give a payment schedule for {len(unbacked)} top sheet "
+                f"line(s) totalling {total:,.0f} that have no detail behind them.",
+                "These are stated as a percentage or a lump on the top sheet, so "
+                "the budget carries no phase, duration or date for them. Without a "
+                "schedule they can only be spread by department archetype, which "
+                "for an insurance premium or a bond fee is certainly wrong.",
+                amount_at_stake=round(total, 2),
+                lines=unbacked,
+                answer_format={
+                    "acct": "6700",
+                    "instalments": [{"pay_on": "YYYY-MM-DD", "share": 0.5}],
+                })
+
+        # 2c. Payments the budget prices but triggers rather than dates. These
+        # drive the largest single timing error measured against a real cash flow.
+        triggers = []
+        for a in self.accounts:
+            for d in a.details:
+                for phase in d.phases:
+                    label = phase.label_display or ""
+                    if re.search(r"bonus|deliver|commenc|principal photog|release|"
+                                 r"payable|milestone", label, re.I) and phase.amount:
+                        triggers.append({
+                            "acct": a.acct,
+                            "account_name": a.name_display,
+                            "person": d.person,
+                            "description": label,
+                            "amount": phase.amount,
+                        })
+        if triggers:
+            triggers.sort(key=lambda t: -(t["amount"] or 0))
+            total = sum(t["amount"] or 0 for t in triggers)
+            ask("milestone_payments",
+                f"Date {len(triggers)} payment(s) totalling {total:,.0f} that the "
+                "budget ties to an event rather than a week.",
+                "A bonus payable on delivery, or a fee on commencement, is priced "
+                "by the budget but not scheduled by it. Spread across the shoot it "
+                "lands months early — this was the largest timing error found "
+                "against a real production's cash flow.",
+                amount_at_stake=round(total, 2),
+                count=len(triggers),
+                examples=triggers[:25],
+                answer_format={"acct": "1101", "description": "Sole Credit Bonus",
+                               "pay_on": "YYYY-MM-DD"})
+
+        # 2d. A production already under way has spent money the grid must not
+        # re-forecast. The budget marks these lines but cannot date the cut-off.
+        ctd_hits = sum(1 for a in self.accounts for d in a.details
+                       if re.search(r"\bCTD\b", " ".join(
+                           [d.sub_display or ""] + list(d.notes)
+                           + [p.label_display or "" for p in d.phases])))
+        if ctd_hits:
+            ask("cost_to_date",
+                "State the cost-to-date cut-off week and amount, if this "
+                "production has already started spending.",
+                "The budget carries CTD markers, so some of this money is already "
+                "out of the door. Forecasting it again double-counts the front of "
+                "the schedule.",
+                ctd_marked_records=ctd_hits,
+                answer_format={"as_of": "YYYY-MM-DD", "amount": 0})
 
         # 3. Funding. Required for a net position.
         ask("funding",
