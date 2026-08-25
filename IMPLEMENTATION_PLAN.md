@@ -1,9 +1,16 @@
 # Cashflow App Implementation Plan
 
 ## Repo Context
-Repository: `cpetrula/cashflow`
-Status: empty repository / greenfield
-Recommended approach: start with the cash flow workbook importer and read-only reporting MVP.
+Repository: `7777tbone7777/cashflow`, deployed from `main` to the Railway project
+`awake-imagination`.
+
+**This document is a historical record, not a current plan.** It was written
+against an empty repository and proposed building a cash flow importer with
+read-only reporting. The product went the other way: a budget goes in and the
+documents come out, and importing an existing cash flow is the secondary path.
+Milestones 1 to 3 below were largely built, in a different order and shape than
+described. Read `tools/budget-extractor/README.md` for what the system actually
+does.
 
 ## Product Direction
 Build sequence:

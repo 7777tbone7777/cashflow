@@ -10,7 +10,7 @@ Current artifact:
 - `cashflow-inspection.json` — metadata extracted from the sample cash flow workbook
 
 Notes:
-- source workbook: `/home/cpetrula/projects/cashflow-app/Cash Flow The Children California Full 083117.xlsx`
+- source workbook: `Cash Flow The Children California Full 083117.xlsx`
 - verified detail sheet: `The Nun Cash Flow - USD`
 - verified period count: `36` (30 labelled + 6 dated but unlabelled)
 - verified grand total row: `552`

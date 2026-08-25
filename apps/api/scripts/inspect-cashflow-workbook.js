@@ -2,8 +2,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import xlsx from 'xlsx';
 
-const defaultWorkbookPath = '/home/cpetrula/projects/cashflow-app/Cash Flow The Children California Full 083117.xlsx';
-const workbookPath = process.argv[2] || defaultWorkbookPath;
+// No default. This used to point at a path on the original author's laptop,
+// which meant the script failed with "workbook not found" for everyone else and
+// looked like a missing file rather than a wrong assumption.
+const workbookPath = process.argv[2];
+
+if (!workbookPath) {
+  console.error(`Usage: node ${path.basename(process.argv[1])} <path-to-workbook.xlsx>`);
+  process.exit(1);
+}
 
 if (!fs.existsSync(workbookPath)) {
   console.error(`Workbook not found: ${workbookPath}`);
