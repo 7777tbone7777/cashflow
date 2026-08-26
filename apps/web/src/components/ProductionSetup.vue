@@ -14,6 +14,10 @@ const props = defineProps<{
   config: ProductionConfig
   inputsRequired: InputRequired[]
   busy: boolean
+  /** What went wrong, if it did. Shown here because this is where the button is. */
+  error?: string
+  /** What came back, so the button is not the only thing that answers. */
+  result?: string
 }>()
 
 const emit = defineEmits<{
@@ -126,10 +130,22 @@ const ready = computed(() => Boolean(props.config.shoot_start))
       </button>
       <span v-if="!ready" class="hint">A shoot start date is the one thing required.</span>
     </div>
+
+    <!--
+      The outcome belongs next to the button that caused it. Both the grid and
+      the documents panel render further down the page, so from here a
+      successful generation looked identical to nothing happening at all.
+    -->
+    <p v-if="error" class="outcome bad">{{ error }}</p>
+    <p v-else-if="result" class="outcome good">{{ result }}</p>
   </section>
 </template>
 
 <style scoped>
+.outcome { margin: 12px 0 0; font-size: 0.86rem; max-width: 78ch; }
+.outcome.good { color: #7fb08a; }
+.outcome.bad { color: var(--error-fg); background: var(--error-bg); padding: 10px 14px; border-radius: 8px; }
+
 .field-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));

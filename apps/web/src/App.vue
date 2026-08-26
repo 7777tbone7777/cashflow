@@ -34,6 +34,9 @@ const config = ref<ProductionConfig>({ ...DEFAULT_CONFIG })
 let restoring = false
 let saveTimer: ReturnType<typeof setTimeout> | undefined
 const configSaved = ref(false)
+// What the last generation produced, said next to the button that produced it.
+const generateResult = ref('')
+const resultEl = ref<HTMLElement | null>(null)
 // Which show you were last on. Without it a reload opens the oldest production
 // on the account, which reads as the show you were working on having reverted
 // — its answers are simply somebody else's.
@@ -160,15 +163,23 @@ async function generate() {
   if (!selectedId.value) return
   generating.value = true
   error.value = ''
+  generateResult.value = ''
   try {
     // Save first, so the answers that produced this forecast are the ones the
     // show carries — including if the debounce has not fired yet.
     clearTimeout(saveTimer)
     saveTimer = undefined
     await saveConfig()
-    cashflow.value = await api.generateCashflow(selectedId.value, config.value)
+    const result = await api.generateCashflow(selectedId.value, config.value)
+    cashflow.value = result
     summary.value = await api.productionSummary(selectedId.value)
     await refreshProductions(selectedId.value)
+    generateResult.value =
+      `${result.periods} periods, reconciling to the budget. The grid and the documents are below.`
+    // The result renders below the fold, so take the reader to it rather than
+    // leaving the button looking like it did nothing.
+    await nextTick()
+    resultEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   } catch (caught: any) {
     error.value = caught.message || 'Could not generate the cash flow.'
   } finally {
@@ -368,6 +379,8 @@ onMounted(async () => {
           :config="config"
           :inputs-required="budget.inputsRequired"
           :busy="generating"
+          :error="error"
+          :result="generateResult"
           @update:config="config = $event"
           @generate="generate" />
 
@@ -402,7 +415,9 @@ onMounted(async () => {
           :cashflow="cashflow"
           :currency="currency" />
 
-        <CashFlowGrid :summary="summary" :currency="currency" />
+        <div ref="resultEl">
+          <CashFlowGrid :summary="summary" :currency="currency" />
+        </div>
       </template>
 
       <ShowAccess v-if="selectedId" :production-id="selectedId" :role="role" />
