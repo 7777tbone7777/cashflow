@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -344,6 +345,15 @@ class Generator:
         the phase of the same length puts it where it belongs instead of
         collapsing it into the shoot.
 
+        The span is centred in that phase rather than run from its first week.
+        The budget states how long a thing is held and almost never states when
+        it arrives, and taking the opening weeks turns that silence into a claim
+        that everything lands on the first day. It does not: on the reference
+        show it piled 2.3M into the first week of the shoot against 0.3M in the
+        fifth, a staircase that is an artefact of the anchor and nothing else.
+        Centring keeps the duration the budget gives and stops inventing a start
+        date it does not.
+
         Returns None when the line states no duration at all ("1 Allow", "1 Fee"),
         which is a genuine unknown rather than something to fake.
         """
@@ -364,7 +374,8 @@ class Generator:
             # Longer than any single phase: run it forward from that phase.
             start = window[0]
             return list(range(start, min(start + weeks, len(cal.periods))))
-        return window[:weeks]
+        offset = (len(window) - weeks) // 2
+        return window[offset:offset + weeks]
 
     def _profile_for(self, acct: str, department: str) -> tuple[dict[str, float], str] | None:
         """A learned week-by-week curve, indexed off the first shoot week.
@@ -779,9 +790,21 @@ class Generator:
             cost[p.period_index] += p.amount
             lag_days = dept_lags.get(p.department,
                                      timing.get(p.cash_class, {}).get("lag_days", 0))
-            shift = int(round(lag_days / 7.0))
-            target = min(max(p.period_index + shift, 0), n - 1)
-            cash[target] += p.amount
+            # Split across the two weeks the lag straddles rather than rounding
+            # to whole ones. Rounding threw away every answer that was not a
+            # multiple of seven — funding payroll on the Wednesday for the week
+            # just worked is four days, and it was indistinguishable from seven
+            # — and it made the lag behave erratically, since a day either side
+            # of the half-week could move a department's whole spend a week.
+            # The defaults are exact weeks, so none of them move.
+            weeks = lag_days / 7.0
+            base = math.floor(weeks)
+            carry = weeks - base
+            for step, share in ((base, 1.0 - carry), (base + 1, carry)):
+                if share <= 0:
+                    continue
+                target = min(max(p.period_index + step, 0), n - 1)
+                cash[target] += p.amount * share
         return cost, cash
 
     # ---------- output --------------------------------------------------------
