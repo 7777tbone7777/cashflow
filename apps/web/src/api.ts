@@ -403,6 +403,18 @@ export const api = {
 
   productionSummary: (id: string) => request<ProductionSummary>(`/api/productions/${id}/summary`),
 
+  /** The show's standing assumptions. `null` means nobody has saved any yet. */
+  productionConfig: (id: string) =>
+    request<{ config: ProductionConfig | null; savedAt: string }>(
+      `/api/productions/${id}/config`),
+
+  saveProductionConfig: (id: string, config: ProductionConfig) =>
+    request<{ config: ProductionConfig; savedAt: string }>(`/api/productions/${id}/config`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ config }),
+    }),
+
   extractorHealth: () => request<{ extractor: { ok: boolean; url: string } }>('/api/budgets/health'),
 
   budget: (id: string) => request<BudgetSummary>(`/api/budgets/${id}`),

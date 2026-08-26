@@ -225,6 +225,48 @@ productionsRouter.get('/:id/summary', async (req, res, next) => {
   }
 });
 
+/**
+ * The standing assumptions for this show.
+ *
+ * These are answers, not preferences: which week the shoot starts, how long
+ * payroll takes to fund, which departments rig on a preshoot day. They were
+ * previously held only in the browser, so closing the tab discarded them and
+ * the next regeneration silently used the defaults instead of what the
+ * accountant had said. Returns null when nothing has been saved yet, which the
+ * interface reads as "use the defaults".
+ */
+productionsRouter.get('/:id/config', async (req, res, next) => {
+  try {
+    const production = await prisma.production.findUnique({
+      where: { id: req.params.id },
+      select: { configJson: true, updatedAt: true },
+    });
+    if (!production) return res.status(404).json({ error: 'Production not found' });
+    return res.json({ config: production.configJson ?? null, savedAt: production.updatedAt });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+productionsRouter.put('/:id/config', requireRole('editor'), async (req, res, next) => {
+  try {
+    const config = req.body?.config;
+    // An array or a scalar here would be stored happily by Postgres and then
+    // fail to spread into the form on the way back out.
+    if (!config || typeof config !== 'object' || Array.isArray(config)) {
+      return res.status(400).json({ error: 'A config object is required.' });
+    }
+    const production = await prisma.production.update({
+      where: { id: req.params.id },
+      data: { configJson: config },
+      select: { configJson: true, updatedAt: true },
+    });
+    return res.json({ config: production.configJson, savedAt: production.updatedAt });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 // Who else can see this show.
 productionsRouter.use('/:id/members', membersRouter);
 

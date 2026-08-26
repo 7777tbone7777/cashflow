@@ -167,6 +167,12 @@ model Production {
   startDate        DateTime?            @db.Date
   endDate          DateTime?            @db.Date
   notes            String?
+  /// The answers an accountant supplied — shoot dates, payment timing, per-department
+  /// lags, milestones, hot cost conventions. Held here because they are the show's
+  /// standing assumptions, not one request's arguments: a cash flow regenerated in
+  /// week six should use the same answers that produced the one in prep, and until
+  /// this existed every one of them was lost on reload.
+  configJson       Json?                @map("config_json")
   createdAt        DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt        DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
   importBatches    ImportBatch[]

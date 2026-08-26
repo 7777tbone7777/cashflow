@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import {
   DEFAULT_CONFIG, api, auth, type User,
   type BudgetUploadResult, type CashflowResult, type Production,
@@ -29,6 +29,11 @@ const budget = ref<BudgetUploadResult | null>(null)
 const summary = ref<ProductionSummary | null>(null)
 const cashflow = ref<CashflowResult | null>(null)
 const config = ref<ProductionConfig>({ ...DEFAULT_CONFIG })
+// True while a show's stored answers are being put into the form. Without it
+// the autosave below would treat loading as editing.
+let restoring = false
+let saveTimer: ReturnType<typeof setTimeout> | undefined
+const configSaved = ref(false)
 const extractorUp = ref<boolean | null>(null)
 const loading = ref(true)
 const generating = ref(false)
@@ -85,6 +90,12 @@ function applyPrefill(result: BudgetUploadResult) {
 async function loadProduction(id: string) {
   if (!id) return
   summary.value = await api.productionSummary(id).catch(() => null)
+  // What this show was last told about itself. Restoring before the budget is
+  // read matters: the prefill below is a guess taken off the budget header, and
+  // it must not overwrite an answer a person has already given.
+  const saved = await api.productionConfig(id).then((r) => r.config).catch(() => null)
+  restoring = true
+  config.value = saved ? { ...DEFAULT_CONFIG, ...saved } : { ...DEFAULT_CONFIG }
   try {
     const stored = await api.budget(id)
     // Reshape the stored extract into the same view a fresh upload gives, so a
@@ -102,9 +113,14 @@ async function loadProduction(id: string) {
       warnings: stored.warnings || [],
     }
     budget.value = restored
-    applyPrefill(restored)
+    if (!saved) applyPrefill(restored)
   } catch {
     budget.value = null
+  } finally {
+    // Let the watcher save again only once the restored values have settled,
+    // otherwise loading a show immediately writes it straight back.
+    await nextTick()
+    restoring = false
   }
 }
 
@@ -120,6 +136,10 @@ async function generate() {
   generating.value = true
   error.value = ''
   try {
+    // Save first, so the answers that produced this forecast are the ones the
+    // show carries — including if the debounce has not fired yet.
+    clearTimeout(saveTimer)
+    await saveConfig()
     cashflow.value = await api.generateCashflow(selectedId.value, config.value)
     summary.value = await api.productionSummary(selectedId.value)
     await refreshProductions(selectedId.value)
@@ -130,7 +150,35 @@ async function generate() {
   }
 }
 
+/**
+ * Keep the show's answers. They are worth nothing held in a tab: an accountant
+ * sets the payment lags and the hot cost conventions once and regenerates for
+ * months, and before this every reload quietly reverted them to the defaults.
+ * Debounced because these are typed into number fields, not submitted.
+ */
+async function saveConfig() {
+  if (!selectedId.value || !canEdit.value) return
+  try {
+    await api.saveProductionConfig(selectedId.value, config.value)
+    configSaved.value = true
+  } catch {
+    // A failed save is not worth interrupting the work over; the next edit or
+    // the generate below tries again, and generation sends the config anyway.
+    configSaved.value = false
+  }
+}
+
+watch(config, () => {
+  if (restoring) return
+  configSaved.value = false
+  clearTimeout(saveTimer)
+  saveTimer = setTimeout(saveConfig, 800)
+}, { deep: true })
+
 watch(selectedId, async (id) => {
+  // Drop any save still waiting out its debounce. It was scheduled against the
+  // show being left, and firing it now would write those answers onto this one.
+  clearTimeout(saveTimer)
   cashflow.value = null
   if (!id) {
     // Nothing should be on screen from the last show while a new one is set up.
@@ -279,6 +327,14 @@ onMounted(async () => {
           :config="config"
           @update:config="config = $event" />
 
+        <p v-if="canEdit" class="saved-note" :class="{ saved: configSaved }">
+          <template v-if="configSaved">
+            Answers saved to this show. They will be here next time, and the next
+            cash flow is generated from them.
+          </template>
+          <template v-else>Answers are saved to this show as you set them.</template>
+        </p>
+
         <GeneratedDocuments
           :production-id="selectedId"
           :config="config"
@@ -363,4 +419,6 @@ input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-v
 .who { color: var(--muted); font-size: 0.8rem; display: flex; gap: 10px; align-items: center; }
 .link { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; font: inherit; font-size: 0.8rem; }
 .boot { max-width: 1080px; margin: 40px auto; }
+.saved-note { color: var(--muted); font-size: 0.82rem; margin: -4px 0 18px; max-width: 78ch; }
+.saved-note.saved { color: #7fb08a; }
 </style>
