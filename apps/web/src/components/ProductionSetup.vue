@@ -87,16 +87,22 @@ const ready = computed(() => Boolean(props.config.shoot_start))
                @input="set('post_weeks', number($event))" />
       </label>
       <label>
+        <span>Prep ramp</span>
+        <input type="number" min="0.01" max="1" step="0.01" :value="config.prep_ramp ?? 0.05"
+               @input="set('prep_ramp', number($event))" />
+      </label>
+      <label>
         <span>Post decline</span>
         <input type="number" min="0" max="1" step="0.05" :value="config.post_taper ?? 0.5"
                @input="set('post_taper', number($event))" />
       </label>
     </div>
     <p class="hint">
-      Post decline is the last post week as a share of the first — post empties out as the
-      cutting rooms do. 1 spreads it level, which is the one thing post never looks like.
-      The default of 0.5 is a reading of a single production; if you know your own show's
-      shape, this is the number to change.
+      Prep ramp is the first prep week as a share of the last, and post decline is the last
+      post week as a share of the first. Spend climbs through prep as the departments come on
+      and falls away through post as the cutting rooms empty; 1 spreads either level, which is
+      the one shape neither has. The prep default was measured on a completed show's own cash
+      flow — 0.4% of prep in its first week against 42% in its last. Both are settings.
     </p>
 
     <details class="advanced" v-if="asked.has('payment_timing')">

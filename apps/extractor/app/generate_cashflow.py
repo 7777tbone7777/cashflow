@@ -95,6 +95,20 @@ DEPARTMENT_ARCHETYPE: dict[str, str] = {
 # nothing supports. An accountant who knows their own show should change it.
 DEFAULT_POST_TAPER = 0.5
 
+# Prep is the mirror of it, and steeper. Spend ramps toward the shoot as the
+# departments come on one by one, so a level prep spreads money into weeks when
+# almost nobody is being paid — and because the early weeks are usually already
+# spent by the time anyone opens a cash flow, that error lands squarely in the
+# cost-to-date column.
+#
+# The ramp is the first prep week as a share of the last, geometric between
+# them. Unlike the post taper this is measured rather than guessed, and measured
+# on a different production from the one it is tested against: The Children's
+# own cash flow runs 0.4% of prep in week -7 to 42.0% in week -1, with the early
+# half of prep carrying 8.7% of it. A geometric ramp fits that at 0.042, and a
+# twentieth is the round number next to it.
+DEFAULT_PREP_RAMP = 0.05
+
 # How each class of spend converts from cost incurred to cash paid.
 DEFAULT_TIMING = {
     "labour":    {"lag_days": 7,  "note": "payroll funded the week after work"},
@@ -238,6 +252,7 @@ class Generator:
         # How much post spend the decline reshaped, so it can be reported as the
         # assumption it is rather than applied quietly.
         self.post_tapered = 0.0
+        self.prep_ramped = 0.0
 
     def _shape_for(self, acct: str, department: str) -> tuple[dict[str, float], str]:
         """Best available spread for an account, most specific first.
@@ -277,6 +292,33 @@ class Generator:
         last = len(indices) - 1
         return [1.0 - (1.0 - taper) * (position / last) for position in range(len(indices))]
 
+    def _prep_weights(self, indices: list[int]) -> list[float] | None:
+        """A ramp rising across prep, by where each week sits in the whole phase.
+
+        Position is taken from the prep window rather than from the indices
+        handed in, so a two-week hire anchored to the end of prep is weighted as
+        the end of prep — not restarted at the bottom of the ramp.
+        """
+        ramp = self.cfg.get("prep_ramp", DEFAULT_PREP_RAMP)
+        try:
+            ramp = float(ramp)
+        except (TypeError, ValueError):
+            return None
+        if not 0.0 < ramp < 1.0:
+            return None
+        prep = self.calendar.indices_for_phase("prep")
+        if len(prep) < 3:
+            return None
+        position = {index: i for i, index in enumerate(prep)}
+        last = len(prep) - 1
+        weights = []
+        for index in indices:
+            i = position.get(index)
+            if i is None:
+                return None     # not a prep week after all; leave it level
+            weights.append(ramp ** (1.0 - i / last))
+        return weights or None
+
     def _spread(self, amount: float, indices: list[int], *, acct: str,
                 department: str, description: str, basis: str, phase: str,
                 cash_class: str, weights: list[float] | None = None) -> None:
@@ -286,6 +328,10 @@ class Generator:
             weights = self._post_weights(indices)
             if weights is not None:
                 self.post_tapered += amount
+        if weights is None and phase == "prep":
+            weights = self._prep_weights(indices)
+            if weights is not None:
+                self.prep_ramped += amount
         if weights is None:
             weights = [1.0] * len(indices)
         total_weight = sum(weights) or 1.0
@@ -726,16 +772,23 @@ class Generator:
                     "account number and the wording")
 
     def _with_post_note(self) -> list[str]:
-        """Name the decline, with what it is worth, alongside every other guess."""
-        if self.post_tapered <= 0:
-            return self.notes
-        taper = float(self.cfg.get("post_taper", DEFAULT_POST_TAPER))
-        return self.notes + [
-            f"post: {self.post_tapered:,.0f} was spread on a decline rather than level, "
-            f"the last post week set to {taper:.0%} of the first — post empties out as the "
-            "cutting rooms do. The direction is established; this steepness rests on one "
-            "production, and it is a setting rather than a fact."
-        ]
+        """Name the prep ramp and the post decline, with what each is worth."""
+        notes = list(self.notes)
+        if self.prep_ramped > 0:
+            ramp = float(self.cfg.get("prep_ramp", DEFAULT_PREP_RAMP))
+            notes.append(
+                f"prep: {self.prep_ramped:,.0f} was ramped toward the shoot rather than "
+                f"spread level, the first prep week set to {ramp:.0%} of the last — the "
+                "departments come on one by one. Measured on a completed production's own "
+                "cash flow, not assumed, and a setting either way.")
+        if self.post_tapered > 0:
+            taper = float(self.cfg.get("post_taper", DEFAULT_POST_TAPER))
+            notes.append(
+                f"post: {self.post_tapered:,.0f} was spread on a decline rather than level, "
+                f"the last post week set to {taper:.0%} of the first — post empties out as the "
+                "cutting rooms do. The direction is established; this steepness rests on one "
+                "production, and it is a setting rather than a fact.")
+        return notes
 
     def _close_to_grand_total(self) -> None:
         """Place whatever the departments still leave short of the stated total.

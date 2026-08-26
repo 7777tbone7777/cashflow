@@ -182,6 +182,8 @@ export type ProductionConfig = {
   hot_cost_conventions?: HotCostConventions
   /** Last post week as a share of the first. 1 is a flat line across post. */
   post_taper?: number
+  /** First prep week as a share of the last. 1 is a flat line across prep. */
+  prep_ramp?: number
 }
 
 export const DEFAULT_CONFIG: ProductionConfig = {
@@ -207,6 +209,7 @@ export const DEFAULT_CONFIG: ProductionConfig = {
   // Mirrors DEFAULT_CONVENTIONS in the generator. Changing them here changes
   // the day sheets; they are stated rather than buried so they can be argued with.
   post_taper: 0.5,
+  prep_ramp: 0.05,
   hot_cost_conventions: {
     flat_rate_bills_shoot_day: true,
     minimum_prep_units: 11,
