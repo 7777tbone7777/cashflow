@@ -86,7 +86,18 @@ const ready = computed(() => Boolean(props.config.shoot_start))
         <input type="number" min="0" :value="config.post_weeks"
                @input="set('post_weeks', number($event))" />
       </label>
+      <label>
+        <span>Post decline</span>
+        <input type="number" min="0" max="1" step="0.05" :value="config.post_taper ?? 0.5"
+               @input="set('post_taper', number($event))" />
+      </label>
     </div>
+    <p class="hint">
+      Post decline is the last post week as a share of the first — post empties out as the
+      cutting rooms do. 1 spreads it level, which is the one thing post never looks like.
+      The default of 0.5 is a reading of a single production; if you know your own show's
+      shape, this is the number to change.
+    </p>
 
     <details class="advanced" v-if="asked.has('payment_timing')">
       <summary>Payment timing — how cost becomes cash</summary>

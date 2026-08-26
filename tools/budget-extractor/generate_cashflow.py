@@ -69,6 +69,31 @@ DEPARTMENT_ARCHETYPE: dict[str, str] = {
     "6800": "wrap_tail",
 }
 
+# Post spend declines as the show runs out. An archetype says how much of an
+# account lands in post; it said nothing about when, so every post account was
+# spread level across every post week — a flat line for twenty weeks, which is
+# the one thing post never looks like.
+#
+# It declines because the cutting rooms empty. The full crew is there when the
+# picture is assembled and rolls off through the finish, so the weekly number
+# falls even though the finishing crafts are still working. What does not
+# decline is delivery: the money tied to it is scheduled as a milestone rather
+# than smeared, which is a separate question the app already asks.
+#
+# The taper is the last post week as a share of the first, and 1.0 restores the
+# flat line.
+#
+# The direction is not in doubt. The steepness is one observation: on The Mule
+# the back nine weeks of post averaged 0.60 of the front seven, which a straight
+# decline reproduces at about 0.33 — and 0.33 is also where the error over those
+# weeks bottoms out. Setting the default there would be fitting the only show
+# available and calling it accuracy, which is how this project got a correlation
+# it had to withdraw. Half by the end is the honest reading of one data point:
+# it takes most of the improvement (70,030 to 54,526 mean weekly error against
+# The Mule, versus 50,168 at the fitted value) without pretending to a precision
+# nothing supports. An accountant who knows their own show should change it.
+DEFAULT_POST_TAPER = 0.5
+
 # How each class of spend converts from cost incurred to cash paid.
 DEFAULT_TIMING = {
     "labour":    {"lag_days": 7,  "note": "payroll funded the week after work"},
@@ -209,6 +234,9 @@ class Generator:
         self.live_keys: set[str] = set()
         # Accounts whose stated total was placed whole, fringes included.
         self.absorbed_fringe_accounts: set[str] = set()
+        # How much post spend the decline reshaped, so it can be reported as the
+        # assumption it is rather than applied quietly.
+        self.post_tapered = 0.0
 
     def _shape_for(self, acct: str, department: str) -> tuple[dict[str, float], str]:
         """Best available spread for an account, most specific first.
@@ -231,11 +259,32 @@ class Generator:
 
     # ---------- placement helpers -------------------------------------------
 
+    def _post_weights(self, indices: list[int]) -> list[float] | None:
+        """A straight line falling across the post window.
+
+        Returns None when the taper is off or there is no real window to shape,
+        so level remains the behaviour wherever a decline would be an assertion
+        rather than a shape.
+        """
+        taper = self.cfg.get("post_taper", DEFAULT_POST_TAPER)
+        try:
+            taper = float(taper)
+        except (TypeError, ValueError):
+            return None
+        if taper >= 1.0 or taper < 0.0 or len(indices) < 3:
+            return None
+        last = len(indices) - 1
+        return [1.0 - (1.0 - taper) * (position / last) for position in range(len(indices))]
+
     def _spread(self, amount: float, indices: list[int], *, acct: str,
                 department: str, description: str, basis: str, phase: str,
                 cash_class: str, weights: list[float] | None = None) -> None:
         if not amount or not indices:
             return
+        if weights is None and phase == "post":
+            weights = self._post_weights(indices)
+            if weights is not None:
+                self.post_tapered += amount
         if weights is None:
             weights = [1.0] * len(indices)
         total_weight = sum(weights) or 1.0
@@ -665,6 +714,18 @@ class Generator:
                     f"milestone {label}: matched no line in this budget — check the "
                     "account number and the wording")
 
+    def _with_post_note(self) -> list[str]:
+        """Name the decline, with what it is worth, alongside every other guess."""
+        if self.post_tapered <= 0:
+            return self.notes
+        taper = float(self.cfg.get("post_taper", DEFAULT_POST_TAPER))
+        return self.notes + [
+            f"post: {self.post_tapered:,.0f} was spread on a decline rather than level, "
+            f"the last post week set to {taper:.0%} of the first — post empties out as the "
+            "cutting rooms do. The direction is established; this steepness rests on one "
+            "production, and it is a setting rather than a fact."
+        ]
+
     def _close_to_grand_total(self) -> None:
         """Place whatever the departments still leave short of the stated total.
 
@@ -773,7 +834,7 @@ class Generator:
                      + self.by_basis.get("fringe", 0)) / total_placed, 4)
                 if total_placed else 0.0,
             },
-            "assumptions": self.notes,
+            "assumptions": self._with_post_note(),
             "archetype_provenance": dict(self.archetype_hits),
             "overrides": {
                 "loaded": len(self.overrides.overrides),

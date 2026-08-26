@@ -180,6 +180,8 @@ export type ProductionConfig = {
   /** Payments the budget prices but ties to an event rather than a week. */
   milestones?: Array<{ acct: string; description?: string; pay_on: string }>
   hot_cost_conventions?: HotCostConventions
+  /** Last post week as a share of the first. 1 is a flat line across post. */
+  post_taper?: number
 }
 
 export const DEFAULT_CONFIG: ProductionConfig = {
@@ -204,6 +206,7 @@ export const DEFAULT_CONFIG: ProductionConfig = {
   milestones: [],
   // Mirrors DEFAULT_CONVENTIONS in the generator. Changing them here changes
   // the day sheets; they are stated rather than buried so they can be argued with.
+  post_taper: 0.5,
   hot_cost_conventions: {
     flat_rate_bills_shoot_day: true,
     minimum_prep_units: 11,
