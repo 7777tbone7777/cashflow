@@ -74,10 +74,14 @@ function applyPrefill(result: BudgetUploadResult) {
     Record<string, unknown> | undefined
   if (!calendar) return
   const next = { ...config.value }
+  // The extractor normalises the header's date to ISO, whatever the budget
+  // spelled it as. The fallback is for extracts made before it did that.
   const start = String(calendar.shoot_start || '')
-  const parsed = start ? new Date(start.replace(/\./g, ' ')) : null
-  if (parsed && !Number.isNaN(parsed.getTime())) {
-    next.shoot_start = parsed.toISOString().slice(0, 10)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(start)) {
+    next.shoot_start = start
+  } else if (start) {
+    const parsed = new Date(start.replace(/\./g, ' '))
+    if (!Number.isNaN(parsed.getTime())) next.shoot_start = parsed.toISOString().slice(0, 10)
   }
   if (calendar.shoot_days) {
     next.shoot_days = Number(calendar.shoot_days)

@@ -221,13 +221,36 @@ def to_float(token: str | None) -> float | None:
 
 
 def parse_date(token: str) -> str | None:
+    token = token or ""
     # Start dates carry annotations: "09/22/17(NonConsec)", "10/09/17*".
-    m = re.match(r"\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})", token or "")
+    m = re.match(r"\s*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})", token)
     if m:
         token = m.group(1)
     for fmt in ("%m/%d/%y", "%m/%d/%Y", "%m-%d-%y", "%m-%d-%Y"):
         try:
             return datetime.strptime(token, fmt).date().isoformat()
+        except ValueError:
+            continue
+    return parse_long_date(token)
+
+
+def parse_long_date(token: str) -> str | None:
+    """A month spelled out: "Oct.16,2017", "June 04,2018".
+
+    Header fields run together with whatever sits to their right on the page, so
+    the start date on one budget reads "June 04,2018TOTAL" and on another
+    "Oct.16,2017". Anchoring on the year and stopping there takes the date and
+    leaves the neighbour behind — the alternative is a value that parses on the
+    document it was written against and silently fails on the next one.
+    """
+    m = re.search(r"([A-Za-z]{3,9})\.?\s*(\d{1,2})\s*,?\s*(\d{4})", token or "")
+    if not m:
+        return None
+    month, day, year = m.groups()
+    for fmt in ("%b %d %Y", "%B %d %Y"):
+        try:
+            return datetime.strptime(f"{month[:3] if fmt.startswith('%b') else month} "
+                                    f"{day} {year}", fmt).date().isoformat()
         except ValueError:
             continue
     return None
@@ -949,8 +972,15 @@ class BudgetParser:
             "Phase quantities in the budget are durations, not dates. They need a "
             "calendar before they become weeks in a cash flow.",
             prefill={
-                "shoot_start": self.production.get("start_production"),
-                "shoot_finish": self.production.get("finish_production"),
+                # ISO, not the header's own wording. These are read straight into
+                # a date field, and every budget spells its start differently —
+                # "Oct.16,2017" on one, "June 04,2018" run into the next column
+                # on the next. Normalising here means the interface does not
+                # carry a date parser tuned to whichever document came first.
+                "shoot_start": parse_date(self.production.get("start_production")),
+                "shoot_finish": parse_date(self.production.get("finish_production")),
+                "shoot_start_text": self.production.get("start_production"),
+                "shoot_finish_text": self.production.get("finish_production"),
                 "shoot_days": self.production.get("shoot_days"),
                 "post_weeks": self.production.get("post_weeks"),
             })
