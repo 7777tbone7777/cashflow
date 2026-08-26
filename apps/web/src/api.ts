@@ -408,9 +408,14 @@ export const api = {
     request<{ config: ProductionConfig | null; savedAt: string }>(
       `/api/productions/${id}/config`),
 
-  saveProductionConfig: (id: string, config: ProductionConfig) =>
+  /**
+   * `keepalive` is for the save sent as the page is closing — it lets the
+   * request outlive the document instead of being cancelled with it.
+   */
+  saveProductionConfig: (id: string, config: ProductionConfig, keepalive = false) =>
     request<{ config: ProductionConfig; savedAt: string }>(`/api/productions/${id}/config`, {
       method: 'PUT',
+      keepalive,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ config }),
     }),

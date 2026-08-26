@@ -34,6 +34,17 @@ const config = ref<ProductionConfig>({ ...DEFAULT_CONFIG })
 let restoring = false
 let saveTimer: ReturnType<typeof setTimeout> | undefined
 const configSaved = ref(false)
+// Which show you were last on. Without it a reload opens the oldest production
+// on the account, which reads as the show you were working on having reverted
+// — its answers are simply somebody else's.
+const REMEMBERED = 'cashflow:selected-production'
+// The show a pending save belongs to, which is not always the selected one —
+// changing shows with a save still queued would otherwise write the answers
+// onto whichever show you moved to.
+let leavingId = ''
+// Loads overlap: choosing a show and the boot sequence can both start one. Only
+// the newest may write to the form, or a slower earlier load lands on top.
+let loadSeq = 0
 const extractorUp = ref<boolean | null>(null)
 const loading = ref(true)
 const generating = ref(false)
@@ -93,11 +104,16 @@ function applyPrefill(result: BudgetUploadResult) {
 
 async function loadProduction(id: string) {
   if (!id) return
-  summary.value = await api.productionSummary(id).catch(() => null)
+  const seq = ++loadSeq
+  const current = () => seq === loadSeq
+  const summaryResult = await api.productionSummary(id).catch(() => null)
+  if (!current()) return
+  summary.value = summaryResult
   // What this show was last told about itself. Restoring before the budget is
   // read matters: the prefill below is a guess taken off the budget header, and
   // it must not overwrite an answer a person has already given.
   const saved = await api.productionConfig(id).then((r) => r.config).catch(() => null)
+  if (!current()) return
   restoring = true
   config.value = saved ? { ...DEFAULT_CONFIG, ...saved } : { ...DEFAULT_CONFIG }
   try {
@@ -116,15 +132,20 @@ async function loadProduction(id: string) {
       inputsRequired: stored.inputsRequired || [],
       warnings: stored.warnings || [],
     }
+    if (!current()) return
     budget.value = restored
     if (!saved) applyPrefill(restored)
   } catch {
-    budget.value = null
+    if (current()) budget.value = null
   } finally {
     // Let the watcher save again only once the restored values have settled,
-    // otherwise loading a show immediately writes it straight back.
-    await nextTick()
-    restoring = false
+    // otherwise loading a show immediately writes it straight back. A load that
+    // has been superseded must not clear the flag out from under the one that
+    // replaced it.
+    if (current()) {
+      await nextTick()
+      restoring = false
+    }
   }
 }
 
@@ -143,6 +164,7 @@ async function generate() {
     // Save first, so the answers that produced this forecast are the ones the
     // show carries — including if the debounce has not fired yet.
     clearTimeout(saveTimer)
+    saveTimer = undefined
     await saveConfig()
     cashflow.value = await api.generateCashflow(selectedId.value, config.value)
     summary.value = await api.productionSummary(selectedId.value)
@@ -160,11 +182,12 @@ async function generate() {
  * months, and before this every reload quietly reverted them to the defaults.
  * Debounced because these are typed into number fields, not submitted.
  */
-async function saveConfig() {
-  if (!selectedId.value || !canEdit.value) return
+async function saveConfig(target = selectedId.value, snapshot = config.value,
+                            keepalive = false) {
+  if (!target || !canEdit.value) return
   try {
-    await api.saveProductionConfig(selectedId.value, config.value)
-    configSaved.value = true
+    await api.saveProductionConfig(target, snapshot, keepalive)
+    if (target === selectedId.value) configSaved.value = true
   } catch {
     // A failed save is not worth interrupting the work over; the next edit or
     // the generate below tries again, and generation sends the config anyway.
@@ -174,15 +197,44 @@ async function saveConfig() {
 
 watch(config, () => {
   if (restoring) return
+  leavingId = selectedId.value
   configSaved.value = false
   clearTimeout(saveTimer)
-  saveTimer = setTimeout(saveConfig, 800)
+  saveTimer = setTimeout(() => { saveTimer = undefined; void saveConfig() }, 800)
 }, { deep: true })
 
-watch(selectedId, async (id) => {
-  // Drop any save still waiting out its debounce. It was scheduled against the
-  // show being left, and firing it now would write those answers onto this one.
+/**
+ * Send a queued save before the page goes away.
+ *
+ * The debounce is there because these are typed into number fields, but it
+ * means a value changed and then immediately reloaded was never saved at all —
+ * which reads exactly like the save being broken. `keepalive` lets the request
+ * outlive the page. `pagehide` rather than `beforeunload` because Safari and
+ * mobile do not reliably fire the latter.
+ */
+function flushPendingSave() {
+  if (saveTimer === undefined) return
   clearTimeout(saveTimer)
+  saveTimer = undefined
+  void saveConfig(leavingId || selectedId.value, config.value, true)
+}
+
+window.addEventListener('pagehide', flushPendingSave)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushPendingSave()
+})
+
+watch(selectedId, async (id) => {
+  // A save still waiting out its debounce belongs to the show being left, so
+  // send it now rather than dropping it or letting it land on the next show.
+  if (saveTimer !== undefined) {
+    clearTimeout(saveTimer)
+    saveTimer = undefined
+    void saveConfig(leavingId)
+  }
+  leavingId = id
+  if (id) localStorage.setItem(REMEMBERED, id)
+  else localStorage.removeItem(REMEMBERED)
   cashflow.value = null
   if (!id) {
     // Nothing should be on screen from the last show while a new one is set up.
@@ -199,9 +251,14 @@ async function loadWorkspace() {
   loading.value = true
   try {
     await refreshProductions()
-    // Open on a show if there is one; a new account opens ready to upload.
+    // Open on the show you were last on. Falling back to the first in the list
+    // means the oldest production on the account, which is rarely the one you
+    // were working on.
     if (!selectedId.value && productions.value.length) {
-      selectedId.value = productions.value[0].id
+      const remembered = localStorage.getItem(REMEMBERED)
+      selectedId.value = productions.value.some((p) => p.id === remembered)
+        ? (remembered as string)
+        : productions.value[0].id
     }
     if (selectedId.value) await loadProduction(selectedId.value)
     extractorUp.value = (await api.extractorHealth()).extractor.ok
