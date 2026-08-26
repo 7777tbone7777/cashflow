@@ -422,12 +422,17 @@ export const api = {
       body: JSON.stringify({ config: forGenerator(config) }),
     }),
 
-  /** Returns the workbook itself — the browser saves it. */
+  /**
+   * Returns the workbook itself — the browser saves it. This is the one call
+   * that cannot go through `request`, which parses JSON; it still needs the
+   * session cookie, and in development the SPA is on another origin.
+   */
   async generateHotCost(id: string, config: ProductionConfig) {
     const response = await fetch(`${BASE}/api/budgets/${id}/generate/hotcost`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ config }),
+      body: JSON.stringify({ config: forGenerator(config) }),
     })
     if (!response.ok) {
       const payload = await response.json().catch(() => null)
